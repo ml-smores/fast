@@ -1,8 +1,0 @@
-2014/08/12 18:52:29 
-getFilesInSpecifiedDir(): ../data/output/
-2014/08/12 18:52:29 File: FAST-test_test0.pred
-2014/08/12 18:52:29 #Files: 1
-2014/08/12 18:52:29 model	nbtest	AUC	Maj.AUC	Min.AUC	LL	MeanLL	Accuracy	RMSE	F-measure	Maj.F-measure	Min.F-measure	Precision	Maj.Precision	Min.Precision	Recall	Maj.Recall	Min.Recall	TP	TN	FP	FN	
-2014/08/12 18:52:30 FAST-test	36	/	0.714	/	-20.857	-0.579	0.75	0.443	/	0.83	0.526	/	0.917	0.417	/	0.759	0.714	22.0	5.0	2.0	7.0	
-2014/08/12 18:52:30 FAST-test	36.0	/	0.714	/	-20.857	-0.579	0.75	0.443	/	0.83	0.526	/	0.917	0.417	/	0.759	0.714	22.0	5.0	2.0	7.0	
-2014/08/12 18:52:30 Finished!
