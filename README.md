@@ -1,11 +1,11 @@
-----------------------------------------------
-FAST
-----------------------------------------------
-(08/12/2014)
+-------------------------------------------------
+FAST -- Feature-Aware Student knowledge Tracing
+------------------------------------------------
+latest update of readme: 08/12/2014
+
 This is a readme for FAST's code usage, input file format and major output files. 
 
-This code is only for research purposes not for commercial purposes.
-This code is originally developed for research purpose and is still under improvement. 
+This code is only for research purposes not for commercial purposes. It is still under improvement. 
 
 Please email to us if you want to keep in touch with the latest release.
 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or José P.González-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
