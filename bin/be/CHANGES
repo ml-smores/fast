@@ -1,0 +1,124 @@
+CHANGES
+=======
+
+0.6.0
+-----
+- Major modifications in the way genericity is used.
+- ViterbiCalculator is not generic anymore.
+- Handles unreachable states (thanks M. Krueger).
+- HMMReader.read and HMMWriter.write are static.
+- Genericity of HMM changed.
+- Packages apps.cli (command line interface) added.
+- Number of iterations of Baum-Welch learner can be changed.
+- BW Learners are not generics anymore.
+
+
+0.5.0
+-----
+- Porting to Java 1.5: end.  Now uses generics extensively.
+- Bugfix (Gaussian Mixture - random generator, thanks A. Momeni).
+- KMeansCompatible renamed CentroidFactory.
+- OpdfFactory now only has a "factor" method.
+- ObservationDiscrete and related opdf.
+- Only one class convert HMM to dot files (GenericHmmDrawerDot).
+- MarkovGenerator now generates multiple sequences.
+- Sources include regression (i.e. JUnit) tests.
+
+
+0.4.1
+-----
+- Bugfix in OpdfMultiGaussian.java
+
+
+0.4.0
+-----
+- Porting to Java 1.5: continued.
+- Includes a few (JUnit) regression tests.
+- Removed jahmm.apps package from javadoc.
+
+
+0.3.4
+-----
+- ObservationIntegerReader constructor with no argument throws
+  an exception.
+- Implements monovariate Gaussian mixtures (thanks to Benjamin Chung).
+- Implements 'probability' method of all distributions in 'distribution'
+  package.
+- Compilation requires Java 1.5 (Opdf* uses generics).
+
+
+0.3.3
+-----
+- Includes JahmmViz 0.2.1 (small bugfixes/enhancements).
+
+
+0.3.2
+-----
+- Includes JahmmViz 0.2.0 (several improvements).
+- Added observation sequences writers.
+- Added real observations.
+- Changed KullbackLeiblerDistanceCalculator constructors.
+- 'test' package is now be.ac.ulg.montefiore.jahmm.run.test.
+
+
+0.3.1
+-----
+- 2 bugfixes.
+- Observation.toString(NumberFormat) added.
+- Arguments of Hmm(double[] pi, double[][] a, Opdf[] opdfs) constructor are
+  copied.
+
+
+0.3.0
+-----
+- Modified Hmm constructors.
+- distributions are not mutable.
+- distributions are serializable.
+- accessors to the parameters of distributions.
+- opdf.toString() and opdf.toString(NumberFormat) added.
+- Opdfs are cloneable and serializable.
+- new javadoc entries.
+- 'io' package re-organized.
+- added 'gui' package.
+- added 'apps' package (currently holds a library GUI, JahmmViz).
+
+
+0.2.6
+-----
+- GPL licenced. Added missing resources directory.
+
+
+0.2.5 
+-----
+- GPL Licenced. A few examples are now included with the source files.
+
+
+0.2.4
+-----
+- New (cleaner) sequence data file format.
+
+
+0.2.3
+-----
+- Scaling mecanism (allowing the computation of the probability of long
+  observation sequences) and bugfix.
+
+
+0.2.2
+-----
+- Multivariate observation data file reading and bugfix.
+
+
+0.2.1
+-----
+- Added OpdfMultiGaussianFactory class.
+
+
+0.2.0
+-----
+- Added Multivariate gaussian distributions.
+
+
+0.1
+---
+- Initial release.

@@ -1,0 +1,250 @@
+************  Start: 2014/08/25 13:22:06, foldID=0, runID=0 *****************
+Configuration:
+	modelName=FAST-item
+	train=../data/input/train0.txt
+	test=../data/input/test0.txt
+	numFolds=1	numRuns=1	testSingleFile=true
+	EM_TOLERANCE=1.0E-4	EM_MAX_ITERS=400	baumWelchScaledLearner=true
+	LBFGS=true	LBFGS_TOLERANCE=1.0E-6	LBFGS_MAX_ITERS=500	ACCETABLE_LL_DECREASE=0.001	ensureStopForLBFGS=true
+	parameterizedEmit=true	oneLogisticRegression=true
+	useReg=true	tuneL2=false	tuneByTestset=false	LBFGS_REGULARIZATION_WEIGHT=1.0	LBFGS_REGULARIZATION_BIAS=0.0
+	bias=1.0	duplicatedBias=true	oneBiasFeature=false
+	randomRestartWholeProcessTimes=1	randomRestartPerHmmTimes=1	differentInitializationPerSkill=true	initDirichlet=1.0
+	allowForget=false
+	#HMMs=5
+
+
+******** Training: hmmID=0, skill=Variables, foldID=0, runID=0 ********
+#attempts(records)=14
+#students(seqs)=2
+#items(questions)=5
+#finalFeatures=12
+
+
+KC=Variables	iter=0	LL:	-10.058186		
+KC=Variables	iter=1	LL:	-7.229192		
+KC=Variables	iter=2	LL:	-7.205877		
+KC=Variables	iter=3	LL:	-7.165737		
+KC=Variables	iter=4	LL:	-7.101106		
+KC=Variables	iter=5	LL:	-7.007976		
+KC=Variables	iter=6	LL:	-6.892468		
+KC=Variables	iter=7	LL:	-6.771682		
+KC=Variables	iter=8	LL:	-6.663561		
+KC=Variables	iter=9	LL:	-6.577243		
+KC=Variables	iter=10	LL:	-6.513635		
+KC=Variables	iter=11	LL:	-6.469655		
+KC=Variables	iter=12	LL:	-6.440932		
+KC=Variables	iter=13	LL:	-6.423041		
+KC=Variables	iter=14	LL:	-6.412278		
+KC=Variables	iter=15	LL:	-6.405951		
+KC=Variables	iter=16	LL:	-6.402588		
+KC=Variables	iter=17	LL:	-6.400074		
+KC=Variables	iter=18	LL:	-6.398962		
+KC=Variables	iter=19	LL:	-6.398273		
+KC=Variables	iter=20	LL:	-6.397878862592827	LL diff(valueChange/valueAvg) < 1.0E-4
+KC=Variables	iter=20	LL:	-6.397879		
+
+
+
+
+******** Training: hmmID=1, skill=Objects, foldID=0, runID=0 ********
+#attempts(records)=4
+#students(seqs)=1
+#items(questions)=3
+#finalFeatures=12
+
+
+KC=Objects	iter=0	LL:	-2.736819		
+KC=Objects	iter=1	LL:	-2.655328		
+KC=Objects	iter=2	LL:	-2.6552898252846258	LL diff(valueChange/valueAvg) < 1.0E-4
+KC=Objects	iter=2	LL:	-2.65529		
+
+
+
+
+******** Training: hmmID=2, skill=Classes, foldID=0, runID=0 ********
+#attempts(records)=3
+#students(seqs)=1
+#items(questions)=2
+#finalFeatures=12
+
+
+KC=Classes	iter=0	LL:	-2.144177		
+KC=Classes	iter=1	LL:	-1.966649		
+KC=Classes	iter=2	LL:	-1.965111		
+KC=Classes	iter=3	LL:	-1.96348		
+KC=Classes	iter=4	LL:	-1.961743		
+KC=Classes	iter=5	LL:	-1.959906		
+KC=Classes	iter=6	LL:	-1.957979		
+KC=Classes	iter=7	LL:	-1.955977		
+KC=Classes	iter=8	LL:	-1.953914		
+KC=Classes	iter=9	LL:	-1.95181		
+KC=Classes	iter=10	LL:	-1.949684		
+KC=Classes	iter=11	LL:	-1.947558		
+KC=Classes	iter=12	LL:	-1.945453		
+KC=Classes	iter=13	LL:	-1.94339		
+KC=Classes	iter=14	LL:	-1.941386		
+KC=Classes	iter=15	LL:	-1.93946		
+KC=Classes	iter=16	LL:	-1.937625		
+KC=Classes	iter=17	LL:	-1.935893		
+KC=Classes	iter=18	LL:	-1.934271		
+KC=Classes	iter=19	LL:	-1.932764		
+KC=Classes	iter=20	LL:	-1.931374		
+KC=Classes	iter=21	LL:	-1.9301		
+KC=Classes	iter=22	LL:	-1.92894		
+KC=Classes	iter=23	LL:	-1.92789		
+KC=Classes	iter=24	LL:	-1.926944		
+KC=Classes	iter=25	LL:	-1.926094		
+KC=Classes	iter=26	LL:	-1.925336		
+KC=Classes	iter=27	LL:	-1.924658		
+KC=Classes	iter=28	LL:	-1.924056		
+KC=Classes	iter=29	LL:	-1.923522		
+KC=Classes	iter=30	LL:	-1.923049		
+KC=Classes	iter=31	LL:	-1.92263		
+KC=Classes	iter=32	LL:	-1.922259		
+KC=Classes	iter=33	LL:	-1.921932		
+KC=Classes	iter=34	LL:	-1.921642		
+KC=Classes	iter=35	LL:	-1.921385		
+KC=Classes	iter=36	LL:	-1.921157		
+KC=Classes	iter=37	LL:	-1.920954		
+KC=Classes	iter=38	LL:	-1.9207734964139944	LL diff(valueChange/valueAvg) < 1.0E-4
+KC=Classes	iter=38	LL:	-1.920773		
+
+
+
+
+******** Training: hmmID=3, skill=Arrays, foldID=0, runID=0 ********
+#attempts(records)=8
+#students(seqs)=1
+#items(questions)=2
+#finalFeatures=12
+
+
+KC=Arrays	iter=0	LL:	-5.42626		
+KC=Arrays	iter=1	LL:	-5.169721		
+KC=Arrays	iter=2	LL:	-5.069959		
+KC=Arrays	iter=3	LL:	-4.953567		
+KC=Arrays	iter=4	LL:	-4.841216		
+KC=Arrays	iter=5	LL:	-4.758483		
+KC=Arrays	iter=6	LL:	-4.711027		
+KC=Arrays	iter=7	LL:	-4.688338		
+KC=Arrays	iter=8	LL:	-4.678665		
+KC=Arrays	iter=9	LL:	-4.674785		
+KC=Arrays	iter=10	LL:	-4.673275		
+KC=Arrays	iter=11	LL:	-4.672695		
+KC=Arrays	iter=12	LL:	-4.672467003379118	LL diff(valueChange/valueAvg) < 1.0E-4
+KC=Arrays	iter=12	LL:	-4.672467		
+
+
+
+
+******** Training: hmmID=4, skill=Two-dimensional_Arrays, foldID=0, runID=0 ********
+#attempts(records)=2
+#students(seqs)=1
+#items(questions)=1
+#finalFeatures=10
+
+
+KC=Two-dimensional_Arrays	iter=0	LL:	-1.389219		
+KC=Two-dimensional_Arrays	iter=1	LL:	-1.383039		
+KC=Two-dimensional_Arrays	iter=2	LL:	-1.382807		
+KC=Two-dimensional_Arrays	iter=3	LL:	-1.382551		
+KC=Two-dimensional_Arrays	iter=4	LL:	-1.382268		
+KC=Two-dimensional_Arrays	iter=5	LL:	-1.381952		
+KC=Two-dimensional_Arrays	iter=6	LL:	-1.3816		
+KC=Two-dimensional_Arrays	iter=7	LL:	-1.381206		
+KC=Two-dimensional_Arrays	iter=8	LL:	-1.380763		
+KC=Two-dimensional_Arrays	iter=9	LL:	-1.380263		
+KC=Two-dimensional_Arrays	iter=10	LL:	-1.379697		
+KC=Two-dimensional_Arrays	iter=11	LL:	-1.379052		
+KC=Two-dimensional_Arrays	iter=12	LL:	-1.378316		
+KC=Two-dimensional_Arrays	iter=13	LL:	-1.37747		
+KC=Two-dimensional_Arrays	iter=14	LL:	-1.376493		
+KC=Two-dimensional_Arrays	iter=15	LL:	-1.375359		
+KC=Two-dimensional_Arrays	iter=16	LL:	-1.374035		
+KC=Two-dimensional_Arrays	iter=17	LL:	-1.37248		
+KC=Two-dimensional_Arrays	iter=18	LL:	-1.370644		
+KC=Two-dimensional_Arrays	iter=19	LL:	-1.368459		
+KC=Two-dimensional_Arrays	iter=20	LL:	-1.365845		
+KC=Two-dimensional_Arrays	iter=21	LL:	-1.362694		
+KC=Two-dimensional_Arrays	iter=22	LL:	-1.358873		
+KC=Two-dimensional_Arrays	iter=23	LL:	-1.354209		
+KC=Two-dimensional_Arrays	iter=24	LL:	-1.348486		
+KC=Two-dimensional_Arrays	iter=25	LL:	-1.34143		
+KC=Two-dimensional_Arrays	iter=26	LL:	-1.332707		
+KC=Two-dimensional_Arrays	iter=27	LL:	-1.321921		
+KC=Two-dimensional_Arrays	iter=28	LL:	-1.308631		
+KC=Two-dimensional_Arrays	iter=29	LL:	-1.292397		
+KC=Two-dimensional_Arrays	iter=30	LL:	-1.272867		
+KC=Two-dimensional_Arrays	iter=31	LL:	-1.249927		
+KC=Two-dimensional_Arrays	iter=32	LL:	-1.223872		
+KC=Two-dimensional_Arrays	iter=33	LL:	-1.195554		
+KC=Two-dimensional_Arrays	iter=34	LL:	-1.166379		
+KC=Two-dimensional_Arrays	iter=35	LL:	-1.138091		
+KC=Two-dimensional_Arrays	iter=36	LL:	-1.112354		
+KC=Two-dimensional_Arrays	iter=37	LL:	-1.09035		
+KC=Two-dimensional_Arrays	iter=38	LL:	-1.07257		
+KC=Two-dimensional_Arrays	iter=39	LL:	-1.058876		
+KC=Two-dimensional_Arrays	iter=40	LL:	-1.048728		
+KC=Two-dimensional_Arrays	iter=41	LL:	-1.041426		
+KC=Two-dimensional_Arrays	iter=42	LL:	-1.036285		
+KC=Two-dimensional_Arrays	iter=43	LL:	-1.032722		
+KC=Two-dimensional_Arrays	iter=44	LL:	-1.030279		
+KC=Two-dimensional_Arrays	iter=45	LL:	-1.028617		
+KC=Two-dimensional_Arrays	iter=46	LL:	-1.027492		
+KC=Two-dimensional_Arrays	iter=47	LL:	-1.026733		
+KC=Two-dimensional_Arrays	iter=48	LL:	-1.026223		
+KC=Two-dimensional_Arrays	iter=49	LL:	-1.02588		
+KC=Two-dimensional_Arrays	iter=50	LL:	-1.025649		
+KC=Two-dimensional_Arrays	iter=51	LL:	-1.025495		
+KC=Two-dimensional_Arrays	iter=52	LL:	-1.025391		
+KC=Two-dimensional_Arrays	iter=53	LL:	-1.0253221290625536	LL diff(valueChange/valueAvg) < 1.0E-4
+KC=Two-dimensional_Arrays	iter=53	LL:	-1.025322		
+
+
+
+****** Training End: 2014/08/25 13:22:07, Start: 2014/08/25 13:22:06, foldID=0, runID=0 ************
+
+
+
+
+******** Testing: foldID=0, runID=0 ************
+******* Testing:  hmmID=0, skill=Variables ********
+#attempts(records)=13
+#students(sequences)=1
+#items(questions)=5
+#finalFeatures=12
+
+
+******* Testing:  hmmID=1, skill=Objects ********
+#attempts(records)=9
+#students(sequences)=1
+#items(questions)=5
+#finalFeatures=12
+
+
+******* Testing:  hmmID=2, skill=Classes ********
+#attempts(records)=5
+#students(sequences)=1
+#items(questions)=3
+#finalFeatures=12
+
+
+******* Testing:  hmmID=3, skill=Arrays ********
+#attempts(records)=6
+#students(sequences)=1
+#items(questions)=3
+#finalFeatures=12
+
+
+******* Testing:  hmmID=4, skill=Two-dimensional_Arrays ********
+#attempts(records)=3
+#students(sequences)=1
+#items(questions)=1
+#finalFeatures=10
+
+
+Test Results:
+	rmse=	0.4544045961980128	accuracy=	0.7222222222222222	correctClassRatio=	0.8055555555555556	#testObservations=	36
+Running Summary:
+	No hmmsForcedToNonParmTrainDueToLBFGSException!

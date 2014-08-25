@@ -1,0 +1,121 @@
+JAHMM   -   QUICK START GUIDE
+-----------------------------
+
+
+Jahmm is a Java library implementing the various, well-known algorithms
+related to Hidden Makov Models (HMMs for short).
+
+The source code of the library is available; it is licensed under GPL
+(see the resource/COPYING file).
+
+This library is short and simple.  It's been written for clarity.  It
+is particularly well suited for research and academic use.
+
+The website associated to this library is:
+http://www.run.montefiore.ulg.ac.be/~francois/software/jahmm/
+Most information related to this software can be found there.
+
+
+
+COMPILING
+~~~~~~~~~
+
+To compile the library, you simply need to compile all the files held
+in the src directory.  Thus, simply calling 'javac' with all the
+.java files held in the 'src' directory as arguments compiles everything.
+This can be done using 'ant' (see http://ant.apache.org/) by
+typing 'ant' while being in the root directory of the distribution
+(where the 'build.xml' file resides); not using ant does not cause any
+problem, but is not covered here.
+Jahmm requires Java 1.5.0.
+
+The generated .class files will be put in the 'build' directory;
+if you have an other directory where you put your .class files,
+specify it on the command line:
+
+ant -Dclasses.dir=/<class_files_dir>
+
+You can also put 'ant' arguments in the 'ANT_ARGS' environment variable:
+
+export ANT_ARGS="-Dclasses.dir=/<class_files_dir>"
+
+(with Unix's bash).
+
+The last possiblity is to edit the 'build.xml' files directly (change the
+'output' property).
+
+
+
+RUNNING
+~~~~~~~
+
+Notice that if you just want to try the library, you don't have to
+compile it.  '.jar' files for each jahmm release are available on the
+website; to use it, simply launch:
+
+javac -classpath /path/to/jahmm-<version>.jar Myprogram.java
+
+...to compile your program, and:
+
+java -cp /path/to/jahmm-<version>.jar myMainClass
+
+(e.g. java -cp /home/smith/java_class/jahmm-0.5.0.jar test/Testing)
+
+...to run it.
+You can also put the '.jar' file in your classpath.
+
+To run JahmmViz, the GUI associated to Jahmm, look on the website.
+
+
+
+TESTING
+~~~~~~~
+
+Once the library has been compiled, you can launch a test program by typing:
+
+ant test
+
+...in the distribution root directory.  This launches the 'SimpleExample.java'
+test program.  To launch another test program, type:
+ant test -Dtest.class=testClass
+
+This copies all the files in the 'resources' directory to a 'tmp' directory,
+and executes the testClass program from there.
+
+Regression (JUnit) tests have also been written ; see build.xml and the 
+src/be/ac/ulg/montefiore/run/jahmm/test directory.  To launch those tests,
+use 'ant junit'.
+
+
+FILES
+~~~~~
+
+- build.xml: the 'ant' build file.
+- src:       all the .java files.
+  src/.../distributions: Pseudo random distributions.
+  src/.../jahmm: The jahmm library itself.  This directory holds one
+             directory per java package; see the jahmm website for
+             more information about each of them.
+  src/.../jahmm/test: Regression tests.
+  src/.../jahmm/apps: Simple applications.
+- resources: various files that are not suited to go anywhere else.
+- README: this file.
+- CHANGES: changelog.
+- COPYING: license file.
+- THANKS: contributors.
+
+
+CONTACT
+~~~~~~~
+
+Jahmm's author is Jean-Marc Francois.  
+Feel free to send comments and questions related to this library at
+the following address: francois-jahmm@run.montefiore.ulg.ac.be.
+
+
+
+README Changelog:
+~~~~~~~~~~~~~~~~~
+2005/01/29: Updated for v0.3.1.
+2006/01/11: Update for v0.6.0.
+2006/04/05: Minor modifications.
