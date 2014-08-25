@@ -1,7 +1,7 @@
 -------------------------------------------------
 FAST: Feature-Aware Student knowledge Tracing
 ------------------------------------------------
-Latest update of readme: 08/12/2014
+Latest update of readme: 08/25/2014
 
 This is an implementation of FAST model (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf). This readme contains FAST's code usage, input file format and major output files. 
 
