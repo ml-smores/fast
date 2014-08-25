@@ -21,8 +21,6 @@ public class DataPointList extends LinkedList<DataPoint> {
 	private int student = -1, problemName = -1, stepName = -1, outcome = -1,
 			fold = -1, skill = -1;
 	private int feature = -1;
-	// private int insRealFeatureSize = -1;
-	// private ArrayList<Integer> featureColumns;
 	private TreeMap<Integer, String> featureColumnToName;
 
 	public final Bijection students, problems, steps, outcomes, skills;
@@ -35,16 +33,14 @@ public class DataPointList extends LinkedList<DataPoint> {
 	public Bijection finalFeatures = new Bijection();
 
 	public final HashMap<Integer, Set<Integer>> cognitiveModel;
-	// hy* private final String filename;
 	private String filename;
 
-	// hy:
 	public DataPointList(ArrayList<String> instances, String problemColumn,
 			String stepColumn, Bijection problems, Bijection steps,
 			Bijection outcomes, Bijection trainFeatures, Opts opts) {
 		this.opts = opts;
 		this.students = new Bijection(); // Dont'save the index of students
-		// hy: in the future, if trained by stu, may need to change
+		// TODO: in the future, if trained by stu, may need to change
 		cognitiveModel = new HashMap<Integer, Set<Integer>>();
 		skills = new Bijection();
 		this.problems = problems;
@@ -209,11 +205,13 @@ public class DataPointList extends LinkedList<DataPoint> {
 			}
 		}// per instance
 		if (opts.nowInTrain && !opts.inputProvideFeatureColumns) {
-			if (finalFeatures != null && !finalFeatures.contains("bias")
-					&& opts.modelName.contains("bias")) {
-				finalFeatures.put("bias");
-				if (opts.modelName.contains("dupbias"))
+			if (opts.bias > 0 && finalFeatures != null) {
+				if (!opts.duplicatedBias)
+					finalFeatures.put("*bias");
+				else {
+					finalFeatures.put("bias");
 					finalFeatures.put("bias_hidden1");
+				}
 			}
 		}
 	}
@@ -265,7 +263,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 				// if (finalFeatures == null)
 				// finalFeatures = new Bijection();
 				// TODO: optimize
-				finalFeatures.put("bias");
+				finalFeatures.put("*bias");
 			}
 			else {
 				if (hiddenStateIndex == 0) {

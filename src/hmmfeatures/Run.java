@@ -1,7 +1,6 @@
 /**
  * FAST v1.0       08/12/2014
  * 
- * This is a readme for FAST's code usage, input file format and major output files.
  * This code is originally developed for research purpose and is still under improvement. 
  * Please email to us if you want to keep in touch with the latest release.
 	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
@@ -96,7 +95,7 @@ public class Run implements Runnable {
 			opts.wholeProcessRunId = 0;
 			for (; opts.wholeProcessRunId < opts.randomRestartWholeProcessTimes; opts.wholeProcessRunId++) {
 				opts.resetRandom(opts.wholeProcessRunId);
-				System.out.println("\nMODEL NAME = " + opts.modelName);
+				// System.out.println("\nMODEL NAME = " + opts.modelName);
 				if (!opts.testSingleFile)
 					for (int runID = 0; runID < opts.numRuns; runID++)
 						for (int foldID = 0; foldID < opts.numFolds; foldID++) {
@@ -118,7 +117,8 @@ public class Run implements Runnable {
 				EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
 				allFoldRunsEval.evaluateOnMultiFiles(opts.modelName, opts.numRuns,
 						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + opts.modelName + ".eval", opts.predSurfix);
+						opts.outDir + opts.modelName + ".eval", opts.predSurfix,
+						opts.predPrefix);
 				printAndWrite();
 				closeRun();
 			}
@@ -168,7 +168,7 @@ public class Run implements Runnable {
 			}
 			else {
 				opts.mainLogWriter
-						.write("No hmmsForcedToNonParmTrainDueToLBFGSException!\n");
+						.write("Running Summary:\n\tNo hmmsForcedToNonParmTrainDueToLBFGSException!\n");
 			}
 		}
 	}
@@ -414,7 +414,7 @@ public class Run implements Runnable {
 		if (opts.tuneL2)
 			opts.devFile = opts.inDir + opts.devInFilePrefix + fileId
 					+ opts.inFileSurfix;
-		opts.predictionFile = opts.outDir + opts.modelName + "_" + "test" + fileId
+		opts.predictionFile = opts.outDir + opts.predPrefix + fileId
 				+ opts.predSurfix;
 
 		hmms = new ArrayList<Hmm>();
@@ -422,7 +422,7 @@ public class Run implements Runnable {
 		ArrayList<ArrayList<String>> hmmsSequences = new ArrayList<ArrayList<String>>();
 		splitForHmms(opts.trainFile, trainSkills, hmmsSequences);
 		if (hmmsSequences.size() != opts.nbHmms) {
-			System.out.println("WARNING:  reset nbHmms=" + hmmsSequences.size()
+			System.out.println("\nWARNING:  reset nbHmms=" + hmmsSequences.size()
 					+ " (ori=" + opts.nbHmms + ")");
 			opts.nbHmms = hmmsSequences.size();
 		}
@@ -455,8 +455,11 @@ public class Run implements Runnable {
 
 		// prediction and evaluation
 		// TODO: try to read from file to initialize an hmm
-		System.out.println("\n\n******** Testing: " + "foldID=" + foldId
-				+ ", runID=" + runId + " ************");
+		str = "\n\n******** Testing: " + "foldID=" + foldId + ", runID=" + runId
+				+ " ************";
+		System.out.println(str);
+		if (opts.writeMainLog)
+			opts.mainLogWriter.write(str);
 		opts.nowInTrain = false;
 
 		Bijection testSkills = new Bijection();
@@ -673,7 +676,7 @@ public class Run implements Runnable {
 		BufferedReader br = new BufferedReader(isr);
 		String line = null;
 		// logger.debug("Loading data file: " + filename);
-		System.out.println("Loading data file: " + filename);
+		// System.out.println("Loading data file: " + filename);
 		int lineNumber = 0;
 
 		String header = br.readLine();
@@ -810,10 +813,12 @@ public class Run implements Runnable {
 
 			opts.currentKc = testSkills.get(i);
 			opts.currentKCIndex = i;
-			System.out.println("\n******* Testing:  hmmID=" + i + ", skill="
-					+ testSkills.get(i) + " ********");// including header
-			System.out.println("#attempts(records)="
-					+ ((hmmsSequences.get(i).size() - 1)));
+			String str = "\n******* Testing:  hmmID=" + i + ", skill="
+					+ testSkills.get(i) + " ********";
+			System.out.println(str);// including header
+			if (opts.writeMainLog)
+				opts.mainLogWriter.write(str + "\n");
+
 			if (opts.skillsToCheck.contains(testSkills.get(i))) {
 				if (opts.writeMainLog) {
 					opts.mainLogWriter.write("\nKC=" + testSkills.get(i)
@@ -855,10 +860,10 @@ public class Run implements Runnable {
 		int realTotalTest = evaluation.doEvaluationAndWritePred(allProbs,
 				allLabels, allActualLabels, allTrainTestIndicator);
 		totalNbTest += realTotalTest;
-		String str = "\t#test instances:" + totalNbTest;
-		System.out.println(str);
-		if (opts.writeMainLog)
-			opts.mainLogWriter.write(str + "\n");
+		// String str = "\t#test instances:" + totalNbTest;
+		// System.out.println(str);
+		// if (opts.writeMainLog)
+		// opts.mainLogWriter.write(str + "\n");
 
 	}
 
@@ -867,14 +872,6 @@ public class Run implements Runnable {
 			ArrayList<Integer> labels, ArrayList<Integer> actualLabels,
 			ArrayList<Integer> trainTestIndicators, ArrayList<double[]> features)
 			throws IOException {
-		// not including the header
-		String str = "attempts(records)=" + (aHmmSequence.size() - 1);
-		System.out.println(str);
-		if (opts.writeMainLog) {
-			opts.mainLogWriter.write(str + "\n");
-			opts.mainLogWriter.flush();
-		}
-
 		StudentList hmmSequences = null;
 		if (!opts.inputProvideFeatureColumns) {
 			// TODO: figure out why I need this assignment? Seems to configure
@@ -883,7 +880,7 @@ public class Run implements Runnable {
 			hmmSequences = StudentList.loadData(aHmmSequence, opts);
 		}
 		else {
-			System.out.println("skillToTrainFeatures:" + skillToTrainFeatures.size());
+			// System.out.println("#skillsInTrain:" + skillToTrainFeatures.size());
 			hmmSequences = StudentList.loadData(aHmmSequence, opts);
 			Bijection testFeatures = hmmSequences.getFeatures();
 			if (skillToTrainFeatures.get(kcName).getSize() != testFeatures.getSize()) {
@@ -908,8 +905,10 @@ public class Run implements Runnable {
 			}
 		}
 
-		str = "#students(sequences)=" + hmmSequences.size() + "\n";
-		str += "items(questions)=" + hmmSequences.getProblems().getSize() + "\n";
+		// not including the header
+		String str = "#attempts(records)=" + (aHmmSequence.size() - 1) + "\n";
+		str += "#students(sequences)=" + hmmSequences.size() + "\n";
+		str += "#items(questions)=" + hmmSequences.getProblems().getSize() + "\n";
 		if (hmmSequences.getFeatures() != null)
 			str += "#finalFeatures=" + hmmSequences.getFeatures().getSize() + "\n";
 		else
@@ -954,7 +953,7 @@ public class Run implements Runnable {
 				double auc = -1.0;
 				auc = allFoldRunsEval.evaluateOnMultiFiles(curModelName, opts.numRuns,
 						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + curModelName + ".eval", "." + opts.currentKc);
+						opts.outDir + curModelName + ".eval", "." + opts.currentKc, "");
 				System.out.println("currentKc=" + opts.currentKc + "\tauc=" + auc
 						+ "\n");
 				opts.kcTestAucMap.put(opts.currentKc, auc);

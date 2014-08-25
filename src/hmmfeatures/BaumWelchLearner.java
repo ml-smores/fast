@@ -795,7 +795,7 @@ public class BaumWelchLearner {
 		Bijection oriStudents = null;
 		double[][] studentFeatures = null;
 		// TODO: consider removing this judging
-		if (opts.modelName.contains("studummy"))
+		if (opts.hasStudentDummy)
 			finalStudents = stuListSequences.getFinalStudents();
 		ArrayList<Double> realHiddenState0Features = new ArrayList<Double>();
 		ArrayList<Double> realHiddenState1Features = new ArrayList<Double>();
@@ -806,7 +806,7 @@ public class BaumWelchLearner {
 		String diffStr = "";
 		// realHiddenState
 		// TODO: consider removing this judging
-		if (opts.modelName.contains("studummy")) {
+		if (opts.hasStudentDummy) {
 			studentFeatures = new double[finalStudents.getSize()][opts.nbHiddenStates];
 		}
 
@@ -827,7 +827,7 @@ public class BaumWelchLearner {
 			else {
 				String studentName = "";
 				Integer studentIndex = null;
-				if (opts.modelName.contains("studummy")) {
+				if (opts.hasStudentDummy) {
 					studentName = featureName.replace("features_", "");
 					studentName = studentName.replace("_hidden1", "");
 					if (!studentName.contains("bias") && !studentName.contains("j"))
@@ -876,7 +876,7 @@ public class BaumWelchLearner {
 					.get(i)) + "\t";
 		}
 		if (opts.coefficientWeightedByGamma) {
-			if (!opts.modelName.contains("studummy")) {
+			if (opts.hasStudentDummy) {
 				System.out
 						.println("ERROR: I am not going to weight the coefficient by gamma unless are using duplicated studummies");
 				System.exit(1);

@@ -62,7 +62,9 @@ public class Evaluation {
 		accuracy = (realSize - nbMisclassification) / realSize;
 		correctRatio = correctRatio / realSize;
 		String str = "\nTest Results:\n\trmse=\t" + rmse + "\taccuracy=\t"
-				+ accuracy + "\tcorrectClassRatio=" + correctRatio;
+				+ accuracy + "\tcorrectClassRatio=\t" + correctRatio
+				+ "\t#testObservations=\t" + realSize;
+		// String str = "\nTest Results:\n\tcorrectClassRatio=" + correctRatio;
 		System.out.println(str);
 		if (opts.writeMainLog) {
 			opts.mainLogWriter.write(str + "\n");

@@ -1,7 +1,6 @@
 /**
  * FAST v1.0       08/12/2014
  * 
- * This is a readme for FAST's code usage, input file format and major output files.
  * This code is originally developed for research purpose and is still under improvement. 
  * Please email to us if you want to keep in touch with the latest release.
 	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
@@ -78,8 +77,11 @@ public class Opts {
 	public static String curFoldRunDevInFilePrefix = "";
 	@Option(gloss = "predSurfix=.pred is neccessary if we are to use the evaluation code inside this code.")
 	public static String predSurfix = ".pred";
-	public static String predictionFile = outDir + modelName + "_test"
-			+ (ratio.equals("") ? "" : "_" + ratio) + predSurfix;
+	// predictionFile should contain modelName, because modelName and predSurfix
+	// are used together to identify prediction file automatically by Evaluation
+	// engine.
+	public static String predPrefix = modelName + "_test";
+	public static String predictionFile = outDir + predPrefix + "0" + predSurfix;
 
 	// This part is for configuring regularization.
 	public static boolean useReg = true;
@@ -92,15 +94,13 @@ public class Opts {
 	@Option(gloss = "By default, configure baumWelchScaledLearner=true meaning that we use baumWelchScaledLearner.")
 	public static boolean baumWelchScaledLearner = true;
 	@Option(gloss = "TOLERANCE is used to decide the convergence of outer EM. Setting bigger value could make training stop earlier.")
-	public static double EM_TOLERANCE = 1.0E-6;// usual: 1.0E-6(EDM paper);
-																							// 1.0E-4(quick experiments)
+	public static double EM_TOLERANCE = 1.0E-6;// 1.0E-6(EDM paper);1.0E-4(quick
+																							// experiments)
 	@Option(gloss = "EM_MAX_ITERS is used for maximum iteration of outer EM. Setting smaller value could make training stop earlier.")
 	public static int EM_MAX_ITERS = 400;// usual:400(EDM paper)
-	// @Option(gloss =
-	// "By default, removeSeqLength1InTrain and removeSeqLength1InTest =true, and actually removeSeqLength1InTrain=false doesn't work in current code.")
+
 	public static boolean removeSeqLength1InTrain = false;
 	public static boolean removeSeqLength1InTest = false;
-	// public static boolean allowSeqLength1InTrain = true;
 
 	@Option(gloss = "parameterizedEmit can be configured as true by the code itself or by outside specification.")
 	public static boolean parameterizedEmit = true;
@@ -111,7 +111,7 @@ public class Opts {
 	// "oneBiasFeatue=true means just using one  feature. These two can also configures by putting \"bias\" and \"1bias\" in the variant2ModelName")
 	public static boolean oneBiasFeature = false;
 	// @Option(gloss =
-	// "duplicatedBias=true means using one bias feature for \"knonw\" state and another bias feature for the \"unknown\" state.")
+	// "duplicatedBias=true means using one bias feature for \"known\" state and another bias feature for the \"unknown\" state. To set it true is necessary when other features are all shared by two states.")
 	public static boolean duplicatedBias = true;
 
 	// @Option(gloss =
@@ -123,7 +123,7 @@ public class Opts {
 	// @Option(gloss =
 	// "These are for both LIBLINEAR and LBFGS. By default use gamma as instance weight and use it(instead of class weight) to train parameterized emission.")
 	public static boolean useClassWeightToTrainParamerizedEmit = false;
-	@Option(gloss = "By default, just use one LR for emission probabilities.")
+	// Option(gloss = "By default, just use one LR for emission probabilities.")
 	public static boolean oneLogisticRegression = true;
 
 	@Option(gloss = "LBFGS=true means use LBFGS to optimize the logistic regression part; (deprecated: otherwise use LIBLINEAR.)")
@@ -291,12 +291,14 @@ public class Opts {
 	public static HashSet<String> newItems = new HashSet<String>();
 	public static HashSet<String> upTillNowNewStudents = new HashSet<String>();
 	public static HashSet<String> upTillNowNewItems = new HashSet<String>();
+
 	public static boolean writeTrainPredFile = false;
-	// by default, it is adding in a shared (by both hidden states) way, so
-	// opts.modelName should contain("dupbias")
+	// TODO: by default, it is adding in a shared (by both hidden states) way, so
+	// opts.modelName should contain("dupbias"); haven't tested completely
 	public static boolean addSharedStuDummyFeatures = false;
 	public static boolean addSharedItemDummyFeatures = false;
 	public static boolean inputHasStepColumn = true;
+	public static boolean hasStudentDummy = false;
 
 	// "These are all for storing information dynamically, no need to configure.")
 	// [nowInTrain] is for dynamcially recording whether it is in train or test.")
@@ -422,17 +424,15 @@ public class Opts {
 				+ (variant1ModelName.equals("") ? (datasplit + "/")
 						: (variant1ModelName + "/" + datasplit + "/"));
 		outDir = inDir + modelName + "/";
-		predictionFile = outDir + modelName + "_test"
-				+ (ratio.equals("") ? "" : "_" + ratio) + (testSingleFile ? "0" : "")
+		predPrefix = modelName + "_test";
+		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "")
 				+ predSurfix;
 		curFoldRunTrainInFilePrefix = trainInFilePrefix
-				+ (ratio.equals("") ? "" : "_" + ratio) + (testSingleFile ? "0" : "");
+				+ (testSingleFile ? "0" : "");
 		trainFile = inDir + curFoldRunTrainInFilePrefix + inFileSurfix;
-		curFoldRunTestInFilePrefix = testInFilePrefix
-				+ (ratio.equals("") ? "" : "_" + ratio) + (testSingleFile ? "0" : "");
+		curFoldRunTestInFilePrefix = testInFilePrefix + (testSingleFile ? "0" : "");
 		testFile = inDir + curFoldRunTestInFilePrefix + inFileSurfix;
-		curFoldRunDevInFilePrefix = devInFilePrefix
-				+ (ratio.equals("") ? "" : "_" + ratio) + (testSingleFile ? "0" : "");
+		curFoldRunDevInFilePrefix = devInFilePrefix + (testSingleFile ? "0" : "");
 		devFile = inDir + curFoldRunDevInFilePrefix + inFileSurfix;
 
 		skillsToCheck.add("Variables");
@@ -450,8 +450,8 @@ public class Opts {
 			}
 		}
 
-		predictionFile = outDir + modelName + "_test"
-				+ (ratio.equals("") ? "" : "_" + ratio) + (testSingleFile ? "0" : "")
+		predPrefix = modelName + "_test";
+		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "")
 				+ predSurfix;
 		mainLogFile = outDir + "main.log";
 		llLogFile = outDir + "ll.log";
@@ -631,11 +631,11 @@ public class Opts {
 			System.exit(1);
 		}
 
-		if (!(bias > 0 || oneBiasFeature) && modelName.contains("bias")) {
-			System.out
-					.println("ERROR: !(bias > 0 || oneBiasFeature) && modelName.contains(\"bias\")!");
-			System.exit(1);
-		}
+		// if (!(bias > 0) && modelName.contains("bias")) {
+		// System.out
+		// .println("ERROR: !(bias > 0 || oneBiasFeature) && modelName.contains(\"bias\")!");
+		// System.exit(1);
+		// }
 
 		if (!oneLogisticRegression && parameterizedEmit) {
 			System.out
@@ -650,7 +650,7 @@ public class Opts {
 			System.exit(1);
 		}
 
-		if (coefficientWeightedByGamma && !modelName.contains("studummy")) {
+		if (coefficientWeightedByGamma && !hasStudentDummy) {
 			System.out
 					.println("WARNING: I am not going to weight the coefficient by gamma unless are using duplicated studummies");
 			coefficientWeightedByGamma = false;

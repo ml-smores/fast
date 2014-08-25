@@ -262,7 +262,7 @@ public class FeatureHMM {
 				double auc = -1.0;
 				auc = allFoldRunsEval.evaluateOnMultiFiles(curModelName, opts.numRuns,
 						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + curModelName + ".eval", opts.predSurfix);
+						opts.outDir + curModelName + ".eval", opts.predSurfix, "");
 				System.out.println("\tauc=" + auc + "\n");
 				opts.bestAucOnDevAllKcsSum += auc;
 			}
@@ -352,7 +352,7 @@ public class FeatureHMM {
 						+ opts.LBFGS_REGULARIZATION_WEIGHT;
 				auc = allFoldRunsEval.evaluateOnMultiFiles(curModelName, opts.numRuns,
 						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + curModelName + ".eval", opts.predSurfix);
+						opts.outDir + curModelName + ".eval", opts.predSurfix, "");
 				// System.out.println("\tauc=" + auc);
 				if (opts.tuneL2) {
 					opts.bestRegWeightWriter.write(opts.currentKc + "\t"

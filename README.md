@@ -1,9 +1,9 @@
 -------------------------------------------------
-FAST -- Feature-Aware Student knowledge Tracing
+FAST: Feature-Aware Student knowledge Tracing
 ------------------------------------------------
-latest update of readme: 08/12/2014
+Latest update of readme: 08/12/2014
 
-This is a readme for FAST's code usage, input file format and major output files. 
+This is an implementation of FAST model (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf). This readme contains FAST's code usage, input file format and major output files. 
 
 This code is only for research purposes not for commercial purposes. It is still under improvement. 
 
@@ -28,6 +28,11 @@ Following is the readme for using the code.
   We provided a sample configuration file with the major options. However, you could add other options into the file according to your need.
 * Here are the basic options:
 
+	* basicModelName: It should be FAST or KT.
+	* modelName: It could be any string you like.
+	* parameterizedEmit: If parameterizedEmit=true, it uses features in computing emission probability (guess and slip). If basicModelName=KT, the code will automatically set parameterizedEmit=false; if basicModelName=FAST, the code will automatically set parameterizedEmit=true.
+	* allowForget: If allowForget=false, then p(forget)=0, i.e. p(unknown|known)=0.
+	
 	* inDir: input files' directory
 	* outDir: output prediction and evaluation and log files' directory
 	* (execPoolDir: for outputing execution info.)
@@ -42,9 +47,6 @@ Following is the readme for using the code.
 		File is named by trainInFilePrefix(testInFilePrefix) + id + inFileSurfix. (id = current run id * numFolds + current fold id).
 		For example, if numFolds=5, numRuns=1, then there should be 5 pairs of train and test files and should be named by train0.txt, train1.txt...train4.txt, and test0.txt, test1.txt ... test4.txt.
 		
-	* basicModelName: should be "FAST" or "KT"
-	* modelName: could be any string you like
-
 -- USE THE EVALUATION CODE
 For successfully using the evaluation code within FAST, you should make sure the number of files ended with ".pred" surfix generated in the outDir correspond to the numFolds and numRuns that you specified (e.g. for numFolds=1, numFolds=2, there should be only two files in outDir ended with ".pred".
 
@@ -64,8 +66,15 @@ Currently, only support naming in the format of trainX.txt or testX.txt, X shoul
 Input should already be ordered by time within one user. However, users' order doesn't matter. Same user same KC's records don't need to be put together as long as the old records of this user's this KC are put later.
 
 -- RELATION BETWEEN TRAIN AND TEST FILES:
-You shouldn't have new KCs in the test file. Because in training process, each KC correspond to one HMM and has its only set of parameters.
+	* Test file shouldn't have new KCs (indicated by the "KCs" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
+	* Test file should have the same feature columns (indicated by features_XXX or *features_XXX as train file.
+	
+-- FEATURE COLUMNS:
+Feature columns should have prefix features_ or *features_.
+	* If some features are always 0 (never appear) in current KC but may have value 1 in other KCs, then put them as NULL for current KC's records (This is for the sake of computing gradient, if they are NULL then the code doesn't compute gradient for those features for current HMM, see sample1~3).
+	* If you have some features that you want to share by both "known" and "unknown" states (which means the feature value and coefficient is the same no matter a student mastered or not mastered a skill), then you can put *features_ as prefix. See sample2.
 
+	
 -- About features with string as values: 
 Currently, FAST doesn't support string as feature values, and only support numerical variables. Hopefully in the future FAST could solve that.
 
@@ -95,11 +104,6 @@ If you have the kind of data split where some records from a student-skill seque
 -- KCs COLUMN:
 KCs field is the skill current record requires (only support one KC one item/record) now, but you can put multiple KCs as features if you have multiple KCs per item/record, see sample2). All records within the same "KCs" value belong to one HMM and are trained together.
 
--- FEATURE COLUMNS:
-By default, feature fields should have prefix features_.
-	* If some features are always 0 (never appear) in current KC but may have value 1 in other KCs, then put them as NULL for current KC's records (This is for the sake of computing gradient, if they are NULL then the code doesn't compute gradient for those features for current HMM, see sample1~3).
-	* If you have some features that you want to share by both "known" and "unknown" states (which means the feature value and coefficient is the same no matter a student mastered or not mastered a skill), then you can put *features_ as prefix. See sample2.
-
 -- BIAS (INTERCEPT) FEATURE:
 By default, FAST adds bias feature to both hidden states. Don't put bias(intercept) feature in the input (a feature always with value 1). If you want to change the configuration of bias features, please specify bias in configuration java class file (Opts.java). 
 
@@ -111,6 +115,16 @@ Following is the readme for major output files.
 
 -- "XXX.pred" FILE
 The three columns actualLabel,predLabel, predProb are: actual student responses(correct or incorrect), predicted student responses and predicted probability of getting correct responses.
+If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!", it means there are more/less "XXX.pred" files than expected. You can solve this problem by removing (moving) files with ".pred" and rerun the code, or prepare the ".pred" files corresponding to numFolds * numRuns (e.g. if numFolds=2 and numRuns=1, then you should have "XXX_test0.pred", "XXX_test1.pred".)
 
 -- "XXX.eval" FILE and "evaluation.log" FILE
 "XXX.eval" file includes the current evaluation while "evaluation.log" maintains the log of each time's evaluation.
+
+
+
+------------------------------------------------
+References
+------------------------------------------------
+González-Brenes, José P., Yun Huang, and Peter Brusilovsky. General Features in Knowledge Tracing
+to Model Multiple Subskills, Temporal Item Response Theory, and Expert Knowledge. (Nominated as Best Paper Award
+in the 7th International Conference on Educational Data Mining 2014, first 2 authors contributed equally.)

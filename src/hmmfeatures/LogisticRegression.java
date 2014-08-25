@@ -99,7 +99,7 @@ public class LogisticRegression {
 			featureWeights[f] = previousFeatureWeights[f];
 		}
 
-		checkBiasFeature(opts);
+		// checkBiasFeature(opts);
 
 	}
 
