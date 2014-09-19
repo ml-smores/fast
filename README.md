@@ -1,11 +1,10 @@
 -------------------------------------------------
 FAST: Feature-Aware Student knowledge Tracing
 ------------------------------------------------
-Latest update of readme: 08/25/2014
 
 This is an implementation of FAST model (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf). This readme contains FAST's code usage, input file format and major output files. 
 
-This code is only for research purposes not for commercial purposes. It is still under improvement. 
+This code is only for research purposes not for commercial purposes. It is still under development. 
 
 Please email to us if you want to keep in touch with the latest release.
 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or José P.González-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
@@ -13,27 +12,92 @@ We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois 
 
 
 
-----------------------------------------------
-Following is the readme for using the code.
-----------------------------------------------
+---------
+RUN FAST!
+---------
 
--- RUN FAST
-* Go to ./bin/, type command: java hmmfeatures/Run ++../confs/fast.conf
-* This includes training and testing.
-* However, you should make sure you configure the options correctly and prepare the input files correctly before the code can run. See following details.
+* Open a terminal and go to the bin directory
+* Type: java hmmfeatures/Run ++../confs/fast.conf
 
--- CONGIRUATION
+This should train and test FAST with sample data specified in the configuration file fast.conf, which defaults to using data from ../data/input/
+
+
+
+-----------
+INPUT FILES
+-----------
+FAST requires at least two files as input, a training and a testing. By default these are data/train0.txt and data/test0.tst
+Currently, only support naming in the format of trainX.txt or testX.txt, X should be the integer number according to #folds and #runs (and X can not be empty).
+
+IMPORTANT:The input requires a line per observation. The input only requires that lines are sorted by time within a student. 
+This means that the order of students or Knowledge Components (KCs)  doesn't matter as long as the input is sorted over time. 
+
+-----------
+MANDATORY COLUMNS:
+-----------
+
+-- student COLUMN:
+Integer or string.  
+This column identifies sequences. 
+All observations with the same "student" id will be placed in the same sequence.
+
+
+-- KCs COLUMN:
+Integer or string.
+This column identifies an HMM model, and therefore is useful for training multiple KCs.
+The model will learn parameters for each KC individually.
+(You can put multiple KCs as features if you have multiple KCs per item/record, see sample2). 
+
+
+-- outcome COLUMN:
+correct | incorrect
+We only support binary HMMs.
+
+
+-----------
+OPTIONAL COLUMNS:
+-----------
+-- FEATURE COLUMNS:
+Feature columns should have prefix features_ or *features_.
+    * Features must be numeric.  This is not a limitation, because string or categorical variables can be coded as binary features.  For example if you have a single feature that may take values red, green and blue, you could encode this as two different features (red = {0|1}, green={0,1}), or as three binary features (blue={0,1}).
+	* Features that are marked with a star (*) have coefficients shared by both latent states (mastery and not mastery). See sample2
+	* Features that do not have a star have a different coefficient for each latent state. 
+	* By default, FAST adds bias feature to both hidden states.  Don't put bias(intercept) feature in the input (a feature always with value 1).
+     If you want to change the configuration of bias features, please specify bias in configuration java class file (Opts.java). 
+	* If some features are always 0 (never appear) in current KC but may have value 1 in other KCs, then put them as NULL for current KC's records (This is for the sake of computing gradient, if they are NULL then the code doesn't compute gradient for those features for current HMM, see sample1~3).
+
+Although FAST currently has L2-regularization, yet in order to make coefficients more directly interpretable, and also speed up the training, sometimes doing some standardization or normalization of such features to map them to smaller values may help. Yet sometimes standardization or normalization is not suitable due to the feature value distribution (etc.) and will drop the performance. Please do some experimentation.
+
+
+-- problem COLUMN:
+You can put the problem/item/question name/id here. Integer or string are both ok.
+
+-- step COLUMN:
+It doesn't matter what you put here so far. However, it may help you to check the results if you use this column to put information identifying the order of the records.
+
+	
+
+
+-- fold COLUMN:
+By default, all values are 1.
+If you have the kind of data split where some records from a student-skill sequence is used for training and remaining used for testing, then in the test0.txt file, please put the records used for training with fold COLUMN value -1. See sample3.
+
+
+
+
+---------
+CONFIGURING FAST!
+---------
 * See the details of configuration options: by command "java hmmfeatures/Run -help" or by src/hmmfeatures/Opts.java file
-* Configuration file:  confs/fast.conf
-  We provided a sample configuration file with the major options. However, you could add other options into the file according to your need.
+* We provided a sample configuration file in confs/fast.conf with some default values.
+ However, you could add other options into the file according to your need.
 * Here are the basic options:
 
-	* basicModelName: It should be FAST or KT.
+	* basicModelName: FAST|KT  Would choose whether to run Knowledge Tracing or FAST 
 	* modelName: It could be any string you like.
-	* parameterizedEmit: If parameterizedEmit=true, it uses features in computing emission probability (guess and slip). If basicModelName=KT, the code will automatically set parameterizedEmit=false; if basicModelName=FAST, the code will automatically set parameterizedEmit=true.
-	* allowForget: If allowForget=false, then p(forget)=0, i.e. p(unknown|known)=0.
+	* allowForget: True|False. If allowForget=false, then p(forget)=0, i.e. p(unknown|known)=0.
 	
-	* inDir: input files' directory
+	* inDir: input files' directory. By default, training file: train0.txt; testing file: test0.txt.
 	* outDir: output prediction and evaluation and log files' directory
 	* (execPoolDir: for outputing execution info.)
 	* (allModelComparisonOutDir: for output evaluation file comparing different models.)
@@ -42,76 +106,23 @@ Following is the readme for using the code.
 	* testInFilePrefix: the prefix of testing set file(s).
 	* inFileSurfix: the file surfix of training and testing set file(s).
 	* testSingleFile: If testSingleFile=true, then numFolds and numRuns should set to 1, and FAST trains on "train0.txt" and test on "test0.txt" (if trainInFilePrefix=train, testInFilePrefix=test).
-	* numFolds, numRuns: they are used to decide how many times FAST runs and are related to how FAST retrieves train and test files. By default, numRuns is always set to 1.
+	* numFolds, numRuns: they are used to decide how many times FAST runs and are related to how FAST retrieves train and test files. By default, numRuns is always set to 1. 
+       Test file shouldn't have new KCs (indicated by the "KCs" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
+	Test file should have the same feature columns (indicated by features_XXX or *features_XXX as train file.
+
 		
 		File is named by trainInFilePrefix(testInFilePrefix) + id + inFileSurfix. (id = current run id * numFolds + current fold id).
 		For example, if numFolds=5, numRuns=1, then there should be 5 pairs of train and test files and should be named by train0.txt, train1.txt...train4.txt, and test0.txt, test1.txt ... test4.txt.
+
 		
 -- USE THE EVALUATION CODE
 For successfully using the evaluation code within FAST, you should make sure the number of files ended with ".pred" surfix generated in the outDir correspond to the numFolds and numRuns that you specified (e.g. for numFolds=1, numFolds=2, there should be only two files in outDir ended with ".pred".
 
 
 
-----------------------------------------------
-Following is the readme for input file format.
-----------------------------------------------
-
-
--- FILE NAMES:
-Details are explained in the above CONGIRUATION.
-By default, training file: train0.txt; testing file: test0.txt.
-Currently, only support naming in the format of trainX.txt or testX.txt, X should be the integer number according to #folds and #runs (and X can not be empty).
-
--- ORDER OF THE RECORDS:
-Input should already be ordered by time within one user. However, users' order doesn't matter. Same user same KC's records don't need to be put together as long as the old records of this user's this KC are put later.
-
--- RELATION BETWEEN TRAIN AND TEST FILES:
-	* Test file shouldn't have new KCs (indicated by the "KCs" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
-	* Test file should have the same feature columns (indicated by features_XXX or *features_XXX as train file.
-	
--- FEATURE COLUMNS:
-Feature columns should have prefix features_ or *features_.
-	* If some features are always 0 (never appear) in current KC but may have value 1 in other KCs, then put them as NULL for current KC's records (This is for the sake of computing gradient, if they are NULL then the code doesn't compute gradient for those features for current HMM, see sample1~3).
-	* If you have some features that you want to share by both "known" and "unknown" states (which means the feature value and coefficient is the same no matter a student mastered or not mastered a skill), then you can put *features_ as prefix. See sample2.
-
-	
--- About features with string as values: 
-Currently, FAST doesn't support string as feature values, and only support numerical variables. Hopefully in the future FAST could solve that.
-
--- About features that look like categorical variables:
-Please make sure that categorical variables are coded by dummy. Currently FAST doesn't have inner mechanism to transfer categorical variables into dummies, so the input file takes care of that.
-
--- About features that have big values, or range widely:
-Although FAST currently has L2-regularization, yet in order to make coefficients more directly interpretable, and also speed up the training, sometimes doing some standardization or normalization of such features to map them to smaller values may help. Yet sometimes standardization or normalization is not suitable due to the feature value distribution (etc.) and will drop the performance. Please do some experimentation.
-
-
--- student COLUMN:
-You can put either integer or string here.
-
--- problem COLUMN:
-You can put the problem/item/question name/id here. Integer or string are both ok.
-
--- step COLUMN:
-It doesn't matter what you put here so far. However, it may help you to check the results if you use this column to put information identifying the order of the records.
-
--- outcome COLUMN:
-You can only put "correct" or "incorrect" here.
-
--- fold COLUMN:
-By default, all values are 1.
-If you have the kind of data split where some records from a student-skill sequence is used for training and remaining used for testing, then in the test0.txt file, please put the records used for training with fold COLUMN value -1. See sample3.
-
--- KCs COLUMN:
-KCs field is the skill current record requires (only support one KC one item/record) now, but you can put multiple KCs as features if you have multiple KCs per item/record, see sample2). All records within the same "KCs" value belong to one HMM and are trained together.
-
--- BIAS (INTERCEPT) FEATURE:
-By default, FAST adds bias feature to both hidden states. Don't put bias(intercept) feature in the input (a feature always with value 1). If you want to change the configuration of bias features, please specify bias in configuration java class file (Opts.java). 
-
-
-
-------------------------------------------------
-Following is the readme for major output files.
-------------------------------------------------
+------------------
+CONFIGURATION FILE
+------------------
 
 -- "XXX.pred" FILE
 The three columns actualLabel,predLabel, predProb are: actual student responses(correct or incorrect), predicted student responses and predicted probability of getting correct responses.
@@ -119,6 +130,8 @@ If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!",
 
 -- "XXX.eval" FILE and "evaluation.log" FILE
 "XXX.eval" file includes the current evaluation while "evaluation.log" maintains the log of each time's evaluation.
+
+
 
 
 
