@@ -36,20 +36,20 @@ This means that the order of students or Knowledge Components (KCs)  doesn't mat
 MANDATORY COLUMNS:
 -----------
 
--- student COLUMN:
+* student COLUMN:
 Integer or string.  
 This column identifies sequences. 
 All observations with the same "student" id will be placed in the same sequence.
 
 
--- KCs COLUMN:
+* KCs COLUMN:
 Integer or string.
 This column identifies an HMM model, and therefore is useful for training multiple KCs.
 The model will learn parameters for each KC individually.
 (You can put multiple KCs as features if you have multiple KCs per item/record, see sample2). 
 
 
--- outcome COLUMN:
+* outcome COLUMN:
 correct | incorrect
 We only support binary HMMs.
 
@@ -57,7 +57,7 @@ We only support binary HMMs.
 -----------
 OPTIONAL COLUMNS:
 -----------
--- FEATURE COLUMNS:
+* FEATURE COLUMNS:
 Feature columns should have prefix features_ or *features_.
     * Features must be numeric.  This is not a limitation, because string or categorical variables can be coded as binary features.  For example if you have a single feature that may take values red, green and blue, you could encode this as two different features (red = {0|1}, green={0,1}), or as three binary features (blue={0,1}).
 	* Features that are marked with a star (*) have coefficients shared by both latent states (mastery and not mastery). See sample2
@@ -69,16 +69,16 @@ Feature columns should have prefix features_ or *features_.
 Although FAST currently has L2-regularization, yet in order to make coefficients more directly interpretable, and also speed up the training, sometimes doing some standardization or normalization of such features to map them to smaller values may help. Yet sometimes standardization or normalization is not suitable due to the feature value distribution (etc.) and will drop the performance. Please do some experimentation.
 
 
--- problem COLUMN:
+* problem COLUMN:
 You can put the problem/item/question name/id here. Integer or string are both ok.
 
--- step COLUMN:
+* step COLUMN:
 It doesn't matter what you put here so far. However, it may help you to check the results if you use this column to put information identifying the order of the records.
 
 	
 
 
--- fold COLUMN:
+* fold COLUMN:
 By default, all values are 1.
 If you have the kind of data split where some records from a student-skill sequence is used for training and remaining used for testing, then in the test0.txt file, please put the records used for training with fold COLUMN value -1. See sample3.
 
@@ -121,14 +121,14 @@ For successfully using the evaluation code within FAST, you should make sure the
 
 
 ------------------
-CONFIGURATION FILE
+OUTPUT FILE
 ------------------
 
--- "XXX.pred" FILE
+* "XXX.pred" FILE
 The three columns actualLabel,predLabel, predProb are: actual student responses(correct or incorrect), predicted student responses and predicted probability of getting correct responses.
 If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!", it means there are more/less "XXX.pred" files than expected. You can solve this problem by removing (moving) files with ".pred" and rerun the code, or prepare the ".pred" files corresponding to numFolds * numRuns (e.g. if numFolds=2 and numRuns=1, then you should have "XXX_test0.pred", "XXX_test1.pred".)
 
--- "XXX.eval" FILE and "evaluation.log" FILE
+* "XXX.eval" FILE and "evaluation.log" FILE
 "XXX.eval" file includes the current evaluation while "evaluation.log" maintains the log of each time's evaluation.
 
 
