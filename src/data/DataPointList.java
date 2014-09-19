@@ -73,20 +73,21 @@ public class DataPointList extends LinkedList<DataPoint> {
 			// System.out.println("lineNumber=" + lineNumber);
 
 			int aStudent = students.put(columns[student]);
-			int aFold = Integer.parseInt(columns[fold]);
 			int aOutcome = outcomes.get(columns[outcome]);
-			int aProb, aStep;
+			int aFold, aProb, aStep;
 
+			if (fold == -1)
+				aFold = 1;
+			else
+				aFold = Integer.parseInt(columns[fold]);
 			if (problemName == -1)
 				aProb = problems.put("woof");
 			else
 				aProb = problems.put(columns[problemName]);
-
 			if (stepName == -1)
 				aStep = steps.put("meow");
 			else
 				aStep = steps.put(columns[stepName]);
-
 			if (skill == -1)
 				if (stepName == -1)
 					cognitiveModel.put(aProb, new HashSet<Integer>());
@@ -339,11 +340,33 @@ public class DataPointList extends LinkedList<DataPoint> {
 			// features.put(featureName);
 			// }
 		}
+
 		if (ignoredColumns != "" && opts.verbose) {
 			// logger.info("Ignored Column(s):\t" + ignoredColumns);
 			System.out.println("Ignored Column(s):\t" + ignoredColumns);
 			// logger.info("#Ignored Column(s):\t" + ignoredColumnList.size());
 			System.out.println("#Ignored Column(s):\t" + ignoredColumnList.size());
+		}
+
+		if (student == -1
+				// || (problemName == -1 && !problemColumn.equalsIgnoreCase(""))
+				// hy: to change: problemColum?
+				// || (stepName == -1 && !stepColumn.equalsIgnoreCase(""))
+				|| outcome == -1
+				// || fold == -1
+				|| skill == -1
+				|| (opts.parameterizedEmit
+						&& !opts.oneBiasFeature
+						&& (!opts.addSharedItemDummyFeatures && !opts.addSharedStuDummyFeatures) && (feature == -1 || featureColumnToName == null))) {// hy
+			// logger.error("Cannot find column (student:" + student + ", problem:"
+			// + problemName + ",step:" + stepName + ",outcome:" + outcome
+			// + ",fold:" + fold + ",last feature:" + feature + ")"); // hy
+			System.out.println("Cannot find column (student:" + student + ",outcome:"
+					+ outcome + ",KC:" + skill + ")");
+			// ("Cannot find column (student:" + student
+			// + ", problem:" + problemName + ",step:" + stepName + ",outcome:"
+			// + outcome + ",fold:" + fold + ",last feature:" + feature + ")");
+			throw new RuntimeException("Missing column");
 		}
 
 		if (opts.verbose) {
@@ -353,24 +376,6 @@ public class DataPointList extends LinkedList<DataPoint> {
 			System.out.println("COLUMNS:\tstudent:" + student + ", problem:"
 					+ problemName + ",step:" + stepName + ",outcome:" + outcome
 					+ ",last feature:" + feature);
-		}
-
-		if (student == -1
-				|| (problemName == -1 && !problemColumn.equalsIgnoreCase(""))
-				// hy: to change: problemColum?
-				|| (stepName == -1 && !stepColumn.equalsIgnoreCase(""))
-				|| outcome == -1
-				|| fold == -1
-				|| (opts.parameterizedEmit
-						&& !opts.oneBiasFeature
-						&& (!opts.addSharedItemDummyFeatures && !opts.addSharedStuDummyFeatures) && (feature == -1 || featureColumnToName == null))) {// hy
-			// logger.error("Cannot find column (student:" + student + ", problem:"
-			// + problemName + ",step:" + stepName + ",outcome:" + outcome
-			// + ",fold:" + fold + ",last feature:" + feature + ")"); // hy
-			System.out.println("Cannot find column (student:" + student
-					+ ", problem:" + problemName + ",step:" + stepName + ",outcome:"
-					+ outcome + ",fold:" + fold + ",last feature:" + feature + ")");
-			throw new RuntimeException("Missing column");
 		}
 		return inputFeatures;
 	}

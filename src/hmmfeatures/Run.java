@@ -774,7 +774,7 @@ public class Run implements Runnable {
 
 		if (hmmsSequences.size() != hmms.size()) {
 			// logger.error("hmmsSequences and hmms length mismatch!");
-			System.out.println("hmmsSequences and hmms length mismatch!");
+			System.out.println("The #hmms(#KCs) in training and testing mismatch!");
 			System.exit(1);
 		}
 		if (trainSkills.getSize() != testSkills.getSize()) {
