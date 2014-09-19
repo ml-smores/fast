@@ -122,14 +122,6 @@ If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!",
 
 
 
-----------
-BUILT-IN DETAILED EVALUATION 
------------
-For successfully using the evaluation code within FAST, you should make sure the number of files ended with ".pred" surfix generated in the outDir correspond to the numFolds and numRuns that you specified (e.g. for numFolds=1, numFolds=2, there should be only two files in outDir ended with ".pred".
-
-
-
-
 
 ------------------------------------------------
 REFERENCES
