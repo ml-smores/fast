@@ -1,7 +1,9 @@
 package data;
 
-import hmmfeatures.Opts;
+import fast.hmmfeatures.Opts;
+
 import java.text.NumberFormat;
+
 import be.ac.ulg.montefiore.run.jahmm.Observation;
 
 public class DataPoint extends Observation {

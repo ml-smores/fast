@@ -1,6 +1,7 @@
 package data;
 
-import hmmfeatures.Opts;
+import fast.hmmfeatures.Opts;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+
 import common.Bijection;
 
 public class StudentList extends LinkedList<CVStudent> {

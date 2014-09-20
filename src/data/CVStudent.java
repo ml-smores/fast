@@ -1,6 +1,7 @@
 package data;
 
-import hmmfeatures.Opts;
+import fast.hmmfeatures.Opts;
+
 import java.util.Vector;
 
 public class CVStudent extends Vector<DataPoint> {

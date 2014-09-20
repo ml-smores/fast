@@ -1,9 +1,9 @@
 package util;
 
-import hmmfeatures.Opts;
 import edu.berkeley.nlp.math.DifferentiableFunction;
 import edu.berkeley.nlp.math.DoubleArrays;
 import edu.berkeley.nlp.math.GradientLineSearcher;
+import fast.hmmfeatures.Opts;
 
 /**
  */

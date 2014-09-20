@@ -1,13 +1,15 @@
 package util;
 
-import hmmfeatures.Opts;
 import java.io.Serializable;
 import java.util.LinkedList;
+
+import common.GradientMinimizer;
+
 import edu.berkeley.nlp.math.DifferentiableFunction;
 import edu.berkeley.nlp.math.DoubleArrays;
-import edu.berkeley.nlp.math.GradientMinimizer;
 import edu.berkeley.nlp.util.CallbackFunction;
 import edu.berkeley.nlp.util.Logger;
+import fast.hmmfeatures.Opts;
 
 /**
  * @author Dan Klein

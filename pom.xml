@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>fast</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Feature Aware Student knowledge Tracing</name>
+  <url>http://maven.apache.org</url>
+
+ <repositories>
+        <repository>
+          <id>Jahmm</id>
+          <name>Jahmm HMM library repository</name>
+          <url>http://jahmm.googlecode.com/svn/repo</url>
+        </repository>
+ </repositories>
+  <dependencies>
+      <dependency>
+        <groupId>be.ac.ulg.montefiore.run.jahmm</groupId>
+        <artifactId>jahmm</artifactId>
+        <version>0.6.2</version>
+      </dependency>
+  </dependencies>
+</project>
