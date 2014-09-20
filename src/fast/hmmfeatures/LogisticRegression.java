@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import common.Bijection;
+import fast.common.Bijection;
 
 public class LogisticRegression {
 

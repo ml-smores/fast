@@ -1,4 +1,4 @@
-package data;
+package fast.data;
 
 import fast.hmmfeatures.Opts;
 

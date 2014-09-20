@@ -1,4 +1,4 @@
-package common;
+package fast.common;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

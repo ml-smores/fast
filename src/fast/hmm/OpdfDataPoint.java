@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
 import be.ac.ulg.montefiore.run.jahmm.ObservationInteger;
 import be.ac.ulg.montefiore.run.jahmm.Opdf;
 import be.ac.ulg.montefiore.run.jahmm.OpdfInteger;
-import common.Bijection;
-import data.DataPoint;
+import fast.common.Bijection;
+import fast.data.DataPoint;
 
 /**
  * This class implements a distribution over a finite set of elements. This set

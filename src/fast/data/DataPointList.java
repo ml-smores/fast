@@ -1,5 +1,6 @@
-package data;
+package fast.data;
 
+import fast.common.Bijection;
 import fast.hmmfeatures.Opts;
 
 import java.util.ArrayList;
@@ -9,8 +10,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import common.Bijection;
 
 //import org.apache.log4j.Logger;
 

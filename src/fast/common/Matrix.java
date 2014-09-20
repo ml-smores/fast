@@ -1,4 +1,4 @@
-package common;
+package fast.common;
 
 import java.util.Arrays;
 

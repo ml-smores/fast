@@ -1,4 +1,4 @@
-package common;
+package fast.common;
 /*
  * Copyright (c) 2002-5 Gregor Heinrich, Arbylon. All rights reserved. No
  * redistribution prior to release, in source or binary forms, without written

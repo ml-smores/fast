@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import common.Bijection;
-import data.StudentList;
+import fast.common.Bijection;
+import fast.data.StudentList;
 import fast.evaluation.EvaluationGeneral;
 import fig.exec.Execution;
 

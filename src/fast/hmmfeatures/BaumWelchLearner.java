@@ -22,11 +22,12 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
-import common.Bijection;
-import data.DataPoint;
-import data.StudentList;
+
 //import be.ac.ulg.montefiore.run.jahmm.ForwardBackwardCalculator;
 //import be.ac.ulg.montefiore.run.jahmm.Hmm;
+import fast.common.Bijection;
+import fast.data.DataPoint;
+import fast.data.StudentList;
 
 /**
  * An implementation of the Baum-Welch learning algorithm. This algorithm finds

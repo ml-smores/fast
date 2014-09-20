@@ -1,6 +1,7 @@
 package fast.hmmfeatures;
 
-import util.LBFGSMinimizer;
+//import util.LBFGSMinimizer;
+import edu.berkeley.nlp.math.LBFGSMinimizer;
 import edu.berkeley.nlp.math.CachingDifferentiableFunction;
 import fig.basic.Pair;
 
@@ -28,7 +29,9 @@ public class LBFGS {
 
 	public double[] run() {
 		NegativeRegularizedExpectedLogLikelihood negativeLikelihood = new NegativeRegularizedExpectedLogLikelihood();
-		LBFGSMinimizer minimizer = new LBFGSMinimizer(opts);
+		
+		//TODO: Jose changed  this!!! Please verify
+		LBFGSMinimizer minimizer = new LBFGSMinimizer();
 		minimizer.setMaxIterations(opts.LBFGS_MAX_ITERS);
 		// featureWeights is deep copied into guess -> valueAt, deravativeAt ->
 		// calculate -> setWeights set featuWeights as the new one.

@@ -7,8 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import common.Bijection;
-import data.DataPoint;
+
+import fast.common.Bijection;
+import fast.data.DataPoint;
 
 /**
  * @author hy

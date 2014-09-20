@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import common.Bijection;
-import common.RandomSampler;
-import data.CVStudent;
-import data.DataPoint;
-import data.StudentList;
+import fast.common.Bijection;
+import fast.common.RandomSampler;
+import fast.data.CVStudent;
+import fast.data.DataPoint;
+import fast.data.StudentList;
 import fast.evaluation.EvaluationGeneral;
 
 public class FeatureHMM {

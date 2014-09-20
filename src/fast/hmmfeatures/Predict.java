@@ -4,8 +4,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import data.DataPoint;
-import data.StudentList;
+
+import fast.data.DataPoint;
+import fast.data.StudentList;
 
 public class Predict {
 

@@ -28,7 +28,8 @@ package fast.hmmfeatures;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
-import data.DataPoint;
+
+import fast.data.DataPoint;
 
 /**
  * This class can be used to compute the probability of a given observations

@@ -5,8 +5,7 @@ import java.util.List;
 
 import be.ac.ulg.montefiore.run.jahmm.Hmm;
 import be.ac.ulg.montefiore.run.jahmm.Observation;
-
-import common.Matrix;
+import fast.common.Matrix;
 
 
 public class OnlineForwardBackward		
