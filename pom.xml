@@ -18,10 +18,17 @@
         </repository>
  </repositories>
   <dependencies>
+    <dependency>
+      <groupId>edu.berkeley.nlp</groupId>
+      <artifactId>berkeleyparser</artifactId>
+      <version>r32</version>
+    </dependency>
+
       <dependency>
         <groupId>be.ac.ulg.montefiore.run.jahmm</groupId>
         <artifactId>jahmm</artifactId>
         <version>0.6.2</version>
       </dependency>
+    
   </dependencies>
 </project>

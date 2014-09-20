@@ -3,7 +3,8 @@ package fast.hmmfeatures;
 //import util.LBFGSMinimizer;
 import edu.berkeley.nlp.math.LBFGSMinimizer;
 import edu.berkeley.nlp.math.CachingDifferentiableFunction;
-import fig.basic.Pair;
+import edu.berkeley.nlp.util.Pair;
+
 
 public class LBFGS {
 
