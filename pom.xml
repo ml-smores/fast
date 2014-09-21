@@ -2,36 +2,39 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- Properties of this program -->
   <groupId>fast</groupId>
   <artifactId>fast</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
-
   <name>Feature Aware Student knowledge Tracing</name>
   <url>http://maven.apache.org</url>
 
- <repositories>
-   <repository>
-     <id>Jahmm</id>
-     <name>Jahmm HMM library repository</name>
-     <url>http://jahmm.googlecode.com/svn/repo</url>
-   </repository>
- </repositories>
- <dependencies>
-   <dependency>
-     <groupId>edu.berkeley.nlp</groupId>
-     <artifactId>berkeleyparser</artifactId>
-     <version>r32</version>
-   </dependency>
+  <repositories>
+    <repository>
+      <id>Jahmm</id>
+      <name>Jahmm HMM library repository</name>
+      <url>http://jahmm.googlecode.com/svn/repo</url>
+    </repository>
+  </repositories>
 
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>edu.berkeley.nlp</groupId>
+      <artifactId>berkeleyparser</artifactId>
+      <version>r32</version>
+    </dependency>
+    
    <dependency>
      <groupId>be.ac.ulg.montefiore.run.jahmm</groupId>
      <artifactId>jahmm</artifactId>
      <version>0.6.2</version>
    </dependency>  
- </dependencies>
+  </dependencies>
 
   <build>
+    <!-- Include sample data -->
     <resources>
       <resource>
         <directory>sample-data</directory>
@@ -39,37 +42,43 @@
       </resource>
     </resources>
 
-    <plugins>
-      <plugin>
-	
-	<artifactId>maven-assembly-plugin</artifactId>
-	<configuration>
-          <archive>
-            <manifest>
-              <mainClass>fast.hmmfeatures.Run</mainClass>
-            </manifest>
-          </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-	  </descriptorRefs>
-	</configuration>
-	<executions>
-	  <execution>
-	    <id>make-assembly</id> <!-- this is used for inheritance merges -->
-	    <phase>package</phase> <!-- bind to the packaging phase -->
-	    <goals>
-              <goal>single</goal>
-	    </goals>
-	  </execution>
-	</executions>
-      </plugin>
-    </plugins>
+    <!-- Include dependencies on the JAR -->
 
 
+<plugins>
+<plugin>
+<artifactId>maven-assembly-plugin</artifactId>
+<configuration>
+    <archive>
+        <manifest>
+            <mainClass>fast.hmmfeatures.Run</mainClass>
+        </manifest>
+    </archive>
+    <descriptorRefs>
+        <descriptorRef>jar-with-dependencies</descriptorRef>
+    </descriptorRefs>
+    <descriptors>
+        <descriptor>src/main/assembly/jar.xml</descriptor>
+        <descriptor>src/main/assembly/zip.xml</descriptor>
+    </descriptors>
+</configuration>
+<executions>
+    <execution>
+        <id>make-assembly</id>
+        <phase>package</phase>
+        <goals>
+            <goal>single</goal>
+        </goals>
+    </execution>
+</executions>
+</plugin>
+</plugins>
 
-    
+
 
 
   </build>
+
+
 
 </project>
