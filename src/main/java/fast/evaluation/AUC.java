@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+// Code from: https://code.google.com/p/jforests/source/browse/trunk/jforests/src/main/java/edu/uci/jforests/eval/AUC.java
 //package edu.uci.jforests.eval;
 package fast.evaluation;
 
