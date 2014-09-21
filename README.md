@@ -2,13 +2,15 @@
 FAST: Feature-Aware Student knowledge Tracing
 ------------------------------------------------
 
-This is an implementation of FAST model (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf). This readme contains FAST's code usage, input file format and major output files. 
+FAST is a student modeling toolkit that was presented in the 7th International Conference on Educational Data Mining (2014).
+It is an alternative to BNT-SM for designing student models with features. 
+In our experiments FAST is up to 300x faster than BNT-SM, and we think it is much simpler to use.
 
-This code is only for RESEARCH purposes not for commercial purposes. It is still under development. 
+For the technically minded, FAST relies on HMM with Features ([Berg-Kirpatrick et al, 2010] (http://www.cs.berkeley.edu/~tberg/papers/naaclhlt2010.pdf)).
 
-Please email to us if you want to keep in touch with the latest release.
+
+This document introduces how to run FAST.
 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or José P.González-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
-We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois (jahmm) for part of their codes that FAST is developed based on.
 
 
 
@@ -16,8 +18,8 @@ We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois 
 RUN FAST!
 ---------
 
-* Open a terminal and go to the bin directory
-* Type: java hmmfeatures/Run ++../confs/fast.conf
+* Open a terminal and go to the target directory
+* Type: java -jar fast-1.0-SNAPSHOT-jar-with-dependencies.jar  ++../confs/fast.conf
 
 This should train and test FAST with sample data specified in the configuration file fast.conf, which defaults to using data from ../data/input/
 
@@ -124,8 +126,8 @@ If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!",
 
 
 ------------------------------------------------
-REFERENCES
+MORE INFORMATION ON FAST
 ------------------------------------------------
-González-Brenes, José P., Yun Huang, and Peter Brusilovsky. General Features in Knowledge Tracing
+* González-Brenes, José P., Yun Huang, and Peter Brusilovsky. General Features in Knowledge Tracing
 to Model Multiple Subskills, Temporal Item Response Theory, and Expert Knowledge. (Nominated as Best Paper Award
 in the 7th International Conference on Educational Data Mining 2014, first 2 authors contributed equally.)
