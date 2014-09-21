@@ -1,43 +1,47 @@
--------------------------------------------------
+
 FAST: Feature-Aware Student knowledge Tracing
-------------------------------------------------
+=============================================
 
-FAST is an efficient toolkit for designing student models with features ([Huang et al, 2014] (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf)).  
-FAST is an alternative to Knowledge Tracing and BNT-SM for designing student models with features. 
-In our experiments FAST is up to 300x faster than BNT-SM, and we think it is much simpler to use.
+This is the description of FAST, an efficient toolkit for modeling student performance in Intelligent Tutoring Systems ([Huang et al, 2014] (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf)).  
+FAST is alterantive to the [BNT-SM toolkit] (http://www.cs.cmu.edu/~listen/BNT-SM/), a toolkit that requires research to design a different different Bayes Net for each feature they want to prototype.
+The FAST toolkit is up to 300x faster than BNT-SM, and much simpler to use.
 
-We presented the model in the 7th International Conference on Educational Data Mining (2014), and it was selected as one the top 5 paper submissions.
-For the technically minded, FAST relies on HMM with Features ([Berg-Kirpatrick et al, 2010] (http://www.cs.berkeley.edu/~tberg/papers/naaclhlt2010.pdf)).
-
-
-This document introduces how to run FAST.
-We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or José P.González-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
+We presented the model in the 7th International Conference on Educational Data Mining (2014) (see [slides]  (http://www.cs.cmu.edu/~joseg/files/fast_presentation.pdf) ), and it was selected as one the top 5 paper submissions.
 
 
 
----------
-RUN FAST!
----------
-
-* Open a terminal and go to the target directory
-* Type: java -jar fast-1.0.0-release.jar ++examples/fast-example1.conf
-
-This should train and test FAST with sample data specified in the configuration file fast.conf, which defaults to using data from ../data/input/
+Technical Details 
+-----------------
+FAST learns per parameters for each skill using a HMM with Features ([Berg-Kirpatrick et al, 2010] (http://www.cs.berkeley.edu/~tberg/papers/naaclhlt2010.pdf)).
 
 
 
------------
-INPUT FILES
------------
-FAST requires at least two files as input, a training and a testing. By default these are data/train0.txt and data/test0.txt
+
+Running FAST
+============
+
+Quick Start
+------------
+1. Download the latest binaries [here] (https://github.com/ml-smores/fast/releases).
+2. Open a terminal 
+3. Type: 
+``` java -jar fast-1.0.0-release.jar ++examples/fast-example1.conf  ````
+
+Congratulations! You just trained a student model using state of the art technology.
+
+
+Input File
+==========
+FAST requires a configuration file that species  training and a testing files. We now describe the format of these input files.
+
 The input files should be delimited by tab(\t) or comma (,). 
-Currently, only support naming in the format of prefix-X-surfix (e.g. train0.txt with prefix as "train", X as "0" and surfix as ".txt"). X should be the integer number according to #folds and #runs (and X can not be empty); the prefix can be specified by trainInFilePrefix or testInFilePrefix; the surfix can be specified by inFileSurfix (see following "CONFIGURING FAST!")
+Currently, the filenames must follow thie pattern  ```prefix-X-suffix``` (e.g. train0.txt). X is a number from 0 to ```folds````.
 
 IMPORTANT:
 * The input requires a line per observation. The input only requires that lines are sorted by time within a student. This means that the order of students or Knowledge Components (KCs)  doesn't matter as long as the input is sorted over time. 
 * The train and test files should have the same number and same set of KCs (HMMs), i.e. the code won't predict for new KC(HMM) that it didn't train on.
 
------------
+
 MANDATORY COLUMNS:
 -----------
 * student COLUMN:
@@ -56,7 +60,6 @@ correct | incorrect
 We only support binary HMMs.
 
 
------------
 OPTIONAL COLUMNS:
 -----------
 * FEATURE COLUMNS:
@@ -82,9 +85,8 @@ If you have the kind of data split where some records from a student-skill seque
 
 
 
----------
 CONFIGURING FAST!
----------
+================
 * See the details of configuration options: by command "java hmmfeatures/Run -help" or by src/hmmfeatures/Opts.java file
 * We provided a sample configuration file in confs/fast.conf with some default values. However, you could add other options into the file according to your need.
 * Here are the basic options:
@@ -103,18 +105,16 @@ CONFIGURING FAST!
 	* inFileSurfix: the file surfix of training and testing set file(s).
 	* testSingleFile: If testSingleFile=true, then numFolds and numRuns should set to 1, and FAST trains on "train0.txt" and test on "test0.txt" (if trainInFilePrefix=train, testInFilePrefix=test).
 	* numFolds, numRuns: they are used to decide how many times FAST runs and are related to how FAST retrieves train and test files. By default, numRuns is always set to 1. 
-       Test file shouldn't have new KCs (indicated by the "KC" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
+       
+      Test file shouldn't have new KCs (indicated by the "KC" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
 	Test file should have the same feature columns (indicated by features_XXX or *features_XXX as train file.
-
 		
 		File is named by trainInFilePrefix(testInFilePrefix) + id + inFileSurfix. (id = current run id * numFolds + current fold id).
 		For example, if numFolds=5, numRuns=1, then there should be 5 pairs of train and test files and should be named by train0.txt, train1.txt...train4.txt, and test0.txt, test1.txt ... test4.txt.
 
 
-
-------------------
 OUTPUT FILE
-------------------
+===========
 
 * "XXX.pred" FILE
 The three columns actualLabel,predLabel, predProb are: actual student responses(correct or incorrect), predicted student responses and predicted probability of getting correct responses.
@@ -124,11 +124,6 @@ If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!",
 "XXX.eval" file includes the current evaluation while "evaluation.log" maintains the log of each time's evaluation.
 
 
-
-
-------------------------------------------------
-MORE INFORMATION ON FAST
-------------------------------------------------
-* González-Brenes, José P., Yun Huang, and Peter Brusilovsky. General Features in Knowledge Tracing
-to Model Multiple Subskills, Temporal Item Response Theory, and Expert Knowledge. (Nominated as Best Paper Award
-in the 7th International Conference on Educational Data Mining 2014, first 2 authors contributed equally.)
+Contact us
+==========
+We would love to hear your feedback.  Please [email us] (ml-smores@googlegroups.com)!
