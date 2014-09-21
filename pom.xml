@@ -32,6 +32,13 @@
  </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>sample-data</directory>
+	<targetPath>../sample-data</targetPath>      
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
 	
@@ -57,6 +64,12 @@
 	</executions>
       </plugin>
     </plugins>
+
+
+
+    
+
+
   </build>
 
 </project>
