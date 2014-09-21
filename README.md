@@ -126,4 +126,4 @@ If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!",
 
 Contact us
 ==========
-We would love to hear your feedback.  Please [email us] (ml-smores@googlegroups.com)!
+We would love to hear your feedback.  Please [email us] (mailto:ml-smores@googlegroups.com)!
