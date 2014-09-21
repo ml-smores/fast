@@ -2,8 +2,9 @@ package fast.hmmfeatures;
 
 import java.util.List;
 
+import edu.berkeley.nlp.util.Pair;
 import fast.hmm.ForwardBackward;
-import fig.basic.Pair;
+
 
 public interface EMSequenceModel {
 
