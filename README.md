@@ -2,10 +2,11 @@
 FAST: Feature-Aware Student knowledge Tracing
 ------------------------------------------------
 
-FAST is a student modeling toolkit that was presented in the 7th International Conference on Educational Data Mining (2014).
-It is an alternative to BNT-SM for designing student models with features. 
+FAST is an efficient toolkit for designing student models with features ([Huang et al, 2014] (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf)).  
+FAST is an alternative to Knowledge Tracing and BNT-SM for designing student models with features. 
 In our experiments FAST is up to 300x faster than BNT-SM, and we think it is much simpler to use.
 
+We presented the model in the 7th International Conference on Educational Data Mining (2014), and it was selected as one the top 5 paper submissions.
 For the technically minded, FAST relies on HMM with Features ([Berg-Kirpatrick et al, 2010] (http://www.cs.berkeley.edu/~tberg/papers/naaclhlt2010.pdf)).
 
 
