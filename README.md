@@ -20,7 +20,7 @@ RUN FAST!
 ---------
 
 * Open a terminal and go to the target directory
-* Type: java -jar fast-1.0-SNAPSHOT-jar-with-dependencies.jar  ++../confs/fast.conf
+* Type: java -jar fast-1.0.0-release.jar ++examples/fast-example1.conf
 
 This should train and test FAST with sample data specified in the configuration file fast.conf, which defaults to using data from ../data/input/
 
