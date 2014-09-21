@@ -1,3 +1,0 @@
-model	nbtest	AUC	Maj.AUC	Min.AUC	LL	MeanLL	Accuracy	RMSE	F-measure	Maj.F-measure	Min.F-measure	Precision	Maj.Precision	Min.Precision	Recall	Maj.Recall	Min.Recall	TP	TN	FP	FN	
-FAST-item	36	/	0.645	/	-21.597	-0.6	0.722	0.454	/	0.815	0.444	/	0.88	0.364	/	0.759	0.571	22.0	4.0	3.0	7.0	
-FAST-item	36.0	/	0.645	/	-21.597	-0.6	0.722	0.454	/	0.815	0.444	/	0.88	0.364	/	0.759	0.571	22.0	4.0	3.0	7.0	
