@@ -31,43 +31,47 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <hr><h2>
-<a name="fast-feature-aware-student-knowledge-tracing" class="anchor" href="#fast-feature-aware-student-knowledge-tracing"><span class="octicon octicon-link"></span></a>FAST: Feature-Aware Student knowledge Tracing</h2>
+        <h1>
+<a name="fast-feature-aware-student-knowledge-tracing" class="anchor" href="#fast-feature-aware-student-knowledge-tracing"><span class="octicon octicon-link"></span></a>FAST: Feature-Aware Student knowledge Tracing</h1>
 
-<p>FAST is an efficient toolkit for designing student models with features (<a href="http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf">Huang et al, 2014</a>).<br>
-FAST is an alternative to Knowledge Tracing and BNT-SM for designing student models with features. 
-In our experiments FAST is up to 300x faster than BNT-SM, and we think it is much simpler to use.</p>
+<p>This is the description of FAST, an efficient toolkit for modeling student performance in Intelligent Tutoring Systems (<a href="http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf">Huang et al, 2014</a>).<br>
+FAST is alterantive to the <a href="http://www.cs.cmu.edu/%7Elisten/BNT-SM/">BNT-SM toolkit</a>, a toolkit that requires research to design a different different Bayes Net for each feature they want to prototype.
+The FAST toolkit is up to 300x faster than BNT-SM, and much simpler to use.</p>
 
-<p>We presented the model in the 7th International Conference on Educational Data Mining (2014), and it was selected as one the top 5 paper submissions.
-For the technically minded, FAST relies on HMM with Features (<a href="http://www.cs.berkeley.edu/%7Etberg/papers/naaclhlt2010.pdf">Berg-Kirpatrick et al, 2010</a>).</p>
+<p>We presented the model in the 7th International Conference on Educational Data Mining (2014) (see <a href="http://www.cs.cmu.edu/%7Ejoseg/files/fast_presentation.pdf">slides</a> ), and it was selected as one the top 5 paper submissions.</p>
 
-<p>This document introduces how to run FAST.
-We sincerely welcome you to contact Yun Huang (<a href="mailto:huangyun.ai@gmail.com">huangyun.ai@gmail.com</a>), or José P.González-Brenes (<a href="mailto:josepablog@gmail.com">josepablog@gmail.com</a>) for problems in the code or cooperation.</p>
+<h2>
+<a name="technical-details-" class="anchor" href="#technical-details-"><span class="octicon octicon-link"></span></a>Technical Details </h2>
 
-<hr><h2>
-<a name="run-fast" class="anchor" href="#run-fast"><span class="octicon octicon-link"></span></a>RUN FAST!</h2>
+<p>FAST learns per parameters for each skill using a HMM with Features (<a href="http://www.cs.berkeley.edu/%7Etberg/papers/naaclhlt2010.pdf">Berg-Kirpatrick et al, 2010</a>).</p>
 
-<ul>
-<li>Open a terminal and go to the target directory</li>
-<li>Type: </li>
-</ul><pre><code>java -jar fast-1.0.0-release.jar ++examples/fast-example1.conf
-</code></pre>
+<h1>
+<a name="running-fast" class="anchor" href="#running-fast"><span class="octicon octicon-link"></span></a>Running FAST</h1>
 
-<p>This should train and test FAST with sample data specified in the configuration file fast.conf, which defaults to using data from ../data/input/</p>
+<h2>
+<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h2>
 
-<hr><h2>
-<a name="input-files" class="anchor" href="#input-files"><span class="octicon octicon-link"></span></a>INPUT FILES</h2>
+<ol>
+<li>Download the latest binaries <a href="https://github.com/ml-smores/fast/releases">here</a>.</li>
+<li>Open a terminal </li>
+<li>Type: 
+<code>java -jar fast-1.0.0-release.jar ++examples/fast-example1.conf</code>`</li>
+</ol><p>Congratulations! You just trained a student model using state of the art technology.</p>
 
-<p>FAST requires at least two files as input, a training and a testing. By default these are data/train0.txt and data/test0.txt
-The input files should be delimited by tab(\t) or comma (,). 
-Currently, only support naming in the format of prefix-X-surfix (e.g. train0.txt with prefix as "train", X as "0" and surfix as ".txt"). X should be the integer number according to #folds and #runs (and X can not be empty); the prefix can be specified by trainInFilePrefix or testInFilePrefix; the surfix can be specified by inFileSurfix (see following "CONFIGURING FAST!")</p>
+<h1>
+<a name="input-file" class="anchor" href="#input-file"><span class="octicon octicon-link"></span></a>Input File</h1>
+
+<p>FAST requires a configuration file that species  training and a testing files. We now describe the format of these input files.</p>
+
+<p>The input files should be delimited by tab(\t) or comma (,). 
+Currently, the filenames must follow thie pattern  <code>prefix-X-suffix</code> (e.g. train0.txt). X is a number from 0 to <code>folds</code>`.</p>
 
 <p>IMPORTANT:</p>
 
 <ul>
 <li>The input requires a line per observation. The input only requires that lines are sorted by time within a student. This means that the order of students or Knowledge Components (KCs)  doesn't matter as long as the input is sorted over time. </li>
 <li>The train and test files should have the same number and same set of KCs (HMMs), i.e. the code won't predict for new KC(HMM) that it didn't train on.</li>
-</ul><hr><h2>
+</ul><h2>
 <a name="mandatory-columns" class="anchor" href="#mandatory-columns"><span class="octicon octicon-link"></span></a>MANDATORY COLUMNS:</h2>
 
 <ul>
@@ -83,7 +87,7 @@ The model will learn parameters for each KC individually.
 <li><p>outcome COLUMN:
 correct | incorrect
 We only support binary HMMs.</p></li>
-</ul><hr><h2>
+</ul><h2>
 <a name="optional-columns" class="anchor" href="#optional-columns"><span class="octicon octicon-link"></span></a>OPTIONAL COLUMNS:</h2>
 
 <ul>
@@ -108,8 +112,8 @@ It doesn't matter what you put here so far. However, it may help you to check th
 <li><p>fold COLUMN:
 By default, all values are 1.
 If you have the kind of data split where some records from a student-skill sequence is used for training and remaining used for testing, then in the test0.txt file, please put the records used for training with fold COLUMN value -1. See sample3.</p></li>
-</ul><hr><h2>
-<a name="configuring-fast" class="anchor" href="#configuring-fast"><span class="octicon octicon-link"></span></a>CONFIGURING FAST!</h2>
+</ul><h1>
+<a name="configuring-fast" class="anchor" href="#configuring-fast"><span class="octicon octicon-link"></span></a>CONFIGURING FAST!</h1>
 
 <ul>
 <li>See the details of configuration options: by command "java hmmfeatures/Run -help" or by src/hmmfeatures/Opts.java file</li>
@@ -130,8 +134,9 @@ If you have the kind of data split where some records from a student-skill seque
 <li>inFileSurfix: the file surfix of training and testing set file(s).</li>
 <li>testSingleFile: If testSingleFile=true, then numFolds and numRuns should set to 1, and FAST trains on "train0.txt" and test on "test0.txt" (if trainInFilePrefix=train, testInFilePrefix=test).</li>
 <li>
-<p>numFolds, numRuns: they are used to decide how many times FAST runs and are related to how FAST retrieves train and test files. By default, numRuns is always set to 1. 
-Test file shouldn't have new KCs (indicated by the "KC" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
+<p>numFolds, numRuns: they are used to decide how many times FAST runs and are related to how FAST retrieves train and test files. By default, numRuns is always set to 1. </p>
+
+<p>Test file shouldn't have new KCs (indicated by the "KC" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
 Test file should have the same feature columns (indicated by features_XXX or *features_XXX as train file.</p>
 
 <p>File is named by trainInFilePrefix(testInFilePrefix) + id + inFileSurfix. (id = current run id * numFolds + current fold id).
@@ -139,8 +144,8 @@ For example, if numFolds=5, numRuns=1, then there should be 5 pairs of train and
 </li>
 </ul>
 </li>
-</ul><hr><h2>
-<a name="output-file" class="anchor" href="#output-file"><span class="octicon octicon-link"></span></a>OUTPUT FILE</h2>
+</ul><h1>
+<a name="output-file" class="anchor" href="#output-file"><span class="octicon octicon-link"></span></a>OUTPUT FILE</h1>
 
 <ul>
 <li><p>"XXX.pred" FILE
@@ -148,14 +153,10 @@ The three columns actualLabel,predLabel, predProb are: actual student responses(
 If the evaluation process outputs "ERROR: #files should be numFolds * numRuns!", it means there are more/less "XXX.pred" files than expected. You can solve this problem by removing (moving) files with ".pred" and rerun the code, or prepare the ".pred" files corresponding to numFolds * numRuns (e.g. if numFolds=2 and numRuns=1, then you should have "XXX_test0.pred", "XXX_test1.pred".)</p></li>
 <li><p>"XXX.eval" FILE and "evaluation.log" FILE
 "XXX.eval" file includes the current evaluation while "evaluation.log" maintains the log of each time's evaluation.</p></li>
-</ul><hr><h2>
-<a name="more-information-on-fast" class="anchor" href="#more-information-on-fast"><span class="octicon octicon-link"></span></a>MORE INFORMATION ON FAST</h2>
+</ul><h1>
+<a name="contact-us" class="anchor" href="#contact-us"><span class="octicon octicon-link"></span></a>Contact us</h1>
 
-<ul>
-<li>González-Brenes, José P., Yun Huang, and Peter Brusilovsky. General Features in Knowledge Tracing
-to Model Multiple Subskills, Temporal Item Response Theory, and Expert Knowledge. (Nominated as Best Paper Award
-in the 7th International Conference on Educational Data Mining 2014, first 2 authors contributed equally.)</li>
-</ul>
+<p>We would love to hear your feedback.  Please <a href="mailto:ml-smores@googlegroups.com">email us</a>!</p>
       </section>
     </div>
 
