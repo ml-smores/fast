@@ -2,7 +2,7 @@
 FAST: Feature-Aware Student knowledge Tracing
 =============================================
 
-This is the repository of FAST, an efficient toolkit for modeling student performance in Intelligent Tutoring Systems ([Huang et al, 2014] (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf)). FAST is alterantive to the [BNT-SM toolkit] (http://www.cs.cmu.edu/~listen/BNT-SM/), a toolkit that requires the researcher to design a different different Bayes Net for each feature set they want to prototype.
+This is the repository of FAST, an efficient toolkit for modeling time-changing student performance ([Huang, González-Brenes, Brusilovsky et al, 2014] (http://educationaldatamining.org/EDM2014/uploads/procs2014/long%20papers/84_EDM-2014-Full.pdf)). FAST is alterantive to the [BNT-SM toolkit] (http://www.cs.cmu.edu/~listen/BNT-SM/), a toolkit that requires the researcher to design a different different Bayes Net for each feature set they want to prototype.
 The FAST toolkit is up to 300x faster than BNT-SM, and much simpler to use.
 
 We presented the model in the 7th International Conference on Educational Data Mining (2014) (see [slides]  (http://www.cs.cmu.edu/~joseg/files/fast_presentation.pdf) ), where it was selected as one the top 5 paper submissions.
@@ -21,9 +21,10 @@ Running FAST
 
 Quick Start
 ------------
-1. Download the latest binaries [here] (https://github.com/ml-smores/fast/releases).
-2. Open a terminal 
-3. Type: 
+
+1. Download the latest release [here] (https://github.com/ml-smores/fast/releases).
+2. Decompress the file.  It includes sample data for getting you started quickly.
+3. Open a terminal and type:  
 ``` java -jar fast-1.0.0-release.jar ++examples/fast-example1.conf  ````
 
 Congratulations! You just trained a student model using state of the art technology.
