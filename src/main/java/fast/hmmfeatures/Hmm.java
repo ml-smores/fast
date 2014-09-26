@@ -1,7 +1,15 @@
-/* 
- * Use specified data structure for observation: DataPoint
- * Use List<? extends OpdfContextAware<DataPoint>> opdfs to initialize Hmm
+/**
+ * FAST v1.0       08/12/2014
  * 
+ * This code is only for research purpose not commercial purpose.
+ * It is originally developed for research purpose and is still under improvement. 
+ * Please email to us if you want to keep in touch with the latest release.
+	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
+ * We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois (jahmm) for part of their codes that FAST is developed based on.
+ *
+ */
+
+/* 
  * This is built based on:
  * 
  *   jaHMM package - v0.6.1 

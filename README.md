@@ -11,7 +11,7 @@ We presented the model in the 7th International Conference on Educational Data M
 
 Technical Details 
 -----------------
-FAST learns per parameters for each skill using a HMM with Features ([Berg-Kirpatrick et al, 2010] (http://www.cs.berkeley.edu/~tberg/papers/naaclhlt2010.pdf)).
+FAST learns per parameters for each skill using an HMM with Features ([Berg-Kirpatrick et al, 2010] (http://www.cs.berkeley.edu/~tberg/papers/naaclhlt2010.pdf)).
 
 
 
@@ -32,14 +32,15 @@ Congratulations! You just trained a student model using state of the art technol
 
 Input File
 ==========
-FAST requires a configuration file that species  training and a testing files. We now describe the format of these input files.
+FAST requires a configuration file that specifies training and testing file(s). We now describe the format of these input files.
 
 The input files should be delimited by tab(\t) or comma (,). 
-Currently, the filenames must follow thie pattern  ```prefix-X-suffix``` (e.g. train0.txt). X is a number from 0 to ```folds````.
+Currently, the filenames must follow the pattern  ```prefix-X-suffix``` (e.g. train0.txt). X is a number from 0 to ```numFolds```. Details can be seen in ```CONFIGURING FAST!```.
 
 IMPORTANT:
 * The input requires a line per observation. The input only requires that lines are sorted by time within a student. This means that the order of students or Knowledge Components (KCs)  doesn't matter as long as the input is sorted over time. 
-* The train and test files should have the same number and same set of KCs (HMMs), i.e. the code won't predict for new KC(HMM) that it didn't train on.
+* The test file shouldn't have new KCs (HMMs), i.e. the code won't predict for the new KC(HMM) that it didn't train on
+* The test file should have the same feature columns (indicated by features_XXX or *features_XXX) as train file.
 
 
 MANDATORY COLUMNS:
@@ -97,20 +98,15 @@ CONFIGURING FAST!
 	
 	* inDir: input files' directory. By default, training file: train0.txt; testing file: test0.txt.
 	* outDir: output prediction and evaluation and log files' directory
-	* (execPoolDir: for outputing execution info.)
-	* (allModelComparisonOutDir: for output evaluation file comparing different models.)
+	* allModelComparisonOutDir: for output evaluation file containing all models runned before for comparing different models.)
 	
 	* trainInFilePrefix: the prefix of training set file(s).
 	* testInFilePrefix: the prefix of testing set file(s).
-	* inFileSurfix: the file surfix of training and testing set file(s).
-	* testSingleFile: If testSingleFile=true, then numFolds and numRuns should set to 1, and FAST trains on "train0.txt" and test on "test0.txt" (if trainInFilePrefix=train, testInFilePrefix=test).
-	* numFolds, numRuns: they are used to decide how many times FAST runs and are related to how FAST retrieves train and test files. By default, numRuns is always set to 1. 
-       
-      Test file shouldn't have new KCs (indicated by the "KC" column). Because in training process, each KC correspond to one HMM with its own set of parameters and they are used for testing corresponding KC (HMM).
-	Test file should have the same feature columns (indicated by features_XXX or *features_XXX as train file.
+	* inFileSuffix: the file Suffix of training and testing set file(s).
+	* testSingleFile: If testSingleFile=true, then numFolds should be set to 1; otherwise, FAST can automatically retrieve multiple train and test files according to specified numFolds.
+	* numFolds: this is the number of train and test pairs, which is used for FAST automatically retrieving multiple train and test files. 
 		
-		File is named by trainInFilePrefix(testInFilePrefix) + id + inFileSurfix. (id = current run id * numFolds + current fold id).
-		For example, if numFolds=5, numRuns=1, then there should be 5 pairs of train and test files and should be named by train0.txt, train1.txt...train4.txt, and test0.txt, test1.txt ... test4.txt.
+	File will be named by trainInFilePrefix(testInFilePrefix) + id + inFileSuffix with id equals to current fold id (starting from 0). For example, if numFolds=5, trainInFilePrefix=train, testInFilePrefix=test, and inFileSuffix=.txt, then there should be 5 pairs of train and test files in the inDir and they should be named by train0.txt, train1.txt...train4.txt, and test0.txt, test1.txt ... test4.txt.
 
 
 OUTPUT FILE

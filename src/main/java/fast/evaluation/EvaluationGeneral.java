@@ -1,6 +1,15 @@
-package fast.evaluation;
+/**
+ * FAST v1.0       08/12/2014
+ * 
+ * This code is only for research purpose not commercial purpose.
+ * It is originally developed for research purpose and is still under improvement. 
+ * Please email to us if you want to keep in touch with the latest release.
+	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
+ * We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois (jahmm) for part of their codes that FAST is developed based on.
+ *
+ */
 
-import fast.hmmfeatures.Opts;
+package fast.evaluation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,6 +25,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import fast.hmmfeatures.Opts;
 
 public class EvaluationGeneral {
 
@@ -28,7 +38,7 @@ public class EvaluationGeneral {
 	public static boolean outputPerItemPerformance = false;
 	public static String perItemPerformanceOutFile = "";
 	private static String recordInfoFilePrefix = "record-info-";
-	private static String recordInfoFileSurfix = ".map";
+	private static String recordInfoFileSuffix = ".map";
 	private static String recordInfoMapTrainInFile = "";// reconfigure();
 	private static String recordInfoMapTestInFile = "";
 	private static TreeMap<String, Integer> trainItemNbRecordsMap = new TreeMap<String, Integer>();
@@ -44,7 +54,7 @@ public class EvaluationGeneral {
 	// assume input is 1 run, 5 folds, if changes then need to change codes
 	public static boolean extractEval = false;
 	public static String extractEvalOutFile = "";
-	public static String extractEvalOutFileSurfix = "-spss.txt";
+	public static String extractEvalOutFileSuffix = "-spss.txt";
 	public static boolean extractMajAUC = false;
 	public static String extractEvalOriHeader = "";
 	public static String extractEvalNewHeaderField = "";
@@ -87,11 +97,11 @@ public class EvaluationGeneral {
 	public static boolean inputPredFileHasHeader = (basicModelName
 			.contains("MiBKT") || basicModelName.contains("BKT-avg-all") ? false
 			: true);
-	public static String outFileSurfix = ".eval";
+	public static String outFileSuffix = ".eval";
 	public static String outFile = inOutDir + modelName + "-evaluation-metrics"
-			+ outFileSurfix;// instead of modelNames.get(0);
+			+ outFileSuffix;// instead of modelNames.get(0);
 	public static String outFileNameAllModel = "all-models-evaluation-metrics"
-			+ outFileSurfix;
+			+ outFileSuffix;
 	public static String outFileAllModel = basicBasicDir + outFileNameAllModel;
 
 	// confusion matrix's "positive" corresponds to majority
@@ -99,11 +109,11 @@ public class EvaluationGeneral {
 	public static String actualLabel0correspondingStr = "incorrect";
 	public static String majority = "correct";
 	public static String minority = "incorrect";
-	public static String standardPredFileSurfix = ".pred";// ".csv";
-	public static String otherPredFileSurfix = (basicModelName.contains("MiBKT")
+	public static String standardPredFileSuffix = ".pred";// ".csv";
+	public static String otherPredFileSuffix = (basicModelName.contains("MiBKT")
 			|| basicModelName.contains("BKT-avg-all") ? ".predprob"
-			: standardPredFileSurfix);
-	public static String testFileSurfix = (basicModelName.contains("MiBKT")
+			: standardPredFileSuffix);
+	public static String testFileSuffix = (basicModelName.contains("MiBKT")
 			|| basicModelName.contains("BKT-avg-all") ? ".mibkttest" : "");
 	public static String splitter = "[,\t]";
 	public static String delim = "\t";
@@ -253,8 +263,8 @@ public class EvaluationGeneral {
 	public static void evaluateOnMultiFiles(String basicModelName_,
 			String variant1ModelName_, String variant2ModelName_, int numRuns_,
 			int numFolds_, String outDirForComparingModels, String inOutDir,
-			String outFile, String standardPredFileSurfix) throws IOException {
-		// outFileNameAllModel= "all-models-evaluation-metrics" + outFileSurfix
+			String outFile, String standardPredFileSuffix) throws IOException {
+		// outFileNameAllModel= "all-models-evaluation-metrics" + outFileSuffix
 		// loggerOutFileName = "evaluation.log";
 		basicModelName = basicModelName_;
 		variant1ModelName = variant1ModelName_;
@@ -270,15 +280,15 @@ public class EvaluationGeneral {
 		run(modelName, numRuns, numFolds, inOutDir, outFile,
 				(inOutDir + loggerOutFileName),
 				(outDirForComparingModels + outFileNameAllModel),
-				standardPredFileSurfix, "", false, "");
+				standardPredFileSuffix, "", false, "");
 	}
 
 	// require having standardPredFile (actualLabel,....)
 
 	public static double evaluateOnMultiFiles(String modelName_, int numRuns_,
 			int numFolds_, String outDirForComparingModels, String inOutDir,
-			String outFile, String standardFileSurfix, String standardFilePrefix) {
-		// outFileNameAllModel= "all-models-evaluation-metrics" + outFileSurfix
+			String outFile, String standardFileSuffix, String standardFilePrefix) {
+		// outFileNameAllModel= "all-models-evaluation-metrics" + outFileSuffix
 		// loggerOutFileName = "evaluation.log";
 		modelName = modelName_;
 		topXRange[0] = -1;
@@ -293,7 +303,7 @@ public class EvaluationGeneral {
 		double auc = -1.0;
 		auc = run(modelName, numRuns, numFolds, inOutDir, outFile,
 				(inOutDir + loggerOutFileName),
-				(outDirForComparingModels + outFileNameAllModel), standardFileSurfix,
+				(outDirForComparingModels + outFileNameAllModel), standardFileSuffix,
 				"", false, standardFilePrefix);
 		return auc;
 	}
@@ -322,13 +332,13 @@ public class EvaluationGeneral {
 				.contains("BKT-avg-all")) ? true : false;
 		inputPredFileHasHeader = (basicModelName.contains("MiBKT")
 				|| basicModelName.contains("BKT-avg-all") ? false : true);
-		otherPredFileSurfix = (basicModelName.contains("MiBKT")
+		otherPredFileSuffix = (basicModelName.contains("MiBKT")
 				|| basicModelName.contains("BKT-avg-all") ? ".predprob"
-				: standardPredFileSurfix);
-		testFileSurfix = (basicModelName.contains("MiBKT")
+				: standardPredFileSuffix);
+		testFileSuffix = (basicModelName.contains("MiBKT")
 				|| basicModelName.contains("BKT-avg-all") ? ".mibkttest" : "");
 		if (extractEval) {
-			extractEvalOutFile = basicDir + basicModelName + extractEvalOutFileSurfix;
+			extractEvalOutFile = basicDir + basicModelName + extractEvalOutFileSuffix;
 			File curActionD = new File(extractEvalOutFile);
 			if (curActionD.exists() && curActionD.isFile())
 				readExtractEvalFile(extractEvalFilePreviousRecords, extractEvalOutFile);
@@ -342,7 +352,7 @@ public class EvaluationGeneral {
 		}
 		if (outputPerItemPerformance) {
 			perItemPerformanceOutFile = basicDir + "per-item-" + basicModelName
-					+ outFileSurfix;
+					+ outFileSuffix;
 			perItemPerfromanceWriter = new BufferedWriter(new FileWriter(
 					perItemPerformanceOutFile, true));
 		}
@@ -375,7 +385,7 @@ public class EvaluationGeneral {
 												: "") + ""))))) + "/" + datasplit + "/";
 		inOutDir += datasplit + "/" + modelName + "/";
 		// }
-		outFile = inOutDir + modelName + "-evaluation-metrics" + outFileSurfix;
+		outFile = inOutDir + modelName + "-evaluation-metrics" + outFileSuffix;
 		loggerOutFile = inOutDir + loggerOutFileName;
 		outFileAllModel = basicBasicDir + outFileNameAllModel;
 		if (extractEval) {
@@ -484,7 +494,7 @@ public class EvaluationGeneral {
 			for (topX = topXRange[1]; topX >= topXRange[0]; topX--) {
 				reconfigure();
 				run(modelName, numRuns, numFolds, inOutDir, outFile, loggerOutFile,
-						outFileAllModel, otherPredFileSurfix, testFileSurfix,
+						outFileAllModel, otherPredFileSuffix, testFileSuffix,
 						predAllInOneFile, "");
 			}
 			topX = topXRange[0];
@@ -494,7 +504,7 @@ public class EvaluationGeneral {
 				topXPercent = topXPercentRange[index];
 				reconfigure();
 				run(modelName, numRuns, numFolds, inOutDir, outFile, loggerOutFile,
-						outFileAllModel, otherPredFileSurfix, testFileSurfix,
+						outFileAllModel, otherPredFileSuffix, testFileSuffix,
 						predAllInOneFile, "");
 			}
 			topXPercent = topXPercentRange[0];
@@ -502,7 +512,7 @@ public class EvaluationGeneral {
 		else {
 			reconfigure();
 			run(modelName, numRuns, numFolds, inOutDir, outFile, loggerOutFile,
-					outFileAllModel, otherPredFileSurfix, testFileSurfix,
+					outFileAllModel, otherPredFileSuffix, testFileSuffix,
 					predAllInOneFile, "");
 		}
 		if (extractEval)
@@ -525,14 +535,14 @@ public class EvaluationGeneral {
 			perItemPerfromanceWriter.close();
 	}
 
-	// predFileSurfix: used to get the files to get predicted probability (and/or
+	// predFileSuffix: used to get the files to get predicted probability (and/or
 	// predicted labels), for mibkt, it is .predprob(file generated by mibkt),
 	// otherwise, it is usually .pred (standard pred file); if it is mibkt, then
-	// use testFileSurfix to get actual
+	// use testFileSuffix to get actual
 	// labels
 	public static double run(String modelName, int numRuns, int numFolds,
 			String inOutDir, String outFile, String loggerOutFile,
-			String outFileAllModel, String predFileSurfix, String testFileSurfix,
+			String outFileAllModel, String predFileSuffix, String testFileSuffix,
 			boolean predAllInOneFile, String standardFilePrefix) {
 		double finalAuc = -1.0;
 
@@ -551,10 +561,10 @@ public class EvaluationGeneral {
 
 			// get fileNames according to the order of
 			// run0-fold0~4, run1-fold0~4....
-			fileNames = new ArrayList<String>();// including surfix
+			fileNames = new ArrayList<String>();// including suffix
 			modelNames = new ArrayList<String>();
 			// fileName: standardPredFile or otherPredFile(.predprob)
-			getFilesInSpecifiedDir(inOutDir, predFileSurfix, modelNameExtractor,
+			getFilesInSpecifiedDir(inOutDir, predFileSuffix, modelNameExtractor,
 					numRuns, numFolds, fileNames, modelNames, standardFilePrefix);
 
 			ArrayList<ArrayList<Integer>> actualLabelsAllFoldRuns = new ArrayList<ArrayList<Integer>>();
@@ -564,19 +574,19 @@ public class EvaluationGeneral {
 			trainPerItemNbDpAllFoldRuns = new ArrayList<TreeMap<String, Integer>>();
 
 			// only when if (modelName.contains("MiBKT") ||
-			// modelName.contains("BKT-avg-all")), testFileSurfix is useful (for
+			// modelName.contains("BKT-avg-all")), testFileSuffix is useful (for
 			// getting actual labels)
 			// fileName: standardPredFile or otherPredFile(.predprob)
-			input(modelName, inOutDir, fileNames, testFileSurfix, numRuns, numFolds,
+			input(modelName, inOutDir, fileNames, testFileSuffix, numRuns, numFolds,
 					nbInstancesPerFoldRun, actualLabelsAllFoldRuns,
 					predictLabelsAllFoldRuns, predictProbsAllFoldRuns,
 					testRecordItemListAllFoldRuns, trainPerItemNbDpAllFoldRuns);
 			if (outputStandardPredictionFile) {
-				// when fileNames (with predFileSurfix) is not standardPredFile, then
+				// when fileNames (with predFileSuffix) is not standardPredFile, then
 				// generate them!
 				outputStandardPredictionFile(actualLabelsAllFoldRuns,
 						predictLabelsAllFoldRuns, predictProbsAllFoldRuns, inOutDir,
-						fileNames, predFileSurfix, standardPredFileSurfix,
+						fileNames, predFileSuffix, standardPredFileSuffix,
 						nbInstancesPerFoldRun, modelNameExtractor);
 			}
 
@@ -591,7 +601,7 @@ public class EvaluationGeneral {
 			// String inFile = inOutDir + fileNames.get(i);// contains all
 			// // folds
 			// String outFile = inOutDir + curModelName + "-evaluation-metrics"
-			// + outFileSurfix;
+			// + outFileSuffix;
 			// evaluateClassifier(inOutDir, inFile, nbInstancesPerFoldRun,
 			// outFile, curModelName);
 			// }
@@ -662,7 +672,7 @@ public class EvaluationGeneral {
 	}
 
 	public static void input(String modelName, String inOutDir,
-			ArrayList<String> fileNames, String testFileSurfix, int numRuns,
+			ArrayList<String> fileNames, String testFileSuffix, int numRuns,
 			int numFolds, int[] nbInstancesPerFoldRun,
 			ArrayList<ArrayList<Integer>> actualLabelsAllFoldRuns,
 			ArrayList<ArrayList<Integer>> predictLabelsAllFoldRuns,
@@ -673,7 +683,7 @@ public class EvaluationGeneral {
 
 		// System.out.println(modelName);
 		if (modelName.contains("MiBKT") || modelName.contains("BKT-avg-all"))
-			getActualLabelsInSpecifiedDir(inOutDir, testFileSurfix, numRuns,
+			getActualLabelsInSpecifiedDir(inOutDir, testFileSuffix, numRuns,
 					numFolds, actualLabelsAllFoldRuns);
 		int nbIns = 0;
 
@@ -683,9 +693,9 @@ public class EvaluationGeneral {
 				trainItemNbRecordsMap = new TreeMap<String, Integer>();
 				itemNbKcsMap = new TreeMap<String, Integer>();
 				recordInfoMapTrainInFile = recordMapFilesDir + recordInfoFilePrefix
-						+ trainFilePrefix + foldRunID + recordInfoFileSurfix;
+						+ trainFilePrefix + foldRunID + recordInfoFileSuffix;
 				recordInfoMapTestInFile = recordMapFilesDir + recordInfoFilePrefix
-						+ testFilePrefix + foldRunID + recordInfoFileSurfix;
+						+ testFilePrefix + foldRunID + recordInfoFileSuffix;
 				readAFieldIntoMap(recordInfoMapTrainInFile, trainItemNbRecordsMap,
 						itemCol, nbCols);
 				readAFieldIntoArrayList(recordInfoMapTestInFile, testRecordItemList,
@@ -769,8 +779,8 @@ public class EvaluationGeneral {
 			ArrayList<ArrayList<Integer>> actualLabelsAllFoldRuns,
 			ArrayList<ArrayList<Integer>> predictLabelsAllFoldRuns,
 			ArrayList<ArrayList<Double>> predictProbsAllFoldRuns, String inOutDir,
-			ArrayList<String> fileNames, String predFileSurfix,
-			String standardPredFileSurfix, int[] nbInstancesPerFoldRun,
+			ArrayList<String> fileNames, String predFileSuffix,
+			String standardPredFileSuffix, int[] nbInstancesPerFoldRun,
 			String modelNameExtractor) throws IOException {
 
 		if (actualLabelsAllFoldRuns == null || predictLabelsAllFoldRuns == null
@@ -801,8 +811,8 @@ public class EvaluationGeneral {
 			String predOutFileName = modelName
 					+ "_"
 					+ inFileName.substring(0,
-							inFileName.length() - predFileSurfix.length())
-					+ standardPredFileSurfix;
+							inFileName.length() - predFileSuffix.length())
+					+ standardPredFileSuffix;
 			writer = new BufferedWriter(new FileWriter(inOutDir + predOutFileName));
 			writer.write("actualLabel,predictLabel,predictProb\n");
 
@@ -1218,7 +1228,7 @@ public class EvaluationGeneral {
 	 * get fileNames according to the order of run0-fold0~4, run1-fold0~4....
 	 * 
 	 * @param specifiedDir
-	 * @param surfix
+	 * @param suffix
 	 * @param modelNameExtractor
 	 * @param numRuns
 	 * @param numFolds
@@ -1226,7 +1236,7 @@ public class EvaluationGeneral {
 	 * @param modelNames
 	 * @throws IOException
 	 */
-	public static void getFilesInSpecifiedDir(String specifiedDir, String surfix,
+	public static void getFilesInSpecifiedDir(String specifiedDir, String suffix,
 			String modelNameExtractor, int numRuns, int numFolds,
 			ArrayList<String> fileNames, ArrayList<String> modelNames,
 			String standardFilePrefix) throws IOException {
@@ -1248,7 +1258,7 @@ public class EvaluationGeneral {
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			fileName = listOfFiles[i].getName();
-			if (listOfFiles[i].isFile() & fileName.endsWith(surfix)
+			if (listOfFiles[i].isFile() & fileName.endsWith(suffix)
 					& fileName.startsWith(standardFilePrefix)) {
 				printAndLog("\tFile: " + fileName + "\n");
 
@@ -1258,8 +1268,9 @@ public class EvaluationGeneral {
 				realID = foldID;
 
 				if (realID + 1 > fileNames.size()) {
-					System.out.println("ERROR: please ensure there are only "
-							+ fileNames.size() + " files with .pred surfix in " + Opts.outDir
+					System.out.println("ERROR: Please ensure there are only "
+							+ fileNames.size() + " files with suffix=" + suffix
+							+ " and prefix=" + standardFilePrefix + " in " + Opts.outDir
 							+ "!");
 					System.exit(-1);
 				}
@@ -1284,7 +1295,7 @@ public class EvaluationGeneral {
 	// actualLabelsAll, nbInstances correspond to the order of run0,fold0~4,
 	// run1,fold0~4.... run19,fold0~4
 	public static ArrayList<ArrayList<Integer>> getActualLabelsInSpecifiedDir(
-			String specifiedDir, String surfix, int numRuns, int numFolds,
+			String specifiedDir, String suffix, int numRuns, int numFolds,
 			ArrayList<ArrayList<Integer>> actualLabelsAllFiles) throws IOException {
 		if (actualLabelsAllFiles == null || actualLabelsAllFiles.size() != 0) {
 			System.out
@@ -1306,7 +1317,7 @@ public class EvaluationGeneral {
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			fileName = listOfFiles[i].getName();
-			if (listOfFiles[i].isFile() & fileName.endsWith(surfix)) {
+			if (listOfFiles[i].isFile() & fileName.endsWith(suffix)) {
 				printAndLog("File: " + fileName + "\n");
 				ArrayList<Integer> actualLabels = new ArrayList<Integer>();
 				BufferedReader reader = new BufferedReader(new FileReader(specifiedDir

@@ -1,7 +1,8 @@
 /**
  * FAST v1.0       08/12/2014
  * 
- * This code is originally developed for research purpose and is still under improvement. 
+ * This code is only for research purpose not commercial purpose.
+ * It is originally developed for research purpose and is still under improvement. 
  * Please email to us if you want to keep in touch with the latest release.
 	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
  * We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois (jahmm) for part of their codes that FAST is developed based on.
@@ -32,7 +33,7 @@ public class Opts {
 	public static String variant1ModelName = "item";
 	@Option(gloss = "Currently, variant2ModelName could be empty or contain any strings. basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
 	public static String variant2ModelName = "";
-	public static String basicDir = "../data/input/";
+	public static String basicDir = "./examples/example_data/";
 	@Option(gloss = "modelName is used help doing many other configurations. However, you can also specify other configurations by yourself.")
 	public static String modelName = basicModelName
 			+ (variant1ModelName.equals("") ? ""
@@ -47,41 +48,42 @@ public class Opts {
 	@Option(gloss = "datasplit is used to help configure outDir.")
 	public static String datasplit = testSingleFile ? "datasets" : "CVdatasets";
 	@Option(gloss = "inDir is where FAST get input files(train and test).")
-	public static String inDir = basicDir
-			+ basicModelName
-			+ "/"
-			+ (variant1ModelName.equals("") ? (datasplit + "/") : (variant1ModelName
-					+ "/" + datasplit + "/"));
+	public static String inDir = basicDir;
+	// basicDir
+	// + basicModelName
+	// + "/"
+	// + (variant1ModelName.equals("") ? (datasplit + "/") : (variant1ModelName
+	// + "/" + datasplit + "/"));
 	@Option(gloss = "outDir is where FAST output prediction files and log files.")
-	public static String outDir = inDir + modelName + "/";
+	public static String outDir = "./output/";// inDir + modelName + "/";
 	@Option(gloss = "allModelComparisonOutDir is where all different models are compared (by the average evaluation metric).")
-	public static String allModelComparisonOutDir = basicDir;
+	public static String allModelComparisonOutDir = outDir;// basicDir;
 	@Option(gloss = "If just one train test pair, then train(test) file will be \"train(test)InFilePreifix0.txt\". If there are multiple train, test pairs, then based on the configuration of numFolds and numRuns, train(test) file will be \"train(test)InFilePreifixFoldId.txt\", e.g. \"train1.txt\" or \"test1.txt\" for the second fold first run.")
 	public static String trainInFilePrefix = "train";
 	@Option(gloss = "If just one train test pair, then train(test) file will be \"train(test)InFilePreifix0.txt\". If there are multiple train, test pairs, then based on the configuration of numFolds and numRuns, train(test) file will be \"train(test)InFilePreifixFoldId.txt\", e.g. \"train1.txt\" or \"test1.txt\" for the second fold first run.")
 	public static String testInFilePrefix = "test";
 	public static String devInFilePrefix = "dev";
-	@Option(gloss = "The surfix for train and test files.")
-	public static String inFileSurfix = ".txt";
+	@Option(gloss = "The suffix for train and test files.")
+	public static String inFileSuffix = ".txt";
 	// @Option(gloss =
 	// "ratio is used to configure the name of input train/test files when FAST is training on the \"ratio\" of a sequence and testing on remaining of the sequence. Yet you can set it as 0 and gives the standard names (train.txt, test.txt)")
 	public static String ratio = "";// "0.5";
 	@Option(gloss = "If there are more than one runs, these are configured dynamically in each run with changing foldID, e.g. train(test) file will be \"train(test)InFilePreifixFoldId.txt\", e.g. \"train0.txt\" or \"test0.txt\" for the first fold.")
 	public static String trainFile = inDir + trainInFilePrefix + "0"
-			+ inFileSurfix;
+			+ inFileSuffix;
 	@Option(gloss = "If there are more than one runs, these are configured dynamically in each run with changing foldID, e.g. train(test) file will be \"train(test)InFilePreifixFoldId.txt\", e.g. \"train0.txt\" or \"test0.txt\" for the first fold.")
-	public static String testFile = inDir + testInFilePrefix + "0" + inFileSurfix;
-	public static String devFile = inDir + devInFilePrefix + "0" + inFileSurfix;
+	public static String testFile = inDir + testInFilePrefix + "0" + inFileSuffix;
+	public static String devFile = inDir + devInFilePrefix + "0" + inFileSuffix;
 	public static String curFoldRunTrainInFilePrefix = "";
 	public static String curFoldRunTestInFilePrefix = "";
 	public static String curFoldRunDevInFilePrefix = "";
-	@Option(gloss = "predSurfix=.pred is neccessary if we are to use the evaluation code inside this code.")
-	public static String predSurfix = ".pred";
-	// predictionFile should contain modelName, because modelName and predSurfix
+	@Option(gloss = "predSuffix=.pred is neccessary if we are to use the evaluation code inside this code.")
+	public static String predSuffix = ".pred";
+	// predictionFile should contain modelName, because modelName and predSuffix
 	// are used together to identify prediction file automatically by Evaluation
 	// engine.
 	public static String predPrefix = modelName + "_test";
-	public static String predictionFile = outDir + predPrefix + "0" + predSurfix;
+	public static String predictionFile = outDir + predPrefix + "0" + predSuffix;
 
 	// This part is for configuring regularization.
 	public static boolean useReg = true;
@@ -417,42 +419,32 @@ public class Opts {
 								: ("-" + variant2ModelName))));//
 		checkConfig();
 
-		allModelComparisonOutDir = basicDir;
-		inDir = basicDir
-				+ basicModelName
-				+ "/"
-				+ (variant1ModelName.equals("") ? (datasplit + "/")
-						: (variant1ModelName + "/" + datasplit + "/"));
-		outDir = inDir + modelName + "/";
+		allModelComparisonOutDir = outDir;// basicDir;
+		// inDir = basicDir;
+		// + basicModelName
+		// + "/"
+		// + (variant1ModelName.equals("") ? (datasplit + "/")
+		// : (variant1ModelName + "/" + datasplit + "/"));
+		// outDir = inDir + modelName + "/";
 		predPrefix = modelName + "_test";
 		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "")
-				+ predSurfix;
+				+ predSuffix;
 		curFoldRunTrainInFilePrefix = trainInFilePrefix
 				+ (testSingleFile ? "0" : "");
-		trainFile = inDir + curFoldRunTrainInFilePrefix + inFileSurfix;
+		trainFile = inDir + curFoldRunTrainInFilePrefix + inFileSuffix;
 		curFoldRunTestInFilePrefix = testInFilePrefix + (testSingleFile ? "0" : "");
-		testFile = inDir + curFoldRunTestInFilePrefix + inFileSurfix;
+		testFile = inDir + curFoldRunTestInFilePrefix + inFileSuffix;
 		curFoldRunDevInFilePrefix = devInFilePrefix + (testSingleFile ? "0" : "");
-		devFile = inDir + curFoldRunDevInFilePrefix + inFileSurfix;
+		devFile = inDir + curFoldRunDevInFilePrefix + inFileSuffix;
 
 		skillsToCheck.add("Variables");
 	}
 
 	// This is called for all kinds of argumentation input for main().
 	public static void reconfigure() {
-		File curActionD = new File(outDir);
-		if (!curActionD.exists()) {
-			System.out.println("\nCreating directory: " + outDir);
-			boolean result = curActionD.mkdir();
-			if (!result) {
-				System.out.println("Error: directory creation failed: " + outDir);
-				System.exit(1);
-			}
-		}
-
 		predPrefix = modelName + "_test";
 		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "")
-				+ predSurfix;
+				+ predSuffix;
 		mainLogFile = outDir + "main.log";
 		llLogFile = outDir + "ll.log";
 		expectedCountLogFile = outDir + "expectedCount.log";
@@ -563,6 +555,23 @@ public class Opts {
 	}
 
 	public static void checkConfig() {
+		File curActionD = new File(outDir);
+		if (!curActionD.exists()) {
+			System.out.println("\noutDir doesn't exist, creating this directory: "
+					+ outDir);
+			boolean result = curActionD.mkdir();
+			if (!result) {
+				System.out.println("Error: directory creation failed: " + outDir);
+				System.exit(1);
+			}
+		}
+
+		curActionD = new File(inDir);
+		if (!curActionD.exists()) {
+			System.out.println("\nError: inDir doesn't exist: " + inDir);
+			System.exit(1);
+		}
+
 		if (modelName.contains("KT")) {
 			parameterizedEmit = false;
 			oneBiasFeature = false;
@@ -616,8 +625,8 @@ public class Opts {
 
 		if (testSingleFile && (numFolds > 1 || numRuns > 1)) {
 			System.out
-					.println("ERROR: testSingleFile=true && (numFolds > 1 || numRuns > 1)");
-			System.exit(1);
+					.println("WARNING: testSingleFile=true && (numFolds > 1 || numRuns > 1)! Reset testSingleFile=False!");
+			testSingleFile = false;
 		}
 
 		if ((parameterizedEmit || oneBiasFeature) && modelName.contains("KT")) {

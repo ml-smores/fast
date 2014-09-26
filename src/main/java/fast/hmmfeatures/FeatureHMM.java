@@ -1,3 +1,14 @@
+/**
+ * FAST v1.0       08/12/2014
+ * 
+ * This code is only for research purpose not commercial purpose.
+ * It is originally developed for research purpose and is still under improvement. 
+ * Please email to us if you want to keep in touch with the latest release.
+	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
+ * We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois (jahmm) for part of their codes that FAST is developed based on.
+ *
+ */
+
 package fast.hmmfeatures;
 
 import java.io.BufferedWriter;
@@ -6,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-
 import fast.common.Bijection;
 import fast.common.RandomSampler;
 import fast.data.CVStudent;
@@ -263,7 +273,7 @@ public class FeatureHMM {
 				double auc = -1.0;
 				auc = allFoldRunsEval.evaluateOnMultiFiles(curModelName, opts.numRuns,
 						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + curModelName + ".eval", opts.predSurfix, "");
+						opts.outDir + curModelName + ".eval", opts.predSuffix, "");
 				System.out.println("\tauc=" + auc + "\n");
 				opts.bestAucOnDevAllKcsSum += auc;
 			}
@@ -353,7 +363,7 @@ public class FeatureHMM {
 						+ opts.LBFGS_REGULARIZATION_WEIGHT;
 				auc = allFoldRunsEval.evaluateOnMultiFiles(curModelName, opts.numRuns,
 						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + curModelName + ".eval", opts.predSurfix, "");
+						opts.outDir + curModelName + ".eval", opts.predSuffix, "");
 				// System.out.println("\tauc=" + auc);
 				if (opts.tuneL2) {
 					opts.bestRegWeightWriter.write(opts.currentKc + "\t"

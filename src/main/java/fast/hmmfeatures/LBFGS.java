@@ -1,10 +1,21 @@
+/**
+ * FAST v1.0       08/12/2014
+ * 
+ * This code is only for research purpose not commercial purpose.
+ * It is originally developed for research purpose and is still under improvement. 
+ * Please email to us if you want to keep in touch with the latest release.
+	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
+ * We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois (jahmm) for part of their codes that FAST is developed based on.
+ *
+ */
+
 package fast.hmmfeatures;
 
 //import util.LBFGSMinimizer;
-import edu.berkeley.nlp.math.LBFGSMinimizer;
 import edu.berkeley.nlp.math.CachingDifferentiableFunction;
+import edu.berkeley.nlp.math.GradientMinimizer;
+import edu.berkeley.nlp.math.LBFGSMinimizer;
 import edu.berkeley.nlp.util.Pair;
-
 
 public class LBFGS {
 
@@ -30,16 +41,23 @@ public class LBFGS {
 
 	public double[] run() {
 		NegativeRegularizedExpectedLogLikelihood negativeLikelihood = new NegativeRegularizedExpectedLogLikelihood();
-		
-		//TODO: Jose changed  this!!! Please verify
-		LBFGSMinimizer minimizer = new LBFGSMinimizer();
-		minimizer.setMaxIterations(opts.LBFGS_MAX_ITERS);
+
+		// TODO: Jose changed this!!! Please verify
+		GradientMinimizer minimizer;
+		if (opts.ensureStopForLBFGS)
+			minimizer = new LBFGSConstraintMinimizer(opts.EPS, opts.LBFGS_MAX_ITERS);
+		else {
+			minimizer = new LBFGSMinimizer();
+			((LBFGSMinimizer) minimizer).setMaxIterations(opts.LBFGS_MAX_ITERS);
+		}
 		// featureWeights is deep copied into guess -> valueAt, deravativeAt ->
 		// calculate -> setWeights set featuWeights as the new one.
 		// here should start from an inital weights (set before when initializing
 		// feaatureHMM)
 		minimizer.minimize(negativeLikelihood, featureWeights,
 				opts.LBFGS_TOLERANCE, opts.LBFGS_PRINT_MINIMIZER);
+		if (opts.ensureStopForLBFGS)
+			opts.parameterizedEmit = ((LBFGSConstraintMinimizer) minimizer).parameterizedEmit;
 		return featureWeights;
 	}
 

@@ -1,7 +1,8 @@
 /**
  * FAST v1.0       08/12/2014
  * 
- * This code is originally developed for research purpose and is still under improvement. 
+ * This code is only for research purpose not commercial purpose.
+ * It is originally developed for research purpose and is still under improvement. 
  * Please email to us if you want to keep in touch with the latest release.
 	 We sincerely welcome you to contact Yun Huang (huangyun.ai@gmail.com), or Jose P.Gonzalez-Brenes (josepablog@gmail.com) for problems in the code or cooperation.
  * We thank Taylor Berg-Kirkpatrick (tberg@cs.berkeley.edu) and Jean-Marc Francois (jahmm) for part of their codes that FAST is developed based on.
@@ -26,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
 import fast.common.Bijection;
 import fast.data.StudentList;
 import fast.evaluation.EvaluationGeneral;
@@ -118,7 +118,7 @@ public class Run implements Runnable {
 				EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
 				allFoldRunsEval.evaluateOnMultiFiles(opts.modelName, opts.numRuns,
 						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + opts.modelName + ".eval", opts.predSurfix,
+						opts.outDir + opts.modelName + ".eval", opts.predSuffix,
 						opts.predPrefix);
 				printAndWrite();
 				closeRun();
@@ -409,22 +409,22 @@ public class Run implements Runnable {
 	public void runBatch(int foldId, int runId) throws IOException {
 		int fileId = runId * opts.numFolds + foldId;
 		opts.trainFile = opts.inDir + opts.trainInFilePrefix + fileId
-				+ opts.inFileSurfix;
+				+ opts.inFileSuffix;
 		opts.testFile = opts.inDir + opts.testInFilePrefix + fileId
-				+ opts.inFileSurfix;
+				+ opts.inFileSuffix;
 		if (opts.tuneL2)
 			opts.devFile = opts.inDir + opts.devInFilePrefix + fileId
-					+ opts.inFileSurfix;
+					+ opts.inFileSuffix;
 		opts.predictionFile = opts.outDir + opts.predPrefix + fileId
-				+ opts.predSurfix;
+				+ opts.predSuffix;
 
 		hmms = new ArrayList<Hmm>();
 		Bijection trainSkills = new Bijection();
 		ArrayList<ArrayList<String>> hmmsSequences = new ArrayList<ArrayList<String>>();
 		splitForHmms(opts.trainFile, trainSkills, hmmsSequences);
 		if (hmmsSequences.size() != opts.nbHmms) {
-			System.out.println("\nWARNING:  reset nbHmms=" + hmmsSequences.size()
-					+ " (ori=" + opts.nbHmms + ")");
+			// System.out.println("\nWARNING:  reset nbHmms=" + hmmsSequences.size()
+			// + " (ori=" + opts.nbHmms + ")");
 			opts.nbHmms = hmmsSequences.size();
 		}
 
@@ -770,30 +770,27 @@ public class Run implements Runnable {
 	 * @throws IOException
 	 */
 	public void predict(Bijection trainSkills, Bijection testSkills,
-			ArrayList<Hmm> hmms, ArrayList<ArrayList<String>> hmmsSequences)
+			ArrayList<Hmm> trainHmms, ArrayList<ArrayList<String>> hmmsSequences)
 			throws IOException {
 
-		if (hmmsSequences.size() != hmms.size()) {
+		if (hmmsSequences.size() > trainHmms.size()
+				|| testSkills.getSize() > trainSkills.getSize()) {
 			// logger.error("hmmsSequences and hmms length mismatch!");
-			System.out.println("The #hmms(#KCs) in training and testing mismatch!");
+			System.out
+					.println("The # of hmms(KCs) in testset is bigger than that in trainset! Please remove new KCs on testset!");
 			System.exit(1);
 		}
-		if (trainSkills.getSize() != testSkills.getSize()) {
-			// logger.error("trainSkills and testSkills #skills mismatch!");
-			System.out.println("trainSkills and testSkills #skills mismatch!");
-			System.exit(1);
-		}
-		else {
-			for (int i = 0; i < trainSkills.getSize(); i++) {
-				if (!trainSkills.get(i).equals(testSkills.get(i))) {
-					// logger.warn("trainSkills and testSkills order mismatch!");
-					System.out
-							.println("WARNING: trainSkills and testSkills order mismatch!");
-					break;
-					// System.exit(1);
-				}
-			}
-		}
+		// else {
+		// for (int i = 0; i < trainSkills.getSize(); i++) {
+		// if (!trainSkills.get(i).equals(testSkills.get(i))) {
+		// // logger.warn("trainSkills and testSkills order mismatch!");
+		// System.out
+		// .println("WARNING: trainSkills and testSkills order mismatch!");
+		// break;
+		// // System.exit(1);
+		// }
+		// }
+		// }
 
 		// all skills
 		ArrayList<Double> allProbs = new ArrayList<Double>();
@@ -812,44 +809,46 @@ public class Run implements Runnable {
 			ArrayList<Integer> trainTestIndicators = new ArrayList<Integer>();
 			ArrayList<double[]> features = new ArrayList<double[]>();
 
-			opts.currentKc = testSkills.get(i);
+			String currentTestSkill = testSkills.get(i);
+			opts.currentKc = currentTestSkill;
 			opts.currentKCIndex = i;
 			String str = "\n******* Testing:  hmmID=" + i + ", skill="
-					+ testSkills.get(i) + " ********";
+					+ currentTestSkill + " ********";
 			System.out.println(str);// including header
 			if (opts.writeMainLog)
 				opts.mainLogWriter.write(str + "\n");
 
-			if (opts.skillsToCheck.contains(testSkills.get(i))) {
+			if (opts.skillsToCheck.contains(currentTestSkill)) {
 				if (opts.writeMainLog) {
-					opts.mainLogWriter.write("\nKC=" + testSkills.get(i)
+					opts.mainLogWriter.write("\nKC=" + currentTestSkill
 							+ "\t#attempts(records)=" + (hmmsSequences.get(i).size() - 1));
 					opts.mainLogWriter.flush();
 				}
 			}
-			int trainSkillID = trainSkills.get(testSkills.get(i));
-			if (!trainSkills.get(trainSkillID).equals(testSkills.get(i))) {
+
+			if (!trainSkills.contains(currentTestSkill)) {
+				System.out.println("ERROR: testset contains new KC ("
+						+ currentTestSkill
+						+ ") that never appears in trainset! Please remove it!");
+				System.exit(1);
+			}
+
+			int trainSkillID = trainSkills.get(currentTestSkill);
+			if (!trainSkills.get(trainSkillID).equals(currentTestSkill)) {
 				// logger.error("trainSkill and testSkill can not be matched!"
 				// + "(trainSkill=" + trainSkills.get(trainSkillID) + ",testSkill="
 				// + testSkills.get(i) + ")");
 				System.out
-						.println("ERROR: trainSkill and testSkill can not be matched!"
-								+ "(trainSkill=" + trainSkills.get(trainSkillID)
-								+ ",testSkill=" + testSkills.get(i) + ")");
+						.println("ERROR: trainSkill and testSkill names can not be matched!"
+								+ "(trainSkill="
+								+ trainSkills.get(trainSkillID)
+								+ ",testSkill=" + currentTestSkill + ")");
 				System.exit(1);
 			}
 
-			Hmm hmm = hmms.get(trainSkillID);
-			String KCName = testSkills.get(i);
-			if (opts.skillsToCheck.contains(testSkills.get(i))) {
-				if (opts.writeMainLog) {
-					opts.mainLogWriter.write("\nKC=" + testSkills.get(i) + "\tFINAL\t"
-							+ hmm + "\n");
-					opts.mainLogWriter.flush();
-				}
-			}
-			predictOneHmm(hmm, testSkills.get(i), hmmsSequences.get(i), probs,
-					labels, actualLabels, trainTestIndicators, features);
+			Hmm hmm = trainHmms.get(trainSkillID);
+			predictOneHmm(hmm, currentTestSkill, hmmsSequences.get(i), probs, labels,
+					actualLabels, trainTestIndicators, features);
 			allProbs.addAll(probs);
 			allLabels.addAll(labels);
 			allActualLabels.addAll(actualLabels);

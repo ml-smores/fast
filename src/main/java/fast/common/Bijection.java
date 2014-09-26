@@ -84,11 +84,11 @@ public class Bijection implements Serializable {
 	public Integer put(String key) {
 		Integer value = keys.get(key);
 		if (value == null) {
-			value = size++; // hy: [TODO] starts from 0
-			keys.put(key, value);// hy: yun,0
-			values.add(value, key);// hy: 0,yun
+			value = size++;
+			keys.put(key, value);
+			values.add(value, key);
 		}
-		return value;// hy: 0
+		return value;
 	}
 
 	static final Integer max(Collection<Integer> coll) {
