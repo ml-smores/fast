@@ -5,7 +5,7 @@
   <!-- Properties of this program -->
   <groupId>fast</groupId>
   <artifactId>fast</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
   <name>Feature Aware Student knowledge Tracing</name>
   <url>http://maven.apache.org</url>
