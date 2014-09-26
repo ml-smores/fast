@@ -25,7 +25,7 @@ Quick Start
 1. Download the latest release [here] (https://github.com/ml-smores/fast/releases).
 2. Decompress the file.  It includes sample data for getting you started quickly.
 3. Open a terminal and type:  
-``` java -jar fast-1.0.0-final.jar ++examples/fast-example1.conf  ````
+``` java -jar fast-1.0.1-final.jar ++examples/fast-example1.conf  ````
 
 Congratulations! You just trained a student model using state of the art technology.
 
