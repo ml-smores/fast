@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import fast.hmmfeatures.Opts;
 
 public class EvaluationGeneral {
 
@@ -285,7 +284,7 @@ public class EvaluationGeneral {
 
 	// require having standardPredFile (actualLabel,....)
 
-	public static double evaluateOnMultiFiles(String modelName_, int numRuns_,
+	public double evaluateOnMultiFiles(String modelName_, int numRuns_,
 			int numFolds_, String outDirForComparingModels, String inOutDir,
 			String outFile, String standardFileSuffix, String standardFilePrefix) {
 		// outFileNameAllModel= "all-models-evaluation-metrics" + outFileSuffix
@@ -639,6 +638,7 @@ public class EvaluationGeneral {
 			itemMetricsMap.put(field, new ItemMetrics());
 			recordFieldList.add(field);
 		}
+		reader.close();
 		printAndLog("readAFieldIntoArrayList():\t" + "#records="
 				+ recordFieldList.size() + ", file=" + inFile + "\n");
 	}
@@ -667,6 +667,7 @@ public class EvaluationGeneral {
 			count++;
 			fieldMap.put(field, count);
 		}
+		reader.close();
 		printAndLog("fieldMap():\t" + "#fields=" + fieldMap.size() + ", file="
 				+ inFile + "\n");
 	}
@@ -771,6 +772,7 @@ public class EvaluationGeneral {
 			String[] splitResult = line.split(lineSplitter);
 			twoFieldsMap.put(splitResult[0], Integer.parseInt(splitResult[1]));
 		}
+		reader.close();
 		printAndLog("fieldMap():\t" + "#fields=" + twoFieldsMap.size() + ", file="
 				+ inFile + "\n");
 	}
@@ -1015,7 +1017,7 @@ public class EvaluationGeneral {
 			if (outputPerItemPerformance) {
 				for (Map.Entry<String, ItemMetrics> iter : itemMetricsMap.entrySet()) {
 					ItemMetrics curItemMetrics = iter.getValue();
-					String curItem = iter.getKey();
+					// String curItem = iter.getKey();
 					Double auc = getAUC(curItemMetrics.actualLabels,
 							curItemMetrics.predictProbs);
 					curItemMetrics.majAUC[foldRunID] = auc;
@@ -1110,7 +1112,7 @@ public class EvaluationGeneral {
 			squaredError = 0.0;
 		}
 		double avgMajAuc = 0.0;
-		double avgMinAuc = 0.0;
+		// double avgMinAuc = 0.0;
 		double avgAcc = 0.0;
 		double avgRmse = 0.0;
 		double avgMajFmeasure = 0.0;
@@ -1127,7 +1129,7 @@ public class EvaluationGeneral {
 
 		for (int k = 0; k < numFoldsRuns; k++) {
 			avgMajAuc += majAUC[k] / numFoldsRuns;
-			avgMinAuc += minAUC[k] / numFoldsRuns;
+			// avgMinAuc += minAUC[k] / numFoldsRuns;
 			avgAcc += accuracy[k] / numFoldsRuns;
 			avgRmse += rmse[k] / numFoldsRuns;
 			avgMajFmeasure += majFmeasure[k] / numFoldsRuns;
@@ -1270,7 +1272,7 @@ public class EvaluationGeneral {
 				if (realID + 1 > fileNames.size()) {
 					System.out.println("ERROR: Please ensure there are only "
 							+ fileNames.size() + " files with suffix=" + suffix
-							+ " and prefix=" + standardFilePrefix + " in " + Opts.outDir
+							+ " and prefix=" + standardFilePrefix + " in " + specifiedDir
 							+ "!");
 					System.exit(-1);
 				}
@@ -1367,7 +1369,6 @@ public class EvaluationGeneral {
 		return actualLabelsAllFiles;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void printAndLog(String str) throws IOException {
 		System.out.print(str);
 		loggerDate = new Date();

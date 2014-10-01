@@ -103,7 +103,7 @@ public class BaumWelchScaledLearner extends BaumWelchLearner {
 		for (int t = 0; t < sequence.size(); t++)
 			Arrays.fill(gamma[t], 0.);
 
-		double probability = fbc.probability();
+		// double probability = fbc.probability();
 
 		for (int t = 0; t < sequence.size(); t++) {
 			for (int i = 0; i < hmm.nbStates(); i++) {

@@ -20,33 +20,33 @@ import fast.data.StudentList;
 
 public class Predict {
 
-	public static Opts opts;
-	public static boolean verbose = false;
-	public static boolean parameterizedEmit = false;
-	public static double cutoff = 0.5; // >=cutoff -> class1
-	// public static ArrayList<Double> probs = new ArrayList<Double>();
-	// public static ArrayList<Integer> labels = new ArrayList<Integer>();
-	// public static ArrayList<Integer> actualLabels = new ArrayList<Integer>();
-	public static int obsClass1 = 1;
-	public static int obsClass0 = 0;
-	public static String obsClass1Name = "correct";
-	public static String obsClass0Name = "incorrect";
+	public Opts opts;
+	public boolean verbose = false;
+	public boolean parameterizedEmit = false;
+	public double cutoff = 0.5; // >=cutoff -> class1
+	// public ArrayList<Double> probs = new ArrayList<Double>();
+	// public ArrayList<Integer> labels = new ArrayList<Integer>();
+	// public ArrayList<Integer> actualLabels = new ArrayList<Integer>();
+	public int obsClass1 = 1;
+	public int obsClass0 = 0;
+	public String obsClass1Name = "correct";
+	public String obsClass0Name = "incorrect";
 	// TODO: need to infer K/NK, C/IC so that it can be made generic?
 	// TODO: currently only two states cases
-	public static int hiddenState1 = 1;// assuming it's "K"
-	public static int hiddenState0 = 0;
-	// public static double bias = -1.0;
-	public static String predictionFile = "";
-	public static HashSet<String> skillsToCheck = new HashSet<String>();
-	public static ArrayList<double[]> features = null;
-	public static ArrayList<ArrayList<Double>> studentListProbs = new ArrayList<ArrayList<Double>>();
-	public static ArrayList<ArrayList<Integer>> studentListLabels = new ArrayList<ArrayList<Integer>>();
-	public static ArrayList<ArrayList<Integer>> studentListActualLabels = new ArrayList<ArrayList<Integer>>();
-	public static ArrayList<Integer> studentIndexList = new ArrayList<Integer>();
-	public static BufferedWriter predWriter = null;
-	public static BufferedWriter trainPredWriter = null;
+	public int hiddenState1 = 1;// assuming it's "K"
+	public int hiddenState0 = 0;
+	// public double bias = -1.0;
+	public String predictionFile = "";
+	public HashSet<String> skillsToCheck = new HashSet<String>();
+	public ArrayList<double[]> features = null;
+	public ArrayList<ArrayList<Double>> studentListProbs = new ArrayList<ArrayList<Double>>();
+	public ArrayList<ArrayList<Integer>> studentListLabels = new ArrayList<ArrayList<Integer>>();
+	public ArrayList<ArrayList<Integer>> studentListActualLabels = new ArrayList<ArrayList<Integer>>();
+	public ArrayList<Integer> studentIndexList = new ArrayList<Integer>();
+	public BufferedWriter predWriter = null;
+	public BufferedWriter trainPredWriter = null;
 
-	public static void main(String[] args) {
+	public void main(String[] args) {
 	}
 
 	public Predict(Opts opts) {
@@ -79,7 +79,7 @@ public class Predict {
 			ArrayList<ArrayList<Integer>> studentListLabels,
 			ArrayList<ArrayList<Integer>> studentListActualLabels,
 			ArrayList<Integer> studentIndexList, String KCName) {
-		this.features = features;
+		// this.features = features;
 		this.studentListProbs = studentListProbs;
 		this.studentListLabels = studentListLabels;
 		this.studentListActualLabels = studentListActualLabels;
@@ -320,7 +320,7 @@ public class Predict {
 			System.out.println("\n");
 		return lineID;
 	}
-	// public static void print(Hmm hmm) {
+	// public void print(Hmm hmm) {
 	// double priorProbState1 = hmm.getPi(hiddenState1); // assuming it's P(K)
 	// double probState0State1 = hmm.getAij(hiddenState0, hiddenState1);//
 	// assuming

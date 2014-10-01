@@ -38,26 +38,27 @@ public class Run implements Runnable {
 
 	// public static Logger logger = Logger.getLogger("");
 	// public static BufferedWriter opts.mainLogWriter = null;
-	static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");;
+	public DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");;
 	// static String trainingStartDate = "";
 	// static String trainingEndDate = "";
-	static int hmmId = 0;
-	public static Opts opts;
+	public int hmmId = 0;
+	public Opts opts;
 	// order by Bijection
-	public static ArrayList<Hmm> hmms = new ArrayList<Hmm>();
-	public static HashMap<String, Bijection> skillToTrainFeatures = new HashMap<String, Bijection>();
+	public ArrayList<Hmm> hmms = new ArrayList<Hmm>();
+	public HashMap<String, Bijection> skillToTrainFeatures = new HashMap<String, Bijection>();
 
 	public Run() {
 		opts = new Opts();
 	}
 
-	public static void closeRun() {
+	public void closeRun() {
 		opts.closeAndClear();
 		hmms.clear();
 	}
 
 	public static void main(String[] args) throws IOException {
 		Run runner = new Run();
+		Opts opts = new Opts();
 		if (args != null && args.length > 0) {
 			if (args.length == 1)
 				Execution.run(args, runner, runner.opts);
@@ -216,7 +217,6 @@ public class Run implements Runnable {
 		String line = "";
 		System.out.println("Loading train file: " + opts.trainFile + "\n"
 				+ "Loading test file: " + opts.testFile);
-		int lineNumber = 0;
 		String header = trainReader.readLine().trim();
 		String testHeader = testReader.readLine().trim();
 		if (!header.equals(testHeader)) {
@@ -288,7 +288,6 @@ public class Run implements Runnable {
 						aHmmSequences, null, null);
 				hmms.add(trainHmm);
 
-				int nbTest = 0;
 				while ((testLine = testReader.readLine()) != null) {
 					String newLineOnTest = testLine.trim();
 					if (newLineOnTest.length() == 0)
@@ -309,7 +308,6 @@ public class Run implements Runnable {
 						System.exit(1);
 
 					}
-					nbTest++;
 					if (preSkillOnTest.equals("")
 							|| preSkillOnTest.equals(curSkillOnTest)) {
 						if (preSkillOnTest.equals(""))
@@ -480,6 +478,7 @@ public class Run implements Runnable {
 		opts.currentKCIndex = hmmId;
 		// the first one is the header
 		opts.nbDataPointsInTrainPerHmm = aHmmSequences.size() - 1;
+		FeatureHMM featureHMM = new FeatureHMM(opts);
 
 		String str = "\n\n******** Training: hmmID=" + hmmId + ", skill="
 				+ currentKc_ + ", foldID=" + foldId + ", runID=" + runId
@@ -489,11 +488,11 @@ public class Run implements Runnable {
 
 		StudentList aHmmSeqs = StudentList.loadData(aHmmSequences, opts);
 		skillToTrainFeatures.put(opts.currentKc, aHmmSeqs.getFeatures());
-		Bijection finalStudents = aHmmSeqs.getFinalStudents();
+		// Bijection finalStudents = aHmmSeqs.getFinalStudents();
 
 		if (opts.verbose || opts.writeDatapointsLog || opts.writeExpectedCountLog
 				|| opts.writeGammaLog)
-			FeatureHMM.print(aHmmSeqs);
+			featureHMM.print(aHmmSeqs);
 		str = "#attempts(records)="
 				+ (opts.nbDataPointsInTrainPerHmm)
 				+ "\n#students(seqs)="
@@ -527,7 +526,6 @@ public class Run implements Runnable {
 		}
 
 		// Per skill will have one HMM
-		FeatureHMM featureHMM = new FeatureHMM(opts);
 		Hmm hmm = null;
 		if (!opts.useDev)
 			hmm = featureHMM.doTrain(aHmmSeqs, opts.currentKc);
@@ -536,13 +534,12 @@ public class Run implements Runnable {
 		return hmm;
 	}
 
-	public static String getConfigurationStr(String startDate, int foldID,
-			int runID) {
+	public String getConfigurationStr(String startDate, int foldID, int runID) {
 		return getConfigurationStr(startDate, foldID, runID, 1);
 	}
 
-	public static String getConfigurationStr(String startDate, int foldID,
-			int runID, int hmmsSequencesSize) {
+	public String getConfigurationStr(String startDate, int foldID, int runID,
+			int hmmsSequencesSize) {
 		String l2Range = "";
 		if (opts.tuneL2 && opts.LBFGS)
 			for (int i = 0; i < opts.LBFGS_REGULARIZATION_WEIGHT_RANGE.length; i++)
@@ -593,8 +590,8 @@ public class Run implements Runnable {
 				// + opts.INSTANCE_WEIGHT_ROUNDING_THRESHOLD
 				+ "\tACCETABLE_LL_DECREASE="
 				+ opts.ACCETABLE_LL_DECREASE
-				+ "\tensureStopForLBFGS="
-				+ opts.ensureStopForLBFGS
+				// + "\tensureStopForLBFGS="
+				// + opts.ensureStopForLBFGS
 
 				+ "\n\tparameterizedEmit="
 				+ opts.parameterizedEmit
@@ -678,7 +675,6 @@ public class Run implements Runnable {
 		String line = null;
 		// logger.debug("Loading data file: " + filename);
 		// System.out.println("Loading data file: " + filename);
-		int lineNumber = 0;
 
 		String header = br.readLine();
 		String[] headerColumns = header.split("\\s*[,\t]\\s*");// ("\\s*,\\t*\\s*");
@@ -798,8 +794,6 @@ public class Run implements Runnable {
 		ArrayList<Integer> allActualLabels = new ArrayList<Integer>();
 		ArrayList<Integer> allTrainTestIndicator = new ArrayList<Integer>();
 
-		int totalNbTest = 0;
-		int lineID = 2;
 		opts.aucOnTestAllKcsSum = 0.0;
 
 		for (int i = 0; i < hmmsSequences.size(); i++) {
@@ -857,9 +851,8 @@ public class Run implements Runnable {
 
 		// evaluation (one fold all skills)
 		Evaluation evaluation = new Evaluation(opts);
-		int realTotalTest = evaluation.doEvaluationAndWritePred(allProbs,
-				allLabels, allActualLabels, allTrainTestIndicator);
-		totalNbTest += realTotalTest;
+		evaluation.doEvaluationAndWritePred(allProbs, allLabels, allActualLabels,
+				allTrainTestIndicator);
 		// String str = "\t#test instances:" + totalNbTest;
 		// System.out.println(str);
 		// if (opts.writeMainLog)
@@ -876,8 +869,8 @@ public class Run implements Runnable {
 		if (!opts.inputProvideFeatureColumns) {
 			// TODO: figure out why I need this assignment? Seems to configure
 			// trainFeatures as final features for test
-			StudentList.trainFeatures = skillToTrainFeatures.get(kcName);
-			hmmSequences = StudentList.loadData(aHmmSequence, opts);
+			hmmSequences = StudentList.loadData(aHmmSequence,
+					skillToTrainFeatures.get(kcName), opts);
 		}
 		else {
 			// System.out.println("#skillsInTrain:" + skillToTrainFeatures.size());
@@ -1034,10 +1027,9 @@ public class Run implements Runnable {
 	public void generateTestLROutSideFile(Bijection featureMapping,
 			ArrayList<Integer> actualLabels, ArrayList<double[]> features,
 			ArrayList<Integer> trainTestIndicators) throws Exception {
-		String wgtStr = "";
-		String generalLRFeatureStr = "";
-		String generalLRLabelStr = "";
-		String liblinearDataStr = "";
+		// String generalLRFeatureStr = "";
+		// String generalLRLabelStr = "";
+		// String liblinearDataStr = "";
 		String wekaDataStr = "";
 		ArrayList<String> wekaDataStrs = new ArrayList<String>();
 		ArrayList<Integer> nonTrainInstanceActualLabels = new ArrayList<Integer>();
@@ -1075,10 +1067,9 @@ public class Run implements Runnable {
 				opts.testByWekaInputDataWriter.write(wekaDataStr + "\n");
 				opts.testByWekaInputDataWriter.flush();
 			}
-			wgtStr = "";
-			generalLRFeatureStr = "";
-			generalLRLabelStr = "";
-			liblinearDataStr = "";
+			// generalLRFeatureStr = "";
+			// generalLRLabelStr = "";
+			// liblinearDataStr = "";
 			wekaDataStr = "";
 		}
 		// swap targets to make 1 ("correct") appears first, so that Cp(which

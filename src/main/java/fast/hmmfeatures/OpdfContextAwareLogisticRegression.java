@@ -38,7 +38,7 @@ public class OpdfContextAwareLogisticRegression implements
 
 	public Opts opts;
 	// for outputing smallLL
-	private boolean verbose = true;
+	// private boolean verbose = true;
 	// protected OpdfInteger distribution;
 	// private boolean parameterizedEmit;
 	// this is for the origianl emission probs.
@@ -227,9 +227,12 @@ public class OpdfContextAwareLogisticRegression implements
 					.println("ERROR: opts.parameterizedEmit && featureWeights==null!");
 			System.exit(1);
 		}
-		if (!opts.parameterizedEmit && featureWeights != null) {
+		if (!opts.parameterizedEmit
+				&& featureWeights != null
+				&& !opts.hmmsForcedToNonParmTrainDueToLBFGSException
+						.contains(opts.currentKc)) {
 			System.out
-					.println("ERROR: !opts.parameterizedEmit && featureWeights != null");
+					.println("ERROR: !opts.parameterizedEmit && featureWeights != null && currents skill is not forced to use non-parametric way to train!");
 			System.exit(1);
 		}
 		if (opts.useClassWeightToTrainParamerizedEmit
@@ -251,7 +254,6 @@ public class OpdfContextAwareLogisticRegression implements
 		try {
 			if (!opts.parameterizedEmit) {
 				fitNonParameterizedEmit(observations, gamma);
-				// if ()
 			}
 			else {
 				if (opts.useClassWeightToTrainParamerizedEmit) {
@@ -274,7 +276,9 @@ public class OpdfContextAwareLogisticRegression implements
 	// hiddenState
 	public void fit(Collection<? extends DataPoint> observations,
 			double[][] gammas) {
-		if (!opts.parameterizedEmit) {
+		if (!opts.parameterizedEmit
+				&& !opts.hmmsForcedToNonParmTrainDueToLBFGSException
+						.contains(opts.currentKc)) {
 			System.out.println("ERROR: !opts.parameterizedEmit && fitting one LR!");
 			System.exit(1);
 		}
@@ -299,9 +303,12 @@ public class OpdfContextAwareLogisticRegression implements
 					.println("ERROR: opts.parameterizedEmit && featureWeights==null!");
 			System.exit(1);
 		}
-		if (!opts.parameterizedEmit && featureWeights != null) {
+		if (!opts.parameterizedEmit
+				&& featureWeights != null
+				&& !opts.hmmsForcedToNonParmTrainDueToLBFGSException
+						.contains(opts.currentKc)) {
 			System.out
-					.println("ERROR: !opts.parameterizedEmit && featureWeights != null");
+					.println("ERROR: !opts.parameterizedEmit && featureWeights != null && currents skill is not forced to use non-parametric way to train!");
 			System.exit(1);
 		}
 		if (opts.useClassWeightToTrainParamerizedEmit
@@ -423,10 +430,10 @@ public class OpdfContextAwareLogisticRegression implements
 		double[] finalInstanceWeights = new double[newObsLength];
 		int[] finalOutcomes = new int[newObsLength];
 		double[][] finalFeatureValues = new double[newObsLength][];
-		double[] currentDPFeatureValues = null;
+		// double[] currentDPFeatureValues = null;
 		int nbRoundTo0 = 0;
 
-		int i = 0;
+		// int i = 0;
 		Iterator<? extends DataPoint> iter = observations.iterator();
 		for (int index = 0; index < newObsLength; index++) {
 			if (!iter.hasNext())
@@ -802,7 +809,6 @@ public class OpdfContextAwareLogisticRegression implements
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public OpdfContextAwareLogisticRegression clone() {
 		try {
 			OpdfContextAwareLogisticRegression opdfDiscrete = (OpdfContextAwareLogisticRegression) super

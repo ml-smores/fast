@@ -16,24 +16,26 @@ import fast.hmmfeatures.Opts;
 
 public class CVStudent extends Vector<DataPoint> {
 	private static final long serialVersionUID = -7017179401151027439L;
+	public Opts opts;
 	final int fold;
 
 	public int getFold() {
 		return fold;
 	}
 
-	public CVStudent(int fold) {
+	public CVStudent(int fold, Opts opts) {
 		super();
 		this.fold = fold;
+		this.opts = opts;
 	}
 
 	@Override
 	public boolean add(DataPoint s) {
 		if (s.getFold() != fold) {
-			if (!Opts.preDpCurDpFromDifferentSet)
+			if (!this.opts.preDpCurDpFromDifferentSet)
 				System.out
 						.println("Warn: Previous datapoint and current Datapoint are from different sets!");
-			Opts.preDpCurDpFromDifferentSet = true;
+			this.opts.preDpCurDpFromDifferentSet = true;
 		}
 		// throw new
 		// IllegalArgumentException("Multiple occurrences of a student should be in the same fold");

@@ -26,18 +26,18 @@ import fast.evaluation.EvaluationGeneral;
 
 public class FeatureHMM {
 
-	public static Opts opts;
-	public static String KCName = "";
+	public Opts opts;
+	public String skillName = "";
 
 	public static void main(String[] args) throws IOException {
 		// [TODO] create another class for dealing with student modeling(multiple
 		// HMMs), featureHMM
 		// is for running one HMM
-		opts = new Opts();
+		Opts opts = new Opts();
 		FeatureHMM featureHMM = new FeatureHMM(opts);
-		print(opts);
+		featureHMM.print(opts);
 		StudentList sequences = StudentList.loadData(opts.trainFile, opts);
-		print(sequences);
+		featureHMM.print(sequences);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(opts.mainLogFile));
 		Hmm hmm = featureHMM.doTrain(sequences, "/");
 		// prediction
@@ -51,7 +51,7 @@ public class FeatureHMM {
 		int lineID = 0;
 		Predict predict = new Predict(opts);
 		lineID = predict.doPredict(hmm, testSequences, probs, labels, actualLabels,
-				trainTestIndicator, lineID, KCName);
+				trainTestIndicator, lineID, featureHMM.skillName);
 		Evaluation evaluation = new Evaluation(opts);
 		evaluation.doEvaluationAndWritePred(probs, labels, actualLabels,
 				trainTestIndicator);
@@ -63,18 +63,18 @@ public class FeatureHMM {
 		// System.out.println("bias=" + opts.bias);
 	}
 
-	public static void print(Opts opts) {
+	public void print(Opts opts) {
 		System.out.println("trainfile:" + opts.trainFile);
 		System.out.println("testfile:" + opts.testFile);
 	}
 
-	public static void print(StudentList aHmmSeqs) throws IOException {
+	public void print(StudentList aHmmSeqs) throws IOException {
 		String studentsStr = "";
 		String outcomeStr = "";
 		Bijection oriStudents = aHmmSeqs.getOriStudents();
-		Bijection finalStudents = aHmmSeqs.getFinalStudents();
+		// Bijection finalStudents = aHmmSeqs.getFinalStudents();
 		Bijection problems = aHmmSeqs.getProblems();
-		String learningCurveStr = "";
+		// String learningCurveStr = "";
 		String datapointStr2 = "";
 
 		if (opts.writeForLearningCurve)
@@ -162,8 +162,9 @@ public class FeatureHMM {
 	}
 
 	// hy:
-	public Hmm doTrain(StudentList sequences, String KCName) throws IOException {
-		this.KCName = KCName;
+	public Hmm doTrain(StudentList sequences, String skillName)
+			throws IOException {
+		this.skillName = skillName;
 		// TODO: why here?
 		opts.writeForTheBestAucOnDev = true;// to control write logs
 		// 1.read data including features
@@ -187,12 +188,12 @@ public class FeatureHMM {
 		if (sequences.size() == 0)
 			return hmm;
 		if (opts.baumWelchScaledLearner) {
-			BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(KCName, opts);
+			BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(skillName, opts);
 			bwsl.setNbIterations(opts.EM_MAX_ITERS);
 			hmm_ = bwsl.learn(hmm, sequences);
 		}
 		else {
-			BaumWelchLearner bwsl = new BaumWelchLearner(KCName, opts);
+			BaumWelchLearner bwsl = new BaumWelchLearner(skillName, opts);
 			bwsl.setNbIterations(opts.EM_MAX_ITERS);
 			hmm_ = bwsl.learn(hmm, sequences);
 		}
@@ -201,7 +202,7 @@ public class FeatureHMM {
 	}
 
 	public Hmm doTrain(StudentList trainSequences, StudentList devSequences,
-			String KCName) throws IOException {
+			String skillName) throws IOException {
 		// if (!(opts.tuneL2 || opts.randomRestartPerHmmTimes > 1)
 		// && !(opts.combineTrainAndDev || opts.getAucOnDevPerKc)) {
 		if (!opts.useDev) {
@@ -209,7 +210,7 @@ public class FeatureHMM {
 					.println("ERROR:!opts.useDev but now we are tuning or combining train and dev set or getting auc on dev set per kc!");
 			System.exit(1);
 		}
-		this.KCName = KCName;
+		this.skillName = skillName;
 		// 1.read data including features
 		Bijection finalFeatures = trainSequences.getFeatures();// finalFeatures,
 																														// either
@@ -236,12 +237,13 @@ public class FeatureHMM {
 				if (trainSequences.size() == 0)
 					return hmm;
 				if (opts.baumWelchScaledLearner) {
-					BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(KCName, opts);
+					BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(skillName,
+							opts);
 					bwsl.setNbIterations(opts.EM_MAX_ITERS);
 					hmm_ = bwsl.learn(hmm, trainSequences);
 				}
 				else {
-					BaumWelchLearner bwsl = new BaumWelchLearner(KCName, opts);
+					BaumWelchLearner bwsl = new BaumWelchLearner(skillName, opts);
 					bwsl.setNbIterations(opts.EM_MAX_ITERS);
 					hmm_ = bwsl.learn(hmm, trainSequences);
 				}
@@ -264,7 +266,7 @@ public class FeatureHMM {
 				}
 
 				pred.doPredictAndWritePredFile(hmm_, devSequences, probs, labels,
-						actualLabels, trainTestIndicators, 2, KCName, predWriter, null);
+						actualLabels, trainTestIndicators, 2, skillName, predWriter, null);
 				predWriter.close();
 				EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
 				opts.allModelComparisonOutDir = opts.outDir;
@@ -294,12 +296,13 @@ public class FeatureHMM {
 				if (trainSequences.size() == 0)
 					return hmm;
 				if (opts.baumWelchScaledLearner) {
-					BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(KCName, opts);
+					BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(skillName,
+							opts);
 					bwsl.setNbIterations(opts.EM_MAX_ITERS);
 					hmm_ = bwsl.learn(hmm, trainSequences);
 				}
 				else {
-					BaumWelchLearner bwsl = new BaumWelchLearner(KCName, opts);
+					BaumWelchLearner bwsl = new BaumWelchLearner(skillName, opts);
 					bwsl.setNbIterations(opts.EM_MAX_ITERS);
 					hmm_ = bwsl.learn(hmm, trainSequences);
 				}
@@ -336,12 +339,13 @@ public class FeatureHMM {
 				if (trainSequences.size() == 0)
 					return hmm;
 				if (opts.baumWelchScaledLearner) {
-					BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(KCName, opts);
+					BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(skillName,
+							opts);
 					bwsl.setNbIterations(opts.EM_MAX_ITERS);
 					hmm_ = bwsl.learn(hmm, trainSequences);
 				}
 				else {
-					BaumWelchLearner bwsl = new BaumWelchLearner(KCName, opts);
+					BaumWelchLearner bwsl = new BaumWelchLearner(skillName, opts);
 					bwsl.setNbIterations(opts.EM_MAX_ITERS);
 					hmm_ = bwsl.learn(hmm, trainSequences);
 				}
@@ -355,7 +359,7 @@ public class FeatureHMM {
 						opts.predictionFile));
 				predWriter.write("actualLabel,predLabel, predProb\n");
 				pred.doPredictAndWritePredFile(hmm_, devSequences, probs, labels,
-						actualLabels, trainTestIndicators, 2, KCName, predWriter, null);
+						actualLabels, trainTestIndicators, 2, skillName, predWriter, null);
 				predWriter.close();
 				EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
 				opts.allModelComparisonOutDir = opts.outDir;
@@ -421,12 +425,13 @@ public class FeatureHMM {
 			if (trainSequences.size() == 0)
 				return hmm;
 			if (opts.baumWelchScaledLearner) {
-				BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(KCName, opts);
+				BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(skillName,
+						opts);
 				bwsl.setNbIterations(opts.EM_MAX_ITERS);
 				bestHmm = bwsl.learn(hmm, trainSequences);
 			}
 			else {
-				BaumWelchLearner bwsl = new BaumWelchLearner(KCName, opts);
+				BaumWelchLearner bwsl = new BaumWelchLearner(skillName, opts);
 				bwsl.setNbIterations(opts.EM_MAX_ITERS);
 				bestHmm = bwsl.learn(hmm, trainSequences);
 			}
@@ -452,12 +457,13 @@ public class FeatureHMM {
 			if (trainSequences.size() == 0)
 				return hmm;
 			if (opts.baumWelchScaledLearner) {
-				BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(KCName, opts);
+				BaumWelchScaledLearner bwsl = new BaumWelchScaledLearner(skillName,
+						opts);
 				bwsl.setNbIterations(opts.EM_MAX_ITERS);
 				bestHmm = bwsl.learn(hmm, trainSequences);
 			}
 			else {
-				BaumWelchLearner bwsl = new BaumWelchLearner(KCName, opts);
+				BaumWelchLearner bwsl = new BaumWelchLearner(skillName, opts);
 				bwsl.setNbIterations(opts.EM_MAX_ITERS);
 				bestHmm = bwsl.learn(hmm, trainSequences);
 			}
@@ -540,7 +546,7 @@ public class FeatureHMM {
 
 	// hy: Delete original code's static, because i think one featureHMM object
 	// still can have multiple HMM instances due to different randomization
-	private Hmm getRandomFeatureHMM(RandomSampler rs, double dirichlet,
+	public Hmm getRandomFeatureHMM(RandomSampler rs, double dirichlet,
 			Bijection outcomes, final int states, Bijection finalFeatures)
 			throws IOException {// , double[][]
 		// System.out.println("getRandomFeatureHMM...");
@@ -641,7 +647,7 @@ public class FeatureHMM {
 			}
 			else {// two logistic regression
 				int featureDimension = finalFeatures.getSize();
-				double[][] initialEmitFeatureWeights = initialEmitFeatureWeights = new double[opts.nbHiddenStates][featureDimension];
+				double[][] initialEmitFeatureWeights = new double[opts.nbHiddenStates][featureDimension];
 
 				for (int s = 0; s < opts.nbHiddenStates; s++) {
 					if (opts.verbose)
@@ -728,9 +734,9 @@ public class FeatureHMM {
 			String str = "\ninitial randomHMM:\t" + hmm;
 			System.out.println(str);
 		}
-		if (opts.skillsToCheck.contains(KCName)) {
+		if (opts.skillsToCheck.contains(skillName)) {
 			if (opts.writeMainLog) {
-				opts.mainLogWriter.write("KC=" + KCName + "\tINIT\t" + hmm + "\n");
+				opts.mainLogWriter.write("KC=" + skillName + "\tINIT\t" + hmm + "\n");
 				opts.mainLogWriter.flush();
 			}
 		}

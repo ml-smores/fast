@@ -50,7 +50,7 @@ public class BaumWelchLearner {
 	 * Number of iterations performed by the {@link #learn} method.
 	 */
 	private int nbIterations = 0;
-	private static Opts opts;
+	private Opts opts;
 	// private static Logger logger = Logger.getLogger("");
 	private boolean verbose = false;
 	private boolean moreVerbose = false;
@@ -91,7 +91,7 @@ public class BaumWelchLearner {
 
 		boolean retrainUsingNonParam = false;
 		for (int i = 0; i < nbIterations; i++) {
-			if (!retrainUsingNonParam && !opts.modelName.contains("KT")
+			if (!retrainUsingNonParam && opts.modelName.contains("FAST")
 					&& opts.parameterizedEmit == false) {
 				System.out.println("Restart training non-parameterized HMMs");
 				opts.hmmsForcedToNonParmTrainDueToLBFGSException.add(opts.currentKc);
@@ -136,7 +136,6 @@ public class BaumWelchLearner {
 						opts.mainLogWriter.flush();
 					}
 				}
-				// if (opts.writeForTheBestAucOnDev)
 				storeAndWriteInfoPerHmmPerIter(hmm, sequences, ll);
 				break;
 			}
@@ -152,6 +151,7 @@ public class BaumWelchLearner {
 		// if (opts.writeForTheBestAucOnDev)
 		storeAndWriteSummaryPerHmm(hmm, sequences);
 		reconfigure();
+		opts.parameterizedEmit = (opts.modelName.contains("FAST")? true:false);
 		return hmm;
 	}
 
@@ -278,14 +278,15 @@ public class BaumWelchLearner {
 
 		for (int i = 0; i < hmm.nbStates(); i++) {
 			double[] weights = new double[observations.size()];
-			double sum = 0.;
+			//double sum = 0.;
 			int j = 0;
 
 			// o is per sequence
 			for (int o = 0; o < sequences.size(); o++) {
 				List<DataPoint> aObsSeq = sequences.get(o);
 				for (int t = 0; t < aObsSeq.size(); t++, j++)
-					sum += weights[j] = allGamma[o][t][i];
+					//sum += weights[j] = allGamma[o][t][i];
+					weights[j] = allGamma[o][t][i];
 			}
 
 			double[] flatGammaForStateI = Arrays.copyOf(weights, weights.length);
@@ -329,14 +330,14 @@ public class BaumWelchLearner {
 
 	public void reassignRealHiddenState(Hmm hmm,
 			List<? extends List<DataPoint>> sequences) {
-		double p0 = hmm.getPi(0);
-		double a00 = hmm.getAij(0, 0);
+		//double p0 = hmm.getPi(0);
+		//double a00 = hmm.getAij(0, 0);
 		double a01 = hmm.getAij(0, 1);
 		// double Opdf00 =
 		// double Opdf01 =
-		double p1 = hmm.getPi(1);
+		//double p1 = hmm.getPi(1);
 		double a10 = hmm.getAij(1, 0);
-		double a11 = hmm.getAij(1, 1);
+		//double a11 = hmm.getAij(1, 1);
 
 		DataPoint dp = sequences.get(0).get(0);
 		if (opts.useEmissionToJudgeHiddenStates) {
@@ -796,7 +797,8 @@ public class BaumWelchLearner {
 		// TODO: assuming input data is ordered by student already, so that
 		// stuSeqIndex could be the index in the Bijection
 		Bijection finalStudents = null;
-		Bijection oriStudents = null;
+		//TODO: check whether oriStudents is needed or not
+		//Bijection oriStudents = null;
 		double[][] studentFeatures = null;
 		// TODO: consider removing this judging
 		if (opts.hasStudentDummy)
@@ -834,8 +836,11 @@ public class BaumWelchLearner {
 				if (opts.hasStudentDummy) {
 					studentName = featureName.replace("features_", "");
 					studentName = studentName.replace("_hidden1", "");
-					if (!studentName.contains("bias") && !studentName.contains("j"))
-						studentIndex = finalStudents.get(oriStudents.get(studentName) + "");
+					if (!studentName.contains("bias") && !studentName.contains("j")){
+						//TODO: need to check whether I should use oriStudents or not and if so, how to initialize oriStudent?
+						studentIndex = finalStudents.get(studentName + "");
+						//studentIndex = finalStudents.get(oriStudents.get(studentName) + "");
+					}
 				}
 				if (featureName.contains("_hidden1")) {
 					if (opts.hiddenState1 == 1) {// featureCoefficient corresponds to

@@ -25,7 +25,7 @@ import fast.hmmfeatures.Opts;
 
 public class DataPointList extends LinkedList<DataPoint> {
 
-	private static Opts opts;
+	private Opts opts;
 	private static final long serialVersionUID = 4848754572225564741L;
 
 	// private static Logger logger = Logger.getLogger("");
@@ -129,7 +129,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 					&& featureColumnToName.size() > 0) {
 				ArrayList<Double> aFeatures_ = new ArrayList<Double>();
 				nonNullInputFeatures = new Bijection();
-				int nbFeatures = 0;
+				// int nbFeatures = 0;
 				for (Map.Entry<Integer, String> iter : featureColumnToName.entrySet()) {
 					// System.out.println("nbFeatures=" + nbFeatures++);
 					int column = iter.getKey();

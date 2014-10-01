@@ -18,20 +18,15 @@ import java.util.ArrayList;
 
 public class Evaluation {
 
-	public static Opts opts;
-	public static boolean verbose = false;
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
+	public Opts opts;
+	public boolean verbose = false;
 
 	public Evaluation(Opts opts) {
 		this.opts = opts;
 	}
 
 	// one fold all skills
-	public static int doEvaluationAndWritePred(ArrayList<Double> probs,
+	public int doEvaluationAndWritePred(ArrayList<Double> probs,
 			ArrayList<Integer> labels, ArrayList<Integer> actualLabels,
 			ArrayList<Integer> trainTestIndicator) throws IOException {
 		// evaluate and print out

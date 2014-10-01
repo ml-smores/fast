@@ -11,10 +11,9 @@
 
 package fast.hmmfeatures;
 
-//import util.LBFGSMinimizer;
 import edu.berkeley.nlp.math.CachingDifferentiableFunction;
-import edu.berkeley.nlp.math.GradientMinimizer;
 import edu.berkeley.nlp.math.LBFGSMinimizer;
+import edu.berkeley.nlp.util.Logger;
 import edu.berkeley.nlp.util.Pair;
 
 public class LBFGS {
@@ -43,21 +42,34 @@ public class LBFGS {
 		NegativeRegularizedExpectedLogLikelihood negativeLikelihood = new NegativeRegularizedExpectedLogLikelihood();
 
 		// TODO: Jose changed this!!! Please verify
-		GradientMinimizer minimizer;
-		if (opts.ensureStopForLBFGS)
-			minimizer = new LBFGSConstraintMinimizer(opts.EPS, opts.LBFGS_MAX_ITERS);
-		else {
-			minimizer = new LBFGSMinimizer();
-			((LBFGSMinimizer) minimizer).setMaxIterations(opts.LBFGS_MAX_ITERS);
-		}
+		LBFGSMinimizer minimizer = new LBFGSMinimizer();
+		minimizer.setMaxIterations(opts.LBFGS_MAX_ITERS);
+		minimizer.setVerbose(opts.LBFGSverbose);
+
+		// GradientMinimizer minimizer;
+		// if (opts.ensureStopForLBFGS)
+		// minimizer = new LBFGSOptimizer(opts.EPS, opts.LBFGS_MAX_ITERS);
+		// else {
+		// minimizer = new LBFGSMinimizer();
+		// ((LBFGSMinimizer) minimizer).setMaxIterations(opts.LBFGS_MAX_ITERS);
+		// }
+
 		// featureWeights is deep copied into guess -> valueAt, deravativeAt ->
 		// calculate -> setWeights set featuWeights as the new one.
-		// here should start from an inital weights (set before when initializing
+		// here should start from an initial weights (set before when initializing
 		// feaatureHMM)
-		minimizer.minimize(negativeLikelihood, featureWeights,
-				opts.LBFGS_TOLERANCE, opts.LBFGS_PRINT_MINIMIZER);
-		if (opts.ensureStopForLBFGS)
-			opts.parameterizedEmit = ((LBFGSConstraintMinimizer) minimizer).parameterizedEmit;
+		try {
+			minimizer.minimize(negativeLikelihood, featureWeights,
+					opts.LBFGS_TOLERANCE, opts.LBFGS_PRINT_MINIMIZER);
+		}
+		catch (RuntimeException ex) {
+			// if (opts.ensureStopForLBFGS)
+			opts.parameterizedEmit = false; // ((LBFGSOptimizer)
+																			// minimizer).parameterizedEmit;
+			Logger
+					.err("RuntimeException probably caused by [LBFGSMinimizer.implicitMultiply]: Curvature problem.");
+		}
+
 		return featureWeights;
 	}
 

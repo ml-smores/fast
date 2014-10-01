@@ -13,17 +13,16 @@ package fast.data;
 
 import java.text.NumberFormat;
 import be.ac.ulg.montefiore.run.jahmm.Observation;
-import fast.hmmfeatures.Opts;
 
 public class DataPoint extends Observation {
 
 	private final int student, problem, step;
+	private int nbStates;
 	// hy: expandedFeatures[0] will be null without initialization
-	private double[][] expandedFeatures = new double[Opts.nbObsStates][];
+	private double[][] expandedFeatures = null;
 	private double[] features = null;
-
+	private boolean oneLogisticRegression = false;
 	private int fold = -1;
-
 	private Double llAprox = -1., llExact = -1.;
 	private Integer groundTruth, outcome;
 
@@ -32,12 +31,16 @@ public class DataPoint extends Observation {
 		return numberFormat.format(outcome);
 	}
 
+	public void setNbStates(int nbStates) {
+		this.nbStates = nbStates;
+		expandedFeatures = new double[this.nbStates][];
+	}
+
 	public DataPoint(int aOutcome) {
 		this.student = -1;
 		this.problem = -1;
 		this.step = -1;
 		this.fold = -1;
-
 		this.outcome = aOutcome;
 	}
 
@@ -46,9 +49,7 @@ public class DataPoint extends Observation {
 		this.problem = aProb;
 		this.step = aStep;
 		this.fold = aFold;
-
 		this.outcome = aOutcome;
-
 	}
 
 	// hy:
@@ -60,6 +61,7 @@ public class DataPoint extends Observation {
 		this.fold = aFold;
 		this.expandedFeatures = aFeatures;
 		this.outcome = aOutcome;
+		this.oneLogisticRegression = true;
 	}
 
 	public DataPoint(int aStudent, int aProb, int aStep, int aFold, int aOutcome,
@@ -70,6 +72,7 @@ public class DataPoint extends Observation {
 		this.fold = aFold;
 		this.features = aFeatures;
 		this.outcome = aOutcome;
+		this.oneLogisticRegression = false;
 	}
 
 	public DataPoint(int studentId, int problemId, int stepId, int groundTruth,
@@ -125,7 +128,7 @@ public class DataPoint extends Observation {
 
 	// hy:
 	public double[] getFeatures(int hiddenStateIndex) {
-		if (Opts.oneLogisticRegression)
+		if (this.oneLogisticRegression)
 			return expandedFeatures[hiddenStateIndex];// will return null if 2nd
 																								// dimension is not initialized
 		else

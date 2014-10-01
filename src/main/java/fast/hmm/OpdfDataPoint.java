@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import be.ac.ulg.montefiore.run.jahmm.ObservationInteger;
 import be.ac.ulg.montefiore.run.jahmm.Opdf;
 import be.ac.ulg.montefiore.run.jahmm.OpdfInteger;
@@ -100,7 +99,6 @@ public class OpdfDataPoint implements Opdf<DataPoint> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public OpdfDataPoint clone() {
 		try {
 			OpdfDataPoint opdfDiscrete = (OpdfDataPoint) super.clone();

@@ -36,8 +36,8 @@ public class StudentList extends LinkedList<CVStudent> {
 	private final String filename;
 	private final HashMap<Integer, Set<Integer>> cm;
 	public final int numberOfObservations;
-	public static Opts opts;
-	public static Bijection trainFeatures = null;
+	public Opts opts;
+	public Bijection trainFeatures = null;
 
 	public StudentList(DataPointList data, Opts opts_) {
 		super();
@@ -54,12 +54,12 @@ public class StudentList extends LinkedList<CVStudent> {
 		this.numberOfObservations = data.size();
 		Iterator<DataPoint> iDatum = data.iterator();
 		int previousStudent = -1, previousProblem = -1, previousStep = -1;
-		String previousStudentStr = "";
+		// String previousStudentStr = "";
 		double[][] previousFeatures_ = null;
 		double[] previousFeatures = null;
 		int notPutStudent = -1;
 		ArrayList<String> seqLength1Stu = new ArrayList<String>();
-		int nbLines = 1;
+		// int nbLines = 1;
 
 		while (iDatum.hasNext()) {
 			// System.out.println("nbLines=" + nbLines);
@@ -67,8 +67,8 @@ public class StudentList extends LinkedList<CVStudent> {
 			int aStudent = datum.getStudent();
 			int aProblem = datum.getProblem();
 			int aStep = datum.getStep();
-			if (datum.getFold() == 1)
-				nbLines++;
+			// if (datum.getFold() == 1)
+			// nbLines++;
 			// just for determining a record is repeated or not
 			// for oneLR
 			double[][] aFeatures_ = new double[this.opts.nbHiddenStates][];
@@ -205,7 +205,7 @@ public class StudentList extends LinkedList<CVStudent> {
 						finalStudents.put(previousStudent + "");
 				}
 				// finalStudents.put(previousStudent + "");
-				student = new CVStudent(datum.getFold());
+				student = new CVStudent(datum.getFold(), opts);
 				this.add(student);
 			}
 			else {
@@ -299,9 +299,7 @@ public class StudentList extends LinkedList<CVStudent> {
 
 	public StudentList(ArrayList<String> training, String problemColumn,
 			String stepsColumn, Bijection problems, Bijection steps,
-			Bijection outcomes, Opts opts) {// boolean parameterizedEmit, int
-																			// obsClass1,
-		// String obsClass1Name) {
+			Bijection outcomes, Bijection trainFeatures, Opts opts) {
 		this(new DataPointList(training, problemColumn, stepsColumn, problems,
 				steps, outcomes, trainFeatures, opts), opts);
 	}
@@ -354,10 +352,11 @@ public class StudentList extends LinkedList<CVStudent> {
 		String steps = "";
 		if (opts.inputHasStepColumn)
 			steps = "step.*";// "step.name"
-		Bijection bProblems, bSteps, bOutcome;
+		Bijection bProblems, bSteps, bOutcome, bTrainFeatures;
 		bProblems = new Bijection();
 		bSteps = new Bijection();
 		bOutcome = new Bijection();
+		bTrainFeatures = new Bijection();
 
 		ArrayList<String> instances = new ArrayList<String>();
 		try {
@@ -379,7 +378,8 @@ public class StudentList extends LinkedList<CVStudent> {
 		// hy* return new StudentList(data, problems, steps, bProblems, bSteps,
 		// bOutcome);
 		return new StudentList(instances, problems, steps, bProblems, bSteps,
-				bOutcome, opts);// parameterizedEmit, obsClass1, obsClass1Name);
+				bOutcome, bTrainFeatures, opts);// parameterizedEmit, obsClass1,
+																				// obsClass1Name);
 	}
 
 	// received data from one hmm
@@ -389,14 +389,34 @@ public class StudentList extends LinkedList<CVStudent> {
 		if (opts.inputHasStepColumn)
 			steps = "step.*";// "step.name";
 
-		Bijection bProblems, bSteps, bOutcome;
+		Bijection bProblems, bSteps, bOutcome, bTrainFeatures;
 		bProblems = new Bijection();
 		bSteps = new Bijection();
 		bOutcome = new Bijection();
+		bTrainFeatures = new Bijection();
 
 		// hy* return new StudentList(data, problems, steps, bProblems, bSteps,
 		// bOutcome);
 		return new StudentList(data, problems, steps, bProblems, bSteps, bOutcome,
-				opts);// parameterizedEmit, obsClass1, obsClass1Name);
+				bTrainFeatures, opts);// parameterizedEmit, obsClass1, obsClass1Name);
+	}
+
+	public static StudentList loadData(ArrayList<String> data,
+			Bijection trainFeatures, Opts opts) {
+		String problems = "problem.*";// "problem.name";
+		String steps = "";
+		if (opts.inputHasStepColumn)
+			steps = "step.*";// "step.name";
+
+		Bijection bProblems, bSteps, bOutcome, bTrainFeatures;
+		bProblems = new Bijection();
+		bSteps = new Bijection();
+		bOutcome = new Bijection();
+		bTrainFeatures = trainFeatures;
+
+		// hy* return new StudentList(data, problems, steps, bProblems, bSteps,
+		// bOutcome);
+		return new StudentList(data, problems, steps, bProblems, bSteps, bOutcome,
+				bTrainFeatures, opts);// parameterizedEmit, obsClass1, obsClass1Name);
 	}
 }

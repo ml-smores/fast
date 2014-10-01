@@ -202,6 +202,7 @@ public class LogisticRegression {
 
 	}
 
+	@SuppressWarnings("unused")
 	private double scale(double[] array) {
 		double sum = 0.;
 

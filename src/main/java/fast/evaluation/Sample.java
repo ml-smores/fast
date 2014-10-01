@@ -18,13 +18,6 @@
 //package edu.uci.jforests.sample;
 package fast.evaluation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-
 /**
  * @author Yasser Ganjisaffar <ganjisaffar at gmail dot com>
  */
@@ -48,6 +41,5 @@ public class Sample {
 		this.targets = targets;
 		this.size = targets.length;
 	}
-
 
 }
