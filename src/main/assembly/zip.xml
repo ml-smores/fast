@@ -10,11 +10,11 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/examples</directory>
-            <outputDirectory> examples </outputDirectory>
+            <directory>${project.basedir}/input</directory>
+            <outputDirectory> input </outputDirectory>
 	    <includes> 
 	      <include> * </include>
-	      <include> example_data/* </include>
+	      <include> input/* </include>
 	    </includes>
         </fileSet>
         <fileSet>

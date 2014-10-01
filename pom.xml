@@ -38,7 +38,7 @@
     <resources>
       <resource>
         <directory>input</directory>
-	<targetPath>../input</targetPath>      
+	<targetPath>../input/</targetPath>      
       </resource>
     </resources>
 

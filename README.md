@@ -27,7 +27,7 @@ Quick Start
 3. Open a terminal and type:  
 ``` java -jar fast-1.0.2-final.jar ++input/FAST+IRT.conf  ````
 
-Congratulations! You just trained a student model (using IRT features) using state of the art technology.
+Congratulations! You just trained a student model (with IRT features) using state of the art technology.
 
 
 Input File
