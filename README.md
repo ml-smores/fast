@@ -25,9 +25,9 @@ Quick Start
 1. Download the latest release [here] (https://github.com/ml-smores/fast/releases).
 2. Decompress the file.  It includes sample data for getting you started quickly.
 3. Open a terminal and type:  
-``` java -jar fast-1.0.1-final.jar ++examples/fast-example1.conf  ````
+``` java -jar fast-1.0.2-final.jar ++input/FAST+IRT.conf  ````
 
-Congratulations! You just trained a student model using state of the art technology.
+Congratulations! You just trained a student model (using IRT features) using state of the art technology.
 
 
 Input File
@@ -54,7 +54,7 @@ All observations with the same "student" id will be placed in the same sequence.
 Integer or string.
 This column identifies an HMM model, and therefore is useful for training multiple KCs.
 The model will learn parameters for each KC individually.
-(You can put multiple KCs as features if you have multiple KCs per item/record, see sample2). 
+(You can put multiple KCs as features if you have multiple KCs per item/record, see files with prefix "FAST+subskill"). 
 
 * outcome COLUMN:
 correct | incorrect
@@ -66,11 +66,11 @@ OPTIONAL COLUMNS:
 * FEATURE COLUMNS:
 Feature columns should have prefix features_ or *features_.
     * Features must be numeric.  This is not a limitation, because string or categorical variables can be coded as binary features.  For example if you have a single feature that may take values red, green and blue, you could encode this as two different features (red = {0|1}, green={0,1}), or as three binary features (blue={0,1}).
-	* Features that are marked with a star (*) have coefficients shared by both latent states (mastery and not mastery). See sample2
+	* Features that are marked with a star (*) have coefficients shared by both latent states (mastery and not mastery). See files with prefix "FAST+subskill".
 	* Features that do not have a star have a different coefficient for each latent state. 
 	* By default, FAST adds bias feature to both hidden states.  Don't put bias(intercept) feature in the input (a feature always with value 1).
      If you want to change the configuration of bias features, please specify bias in configuration java class file (Opts.java). 
-	* If some features are always 0 (never appear) in current KC but may have value 1 in other KCs, then put them as NULL for current KC's records (This is for the sake of computing gradient, if they are NULL then the code doesn't compute gradient for those features for current HMM, see sample1~3).
+	* If some features are always 0 (never appear) in current KC but may have value 1 in other KCs, then put them as NULL for current KC's records (This is for the sake of computing gradient, if they are NULL then the code doesn't compute gradient for those features for current HMM, see files with prefix "FAST").
 Although FAST currently has L2-regularization, yet in order to make coefficients more directly interpretable, and also speed up the training, sometimes doing some standardization or normalization of such features to map them to smaller values may help. Yet sometimes standardization or normalization is not suitable due to the feature value distribution (etc.) and will drop the performance. Please do some experimentation.
 
 * problem COLUMN:
@@ -81,7 +81,7 @@ It doesn't matter what you put here so far. However, it may help you to check th
 
 * fold COLUMN:
 By default, all values are 1.
-If you have the kind of data split where some records from a student-skill sequence is used for training and remaining used for testing, then in the test0.txt file, please put the records used for training with fold COLUMN value -1. See sample3.
+If you have the kind of data split where some beginning records from a student-skill sequence is used for training and remaining used for testing, then in the test0.txt file, please put the records used for training with fold COLUMN value -1. See files with prefix "FAST+item_split_seq".
 
 
 
@@ -89,7 +89,7 @@ If you have the kind of data split where some records from a student-skill seque
 CONFIGURING FAST!
 ================
 * See the details of configuration options: by command "java hmmfeatures/Run -help" or by src/hmmfeatures/Opts.java file
-* We provided a sample configuration file in confs/fast.conf with some default values. However, you could add other options into the file according to your need.
+* We provided some example configuration file in input/XXX.conf with some default values. However, you could add other options into the file according to your need.
 * Here are the basic options:
 
 	* basicModelName: FAST|KT  Would choose whether to run Knowledge Tracing or FAST (Now by default, when you run FAST, it only parameterizes the emission probabilities. We will release the version allowing parameterizing also transition probabilities soon).

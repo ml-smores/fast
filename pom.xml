@@ -37,8 +37,8 @@
     <!-- Include sample data -->
     <resources>
       <resource>
-        <directory>sample-data</directory>
-	<targetPath>../sample-data</targetPath>      
+        <directory>input</directory>
+	<targetPath>../input</targetPath>      
       </resource>
     </resources>
 
