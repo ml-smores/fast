@@ -146,24 +146,10 @@ public class Opts {
 	@Option(gloss = "forceSetInstanceWeightForLBFGS>0 will set the instance weight by the value by force only for LBFGS.")
 	public double forceSetInstanceWeightForLBFGS = -1.0;
 
-	// Option(gloss =
-	// "LIBLINEAR_C_PENALTY is (for liblinear option) the penalty weight for adjusting the regularization terms importance (yet it is not the direct coefficient in front of regurlarization term.")
-	// [LR_C_PENALTY ] LR_C_PENALTY=1,10, fold0 maxLLD=0.25;
-	// LR_C_PENALTY=0.5,fold0 maxLLD>0.214; can configure it to be
-	// LR_C_PENALTY=2^-3, 2^-2, 2^-1,and 2^0.
 	public double LIBLINEAR_C_PENALTY = 1;
 
-	// @Option(gloss =
-	// "INSTANCE_WEIGHT_ROUNDING_THRESHOLD is used to round the instance weight. By default, no need to use when using LBFGS, but use when use liblinear.")
-	// [INSTANCE_WEIGHT_ROUNDING_THRESHOLD] instance weight <= threshold ->0;
-	// >=(1-threshold) -> 1, if threshold<0 then we don't round at all;
-	// In liblinear, i already added a removeNonpositiveWeights() function to help
-	// remove the instance with weights =0;
-	// Setting threshold smaller is better, and it seems set a threshold is better
-	// than none (when setting 0.1, the LL decrease a lot)
-	public double INSTANCE_WEIGHT_ROUNDING_THRESHOLD = LBFGS ? -1.0 : 1.0E-4;// -1.0;//
-	// @Option(gloss =
-	// "INSTANCE_WEIGHT_MULTIPLIER will multiply the instance weight by specified value (for both liblinear and LBFGS).")
+
+	public double INSTANCE_WEIGHT_ROUNDING_THRESHOLD =  -1.0;// : 1.0E-4;// -1.0;//
 	public double INSTANCE_WEIGHT_MULTIPLIER = 1.0;
 
 	// @Option(gloss =
@@ -185,12 +171,17 @@ public class Opts {
 	public boolean allowForget = true;
 	@Option(gloss = "To decide printing out verbose information or not.")
 	public boolean verbose = false;
+
+	/*
 	@Option(gloss = "To decide printing out verbose information for LBFGS optimization result or not.")
 	public boolean LBFGSverbose = false;
 	@Option(gloss = "To decide printing out verbose information for LBFGS optimization iteration or not.")
-	public boolean LBFGS_PRINT_MINIMIZER = false;
+	
+	public boolean LBFGS_PRINT_MINIMIZER = false; */
 	@Option(gloss = "EPS is for avoiding divided by 0.")
 	public double EPS = 1e-10;
+	
+	
 	@Option(gloss = "EXPECTED_COUNT_SMALL_VALUE is used to decide whether expected count is too small and if so print out warning in log files.")
 	public double EXPECTED_COUNT_SMALL_VALUE = 1.0E-4;// 1.0E-6;
 	@Option(gloss = "ACCETABLE_LL_DECREASE is used to decide whether LL decreas is too small and if so print out warning in log files.")

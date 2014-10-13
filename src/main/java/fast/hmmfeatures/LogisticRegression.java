@@ -130,12 +130,9 @@ public class LogisticRegression {
 				e.printStackTrace();
 			}
 
-		if (opts.LBFGS)
-			featureWeights = useLBFGS(features, featureWeights, labels,
-					expectedCounts);
-		else
-			throw new RuntimeException("We only support LBFGS");
-
+		
+		featureWeights = useLBFGS(features, featureWeights, labels, expectedCounts);
+		
 		if (featureWeights.length != featureMapping.getSize()
 				|| featureWeights.length != features[0].length) {
 			System.out
@@ -147,8 +144,7 @@ public class LogisticRegression {
 
 	public double[] useLBFGS(double[][] features, double[] initialFeatureWeights,
 			int[] outcomes, double[] expectedCounts) {
-		LBFGS LBFGSTrain = new LBFGS(features, initialFeatureWeights,
-				expectedCounts, outcomes, opdf, opts);
+		LBFGS LBFGSTrain = new LBFGS(features, initialFeatureWeights, expectedCounts, outcomes, opdf, opts.regularizationBiasesForLBFGS, opts.LBFGS_MAX_ITERS, opts.verbose, opts.LBFGS_TOLERANCE );
 		featureWeights = LBFGSTrain.run();
 		return featureWeights;
 	}
