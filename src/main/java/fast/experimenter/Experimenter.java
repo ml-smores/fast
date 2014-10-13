@@ -27,6 +27,7 @@ import fast.evaluation.EvaluationGeneral;
 import fast.hmmfeatures.BaumWelchLearner;
 import fast.hmmfeatures.BaumWelchScaledLearner;
 import fast.hmmfeatures.FeatureHMM;
+import fast.hmmfeatures.OpdfContextAwareLogisticRegression;
 
 public class Experimenter {
 

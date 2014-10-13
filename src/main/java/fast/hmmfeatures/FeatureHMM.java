@@ -23,7 +23,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import fast.experimenter.OpdfContextAwareLogisticRegression;
 import be.ac.ulg.montefiore.run.jahmm.Observation;
 
 /**

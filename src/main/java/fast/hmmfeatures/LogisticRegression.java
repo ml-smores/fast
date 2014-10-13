@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import fast.common.Bijection;
-import fast.experimenter.OpdfContextAwareLogisticRegression;
 import fast.experimenter.Opts;
 
 public class LogisticRegression {

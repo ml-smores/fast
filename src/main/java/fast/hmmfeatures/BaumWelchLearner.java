@@ -27,12 +27,12 @@ import java.util.List;
 import java.util.TreeSet;
 
 
+
 //import be.ac.ulg.montefiore.run.jahmm.ForwardBackwardCalculator;
 //import be.ac.ulg.montefiore.run.jahmm.Hmm;
 import fast.common.Bijection;
 import fast.data.DataPoint;
 import fast.data.StudentList;
-import fast.experimenter.OpdfContextAwareLogisticRegression;
 import fast.experimenter.Opts;
 import fast.experimenter.Predict;
 

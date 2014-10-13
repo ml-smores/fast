@@ -15,7 +15,6 @@ import edu.berkeley.nlp.math.CachingDifferentiableFunction;
 import edu.berkeley.nlp.math.LBFGSMinimizer;
 import edu.berkeley.nlp.util.Logger;
 import edu.berkeley.nlp.util.Pair;
-import fast.experimenter.OpdfContextAwareLogisticRegression;
 import fast.experimenter.Opts;
 
 public class LBFGS {
