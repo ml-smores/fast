@@ -24,16 +24,16 @@ import fig.basic.Option;
 
 public class Opts {
 
-	@Option(gloss = "Currently, basicModelName SHOULD be either \"FAST\" or \"KT\". "
-			+ "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
+	@Option(gloss = "basicModelName SHOULD be either \"FAST\" or \"KT\". ")
+			//+ "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
 	public String basicModelName = "FAST";
-	@Option(gloss = "Currently, variant1ModelName could be empty or contain any strings."
-			+ "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
+	@Option(gloss = "variant1ModelName could be empty or contain any strings.")
+			//+ "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
 	public String variant1ModelName = "item";
-	@Option(gloss = "Currently, variant2ModelName could be empty or contain any strings. basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
+	@Option(gloss = "")
 	public String variant2ModelName = "";
 	public String basicDir = "./examples/example_data/";
-	@Option(gloss = "modelName is used help doing many other configurations. However, you can also specify other configurations by yourself.")
+	@Option(gloss = "Human friendly description of the model")
 	public String modelName = basicModelName
 			+ (variant1ModelName.equals("") ? ""
 					: ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
