@@ -82,7 +82,7 @@ public class ForwardBackwardCalculator {
 	 *          How the computation should be done. See the {@link Computation
 	 *          Computation} enum.
 	 */
-	public ForwardBackwardCalculator(List<DataPoint> oseq, Hmm hmm,
+	public ForwardBackwardCalculator(List<DataPoint> oseq, FeatureHMM hmm,
 			EnumSet<Computation> flags) {
 		if (verbose)
 			System.out.println("Non Scaled!");
@@ -125,14 +125,14 @@ public class ForwardBackwardCalculator {
 	 * Hidden Markov Model. This computation computes the <code>alpha</code> array
 	 * as a side effect.
 	 * 
-	 * @see #ForwardBackwardCalculator(List, Hmm, EnumSet)
+	 * @see #ForwardBackwardCalculator(List, FeatureHMM, EnumSet)
 	 */
-	public ForwardBackwardCalculator(List<DataPoint> oseq, Hmm hmm) {
+	public ForwardBackwardCalculator(List<DataPoint> oseq, FeatureHMM hmm) {
 		this(oseq, hmm, EnumSet.of(Computation.ALPHA));
 	}
 
 	/* Computes the content of the alpha array */
-	protected void computeAlpha(Hmm hmm, List<DataPoint> oseq) {
+	protected void computeAlpha(FeatureHMM hmm, List<DataPoint> oseq) {
 		alpha = new double[oseq.size()][hmm.nbStates()];
 
 		for (int i = 0; i < hmm.nbStates(); i++)
@@ -151,14 +151,14 @@ public class ForwardBackwardCalculator {
 	}
 
 	/* Computes alpha[0][i] */
-	protected void computeAlphaInit(Hmm hmm, DataPoint o, int i) {
+	protected void computeAlphaInit(FeatureHMM hmm, DataPoint o, int i) {
 		// hy: i is the hidden state
 		alpha[0][i] = hmm.getPi(i)
 				* hmm.getOpdf(i).probability(o.getFeatures(i), o.getOutcome());
 	}
 
 	/* Computes alpha[t][j] (t > 0) */
-	protected void computeAlphaStep(Hmm hmm, DataPoint o, int t, int j) {
+	protected void computeAlphaStep(FeatureHMM hmm, DataPoint o, int t, int j) {
 		double sum = 0.;
 
 		for (int i = 0; i < hmm.nbStates(); i++)
@@ -184,7 +184,7 @@ public class ForwardBackwardCalculator {
 	 * Computes the content of the beta array. Needs a O(1) access time to the
 	 * elements of oseq to get a theoretically optimal algorithm.
 	 */
-	protected void computeBeta(Hmm hmm, List<DataPoint> oseq) {
+	protected void computeBeta(FeatureHMM hmm, List<DataPoint> oseq) {
 		beta = new double[oseq.size()][hmm.nbStates()];
 
 		for (int i = 0; i < hmm.nbStates(); i++)
@@ -196,7 +196,7 @@ public class ForwardBackwardCalculator {
 	}
 
 	/* Computes beta[t][i] (t < obs. seq.le length - 1) */
-	protected void computeBetaStep(Hmm hmm, DataPoint o, int t, int i) {
+	protected void computeBetaStep(FeatureHMM hmm, DataPoint o, int t, int i) {
 		double sum = 0.;
 
 		for (int j = 0; j < hmm.nbStates(); j++)
@@ -247,7 +247,7 @@ public class ForwardBackwardCalculator {
 	}
 
 	// compute Pr(Dd)
-	private void computeProbability(List<DataPoint> oseq, Hmm hmm,
+	private void computeProbability(List<DataPoint> oseq, FeatureHMM hmm,
 			EnumSet<Computation> flags) {
 		// System.out.println("computeProbability...");
 

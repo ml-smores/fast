@@ -9,14 +9,16 @@
  *
  */
 
-package fast.hmmfeatures;
+package fast.experimenter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+
 import fast.data.DataPoint;
 import fast.data.StudentList;
+import fast.hmmfeatures.FeatureHMM;
 
 public class Predict {
 
@@ -65,7 +67,7 @@ public class Predict {
 
 	}
 
-	public int doPredict(Hmm hmm, StudentList testSequences,
+	public int doPredict(FeatureHMM hmm, StudentList testSequences,
 			ArrayList<Double> probs, ArrayList<Integer> labels,
 			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator,
 			int lineID, String KCName, ArrayList<double[]> features) {
@@ -74,7 +76,7 @@ public class Predict {
 				trainTestIndicator, lineID, KCName);
 	}
 
-	public void doPredict(Hmm hmm, StudentList testSequences,
+	public void doPredict(FeatureHMM hmm, StudentList testSequences,
 			ArrayList<ArrayList<Double>> studentListProbs,
 			ArrayList<ArrayList<Integer>> studentListLabels,
 			ArrayList<ArrayList<Integer>> studentListActualLabels,
@@ -93,7 +95,7 @@ public class Predict {
 				trainTestIndicator, lineID, KCName);
 	}
 
-	public void doPredictAndWritePredFile(Hmm hmm, StudentList testSequences,
+	public void doPredictAndWritePredFile(FeatureHMM hmm, StudentList testSequences,
 			ArrayList<Double> probs, ArrayList<Integer> labels,
 			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicators,
 			int lineID, String KCName, BufferedWriter predWriter,
@@ -106,7 +108,7 @@ public class Predict {
 	}
 
 	// receiving one hmm
-	public int doPredict(Hmm hmm, StudentList testSequences,
+	public int doPredict(FeatureHMM hmm, StudentList testSequences,
 			ArrayList<Double> probs, ArrayList<Integer> labels,
 			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator,
 			int lineID, String KCName) {

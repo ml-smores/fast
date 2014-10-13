@@ -9,7 +9,7 @@
  *
  */
 
-package fast.hmmfeatures;
+package fast.experimenter;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

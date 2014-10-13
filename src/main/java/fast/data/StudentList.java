@@ -21,8 +21,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+
 import fast.common.Bijection;
-import fast.hmmfeatures.Opts;
+import fast.experimenter.Opts;
 
 public class StudentList extends LinkedList<CVStudent> {
 

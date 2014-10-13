@@ -18,8 +18,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import fast.common.Bijection;
-import fast.hmmfeatures.Opts;
+import fast.experimenter.Opts;
 
 //import org.apache.log4j.Logger;
 

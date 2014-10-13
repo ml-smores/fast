@@ -9,7 +9,7 @@
  *
  */
 
-package fast.hmmfeatures;
+package fast.experimenter;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -18,8 +18,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import fast.common.Bijection;
 import fast.data.DataPoint;
+import fast.hmmfeatures.LogisticRegression;
+import fast.hmmfeatures.OpdfContextAware;
 
 /**
  * @author hy

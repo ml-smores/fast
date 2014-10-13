@@ -51,7 +51,7 @@
 <configuration>
     <archive>
         <manifest>
-            <mainClass>fast.hmmfeatures.Run</mainClass>
+            <mainClass>fast.experimenter.Run</mainClass>
         </manifest>
     </archive>
     <descriptorRefs>

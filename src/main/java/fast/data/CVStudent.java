@@ -12,7 +12,8 @@
 package fast.data;
 
 import java.util.Vector;
-import fast.hmmfeatures.Opts;
+
+import fast.experimenter.Opts;
 
 public class CVStudent extends Vector<DataPoint> {
 	private static final long serialVersionUID = -7017179401151027439L;

@@ -23,7 +23,9 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+
 import fast.data.DataPoint;
+import fast.experimenter.Opts;
 
 //import be.ac.ulg.montefiore.run.jahmm.ForwardBackwardCalculator;
 
@@ -45,7 +47,7 @@ public class BaumWelchScaledLearner extends BaumWelchLearner {
 	}
 
 	protected ForwardBackwardCalculator generateForwardBackwardCalculator(
-			List<DataPoint> sequence, Hmm hmm) {
+			List<DataPoint> sequence, FeatureHMM hmm) {
 		return new ForwardBackwardScaledCalculator(sequence, hmm,
 				EnumSet.allOf(ForwardBackwardCalculator.Computation.class));
 	}
@@ -61,7 +63,7 @@ public class BaumWelchScaledLearner extends BaumWelchLearner {
 	 * ctFactors[t]=P(O1...Ot)
 	 */
 	protected double[][][] estimateXi(List<DataPoint> sequence,
-			ForwardBackwardCalculator fbc, Hmm hmm) {
+			ForwardBackwardCalculator fbc, FeatureHMM hmm) {
 		// hy*
 		if (sequence.size() <= 1)
 			throw new IllegalArgumentException("Observation sequence too " + "short");
@@ -97,7 +99,7 @@ public class BaumWelchScaledLearner extends BaumWelchLearner {
 	 * @return
 	 */
 	protected double[][] estimateGamma(List<DataPoint> sequence,
-			ForwardBackwardCalculator fbc, Hmm hmm) {
+			ForwardBackwardCalculator fbc, FeatureHMM hmm) {
 		double[][] gamma = new double[sequence.size()][hmm.nbStates()];
 
 		for (int t = 0; t < sequence.size(); t++)

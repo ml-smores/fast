@@ -9,7 +9,7 @@
  *
  */
 
-package fast.hmmfeatures;
+package fast.experimenter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,9 +27,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
 import fast.common.Bijection;
 import fast.data.StudentList;
 import fast.evaluation.EvaluationGeneral;
+import fast.hmmfeatures.FeatureHMM;
 import fig.exec.Execution;
 
 //import org.apache.log4j.Logger;
@@ -44,7 +46,7 @@ public class Run implements Runnable {
 	public int hmmId = 0;
 	public Opts opts;
 	// order by Bijection
-	public ArrayList<Hmm> hmms = new ArrayList<Hmm>();
+	public ArrayList<FeatureHMM> hmms = new ArrayList<FeatureHMM>();
 	public HashMap<String, Bijection> skillToTrainFeatures = new HashMap<String, Bijection>();
 
 	public Run() {
@@ -255,7 +257,7 @@ public class Run implements Runnable {
 		ArrayList<String> aHmmSequences = new ArrayList<String>();
 		ArrayList<String> aHmmSequencesOnTest = new ArrayList<String>();
 
-		hmms = new ArrayList<Hmm>();
+		hmms = new ArrayList<FeatureHMM>();
 		while ((line = trainReader.readLine()) != null) {
 			String newLine = line.trim();
 			if (newLine.length() == 0)
@@ -284,7 +286,7 @@ public class Run implements Runnable {
 				opts.currentKc = preSkill;
 				opts.currentKCIndex = hmmId;
 				opts.nowInTrain = true;
-				Hmm trainHmm = trainOneHmm(foldId, runId, preSkill, hmmId,
+				FeatureHMM trainHmm = trainOneHmm(foldId, runId, preSkill, hmmId,
 						aHmmSequences, null, null);
 				hmms.add(trainHmm);
 
@@ -355,7 +357,7 @@ public class Run implements Runnable {
 			// train one hmm using aHmmSequences
 			opts.currentKc = preSkill;
 			opts.currentKCIndex = hmmId;
-			Hmm trainHmm = trainOneHmm(foldId, runId, curSkill, hmmId, aHmmSequences,
+			FeatureHMM trainHmm = trainOneHmm(foldId, runId, curSkill, hmmId, aHmmSequences,
 					null, null);
 			hmms.add(trainHmm);
 			while ((testLine = testReader.readLine()) != null) {
@@ -385,7 +387,7 @@ public class Run implements Runnable {
 	}
 
 	public void predictOneHmmOnTest(int foldId, int runId, int hmmId,
-			String kcName, Hmm trainHmm, ArrayList<String> aHmmSequences)
+			String kcName, FeatureHMM trainHmm, ArrayList<String> aHmmSequences)
 			throws IOException {
 		String str = "\n\n******** Testing: hmmID=" + hmmId + ", skill=" + kcName
 				+ ", foldID=" + foldId + ", runID=" + runId + " ************";
@@ -416,7 +418,7 @@ public class Run implements Runnable {
 		opts.predictionFile = opts.outDir + opts.predPrefix + fileId
 				+ opts.predSuffix;
 
-		hmms = new ArrayList<Hmm>();
+		hmms = new ArrayList<FeatureHMM>();
 		Bijection trainSkills = new Bijection();
 		ArrayList<ArrayList<String>> hmmsSequences = new ArrayList<ArrayList<String>>();
 		splitForHmms(opts.trainFile, trainSkills, hmmsSequences);
@@ -471,14 +473,14 @@ public class Run implements Runnable {
 		predict(trainSkills, testSkills, getTrainHmms(), hmmsSequences);
 	}
 
-	public Hmm trainOneHmm(int foldId, int runId, String currentKc_, int hmmId,
+	public FeatureHMM trainOneHmm(int foldId, int runId, String currentKc_, int hmmId,
 			ArrayList<String> aHmmSequences, Bijection devSkills,
 			ArrayList<ArrayList<String>> devHmmsSequences) throws IOException {
 		opts.currentKc = currentKc_;
 		opts.currentKCIndex = hmmId;
 		// the first one is the header
 		opts.nbDataPointsInTrainPerHmm = aHmmSequences.size() - 1;
-		FeatureHMM featureHMM = new FeatureHMM(opts);
+		Experimenter featureHMM = new Experimenter(opts);
 
 		String str = "\n\n******** Training: hmmID=" + hmmId + ", skill="
 				+ currentKc_ + ", foldID=" + foldId + ", runID=" + runId
@@ -526,7 +528,7 @@ public class Run implements Runnable {
 		}
 
 		// Per skill will have one HMM
-		Hmm hmm = null;
+		FeatureHMM hmm = null;
 		if (!opts.useDev)
 			hmm = featureHMM.doTrain(aHmmSeqs, opts.currentKc);
 		else
@@ -748,7 +750,7 @@ public class Run implements Runnable {
 	// return skills;
 	// }
 
-	public ArrayList<Hmm> getTrainHmms() {
+	public ArrayList<FeatureHMM> getTrainHmms() {
 		return hmms;
 	}
 
@@ -766,7 +768,7 @@ public class Run implements Runnable {
 	 * @throws IOException
 	 */
 	public void predict(Bijection trainSkills, Bijection testSkills,
-			ArrayList<Hmm> trainHmms, ArrayList<ArrayList<String>> hmmsSequences)
+			ArrayList<FeatureHMM> trainHmms, ArrayList<ArrayList<String>> hmmsSequences)
 			throws IOException {
 
 		if (hmmsSequences.size() > trainHmms.size()
@@ -840,7 +842,7 @@ public class Run implements Runnable {
 				System.exit(1);
 			}
 
-			Hmm hmm = trainHmms.get(trainSkillID);
+			FeatureHMM hmm = trainHmms.get(trainSkillID);
 			predictOneHmm(hmm, currentTestSkill, hmmsSequences.get(i), probs, labels,
 					actualLabels, trainTestIndicators, features);
 			allProbs.addAll(probs);
@@ -860,7 +862,7 @@ public class Run implements Runnable {
 
 	}
 
-	public void predictOneHmm(Hmm hmm, String kcName,
+	public void predictOneHmm(FeatureHMM hmm, String kcName,
 			ArrayList<String> aHmmSequence, ArrayList<Double> probs,
 			ArrayList<Integer> labels, ArrayList<Integer> actualLabels,
 			ArrayList<Integer> trainTestIndicators, ArrayList<double[]> features)

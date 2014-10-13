@@ -55,7 +55,7 @@ public class ForwardBackwardScaledCalculator extends ForwardBackwardCalculator {
 	 *          {@link ForwardBackwardCalculator.Computation}. The alpha array is
 	 *          always computed.
 	 */
-	public ForwardBackwardScaledCalculator(List<DataPoint> oseq, Hmm hmm,
+	public ForwardBackwardScaledCalculator(List<DataPoint> oseq, FeatureHMM hmm,
 			EnumSet<Computation> flags) {
 		// System.out.println("ForwardBackwardScaledCalculator...");
 		if (oseq.isEmpty())
@@ -106,15 +106,15 @@ public class ForwardBackwardScaledCalculator extends ForwardBackwardCalculator {
 	 * Hidden Markov Model. This computation computes the scaled
 	 * <code>alpha</code> array as a side effect.
 	 * 
-	 * @see #ForwardBackwardScaledCalculator(List, Hmm, EnumSet)
+	 * @see #ForwardBackwardScaledCalculator(List, FeatureHMM, EnumSet)
 	 */
-	public ForwardBackwardScaledCalculator(List<DataPoint> oseq, Hmm hmm) {
+	public ForwardBackwardScaledCalculator(List<DataPoint> oseq, FeatureHMM hmm) {
 		this(oseq, hmm, EnumSet.of(Computation.ALPHA));
 	}
 
 	/* Computes the content of the scaled alpha array */
 	@Override
-	protected void computeAlpha(Hmm hmm, List<DataPoint> oseq) {
+	protected void computeAlpha(FeatureHMM hmm, List<DataPoint> oseq) {
 		// System.out.println("ForwardBackwardScaledCalculator:computeAlpha...");
 		alpha = new double[oseq.size()][hmm.nbStates()];
 
@@ -143,7 +143,7 @@ public class ForwardBackwardScaledCalculator extends ForwardBackwardCalculator {
 	 * 
 	 * hy: new beta = P(Ot+1,...ON|St=qi)/P(O1..Ot)
 	 */
-	protected void computeBeta(Hmm hmm, List<DataPoint> oseq) {
+	protected void computeBeta(FeatureHMM hmm, List<DataPoint> oseq) {
 		// System.out.println("ForwardBackwardScaledCalculator:computeBeta...");
 		beta = new double[oseq.size()][hmm.nbStates()];
 
@@ -193,7 +193,7 @@ public class ForwardBackwardScaledCalculator extends ForwardBackwardCalculator {
 	}
 
 	// added by JPG:
-	public static double getLL(Hmm hmm,
+	public static double getLL(FeatureHMM hmm,
 			AbstractList<? extends AbstractList<DataPoint>> students) {
 		// System.out.println("ForwardBackwardScaledCalculator:getLL...");
 		double ll = 0;

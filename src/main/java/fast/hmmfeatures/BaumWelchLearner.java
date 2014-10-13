@@ -26,11 +26,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+
 //import be.ac.ulg.montefiore.run.jahmm.ForwardBackwardCalculator;
 //import be.ac.ulg.montefiore.run.jahmm.Hmm;
 import fast.common.Bijection;
 import fast.data.DataPoint;
 import fast.data.StudentList;
+import fast.experimenter.OpdfContextAwareLogisticRegression;
+import fast.experimenter.Opts;
+import fast.experimenter.Predict;
 
 /**
  * An implementation of the Baum-Welch learning algorithm. This algorithm finds
@@ -85,9 +89,9 @@ public class BaumWelchLearner {
 	 *         (according to the Baum-Welch algorithm).
 	 * @throws IOException
 	 */
-	public Hmm learn(Hmm initialHmm, List<? extends List<DataPoint>> sequences)
+	public FeatureHMM learn(FeatureHMM initialHmm, List<? extends List<DataPoint>> sequences)
 			throws IOException {
-		Hmm hmm = initialHmm;
+		FeatureHMM hmm = initialHmm;
 
 		boolean retrainUsingNonParam = false;
 		for (int i = 0; i < nbIterations; i++) {
@@ -112,7 +116,7 @@ public class BaumWelchLearner {
 				writeHmm(hmm, sequences, info);
 			}
 			// hmm = iterate(hmm, sequences);// hy
-			Hmm nhmm;
+			FeatureHMM nhmm;
 			try {
 				nhmm = hmm.clone();
 			}
@@ -167,9 +171,9 @@ public class BaumWelchLearner {
 	 * @return A new, updated HMM.
 	 * @throws IOException
 	 */
-	public Hmm iterate(Hmm hmm, List<? extends List<DataPoint>> sequences)
+	public FeatureHMM iterate(FeatureHMM hmm, List<? extends List<DataPoint>> sequences)
 			throws IOException {
-		Hmm nhmm;
+		FeatureHMM nhmm;
 		try {
 			nhmm = hmm.clone();
 		}
@@ -183,7 +187,7 @@ public class BaumWelchLearner {
 		return nhmm;
 	}
 
-	public void EStep(Hmm hmm, List<? extends List<DataPoint>> sequences) {
+	public void EStep(FeatureHMM hmm, List<? extends List<DataPoint>> sequences) {
 		/* gamma and xi arrays are those defined by Rabiner and Juang */
 		/* allGamma[n] = gamma array associated to observation sequence n */
 		allGamma = new double[sequences.size()][][];
@@ -249,7 +253,7 @@ public class BaumWelchLearner {
 		this.ll = ll;
 	}
 
-	public Hmm MStep(Hmm hmm, Hmm nhmm, List<? extends List<DataPoint>> sequences) {
+	public FeatureHMM MStep(FeatureHMM hmm, FeatureHMM nhmm, List<? extends List<DataPoint>> sequences) {
 
 		for (int i = 0; i < hmm.nbStates(); i++) {
 			if (aijDen[i] == 0.) // State i is not reachable
@@ -328,7 +332,7 @@ public class BaumWelchLearner {
 
 	}
 
-	public void reassignRealHiddenState(Hmm hmm,
+	public void reassignRealHiddenState(FeatureHMM hmm,
 			List<? extends List<DataPoint>> sequences) {
 		//double p0 = hmm.getPi(0);
 		//double a00 = hmm.getAij(0, 0);
@@ -386,7 +390,7 @@ public class BaumWelchLearner {
 		opts.cgReachesTrustRegionBoundary = false;
 	}
 
-	public void writeHmm(Hmm hmm, List<? extends List<DataPoint>> sequences,
+	public void writeHmm(FeatureHMM hmm, List<? extends List<DataPoint>> sequences,
 			String info) throws IOException {
 
 		// currently, the code doesn't paramterized init, transition, so we can get
@@ -497,7 +501,7 @@ public class BaumWelchLearner {
 		}
 	}
 
-	public void storeAndWriteSummaryPerHmm(Hmm hmm,
+	public void storeAndWriteSummaryPerHmm(FeatureHMM hmm,
 			List<? extends List<DataPoint>> sequences) throws IOException {
 		String llErrorStr = "KC=" + opts.currentKc + "\t#LLError:\t"
 				+ opts.nbLlError;
@@ -637,7 +641,7 @@ public class BaumWelchLearner {
 		opts.kcAvgDeltaGammaMap.put(opts.currentKc, avgDeltaGamma);
 	}
 
-	public void writeDeltaPCorrect(Hmm hmm,
+	public void writeDeltaPCorrect(FeatureHMM hmm,
 			List<? extends List<DataPoint>> sequences) throws IOException {
 		// ArrayList<Integer> trainTestIndicators = new ArrayList<Integer>();
 		// ArrayList<double[]> features = new ArrayList<double[]>();
@@ -774,7 +778,7 @@ public class BaumWelchLearner {
 		opts.deltaPCorrectWriter.flush();
 	}
 
-	public void writeFinalFeatureWeights(Hmm hmm,
+	public void writeFinalFeatureWeights(FeatureHMM hmm,
 			List<? extends List<DataPoint>> sequences) throws IOException {
 
 		Bijection featureMapping = null;
@@ -947,7 +951,7 @@ public class BaumWelchLearner {
 	}
 
 	// KC \t iter \t LL: \t LLVALUE \t message \t realnfo..
-	public void storeAndWriteInfoPerHmmPerIter(Hmm hmm,
+	public void storeAndWriteInfoPerHmmPerIter(FeatureHMM hmm,
 			List<? extends List<DataPoint>> sequences, double ll) throws IOException {
 		reassignRealHiddenState(hmm, sequences);
 
@@ -1123,7 +1127,7 @@ public class BaumWelchLearner {
 	}
 
 	protected ForwardBackwardCalculator generateForwardBackwardCalculator(
-			List<DataPoint> sequence, Hmm hmm) {
+			List<DataPoint> sequence, FeatureHMM hmm) {
 		// hy:
 		// System.out.println("ForwardBackwardCalculator...");
 		return new ForwardBackwardCalculator(sequence, hmm,
@@ -1131,7 +1135,7 @@ public class BaumWelchLearner {
 	}
 
 	protected double[][][] estimateXi(List<DataPoint> sequence,
-			ForwardBackwardCalculator fbc, Hmm hmm) {
+			ForwardBackwardCalculator fbc, FeatureHMM hmm) {
 		if (verbose)
 			System.out.println("Non Scaled!");
 		if (sequence.size() <= 1) {
@@ -1166,7 +1170,7 @@ public class BaumWelchLearner {
 	 * @return
 	 */
 	protected double[][] estimateGamma(List<DataPoint> sequence,
-			ForwardBackwardCalculator fbc, Hmm hmm) {
+			ForwardBackwardCalculator fbc, FeatureHMM hmm) {
 		if (verbose)
 			System.out.println("Non Scaled!");
 		double[][] gamma = new double[sequence.size()][hmm.nbStates()];
