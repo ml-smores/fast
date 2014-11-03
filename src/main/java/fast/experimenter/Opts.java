@@ -24,7 +24,7 @@ import fig.basic.Option;
 
 public class Opts {
 
-	@Option(gloss = "basicModelName SHOULD be either \"FAST\" or \"KT\". ")
+	@Option(gloss = "basicModelName is either \"FAST\" or \"KT\". ")
 			//+ "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
 	public String basicModelName = "FAST";
 	@Option(gloss = "variant1ModelName could be empty or contain any strings.")
@@ -34,9 +34,7 @@ public class Opts {
 	public String variant2ModelName = "";
 	public String basicDir = "./examples/example_data/";
 	@Option(gloss = "Human friendly description of the model")
-	public String modelName = basicModelName
-			+ (variant1ModelName.equals("") ? ""
-					: ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
+	public String modelName = basicModelName + (variant1ModelName.equals("") ? "" : ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
 							: ("-" + variant2ModelName))));//
 	@Option(gloss = "testSingleFile is used to decide just run one train test pair or multiple train, test pairs.")
 	public boolean testSingleFile = true;
@@ -211,7 +209,7 @@ public class Opts {
 	// (2)LR always output p(Correct). After these, obsClass1 is always "correct"
 	@Option(gloss = "These are decided by default to give convinience to do inference and decide LR's probabilities")
 	public int obsClass1 = 1;
-	@Option(gloss = "These are decided by default to give convinience to do inference and decide LR's probabilities")
+	@Option(gloss = "For discrete classification, the string that is going to be class # 1")
 	public String obsClass1Name = "correct";
 	@Option(gloss = "These are decided by default to give convinience to do inference and decide LR's probabilities")
 	public int nbHiddenStates = 2;
@@ -398,10 +396,7 @@ public class Opts {
 
 	public void configure() {
 
-		modelName = basicModelName
-				+ (variant1ModelName.equals("") ? ""
-						: ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
-								: ("-" + variant2ModelName))));//
+		modelName = basicModelName + (variant1ModelName.equals("") ? "" : ("-" + variant1ModelName + (variant2ModelName.equals("") ? "": ("-" + variant2ModelName))));//
 		checkConfig();
 
 		allModelComparisonOutDir = outDir;// basicDir;
@@ -412,8 +407,7 @@ public class Opts {
 		// : (variant1ModelName + "/" + datasplit + "/"));
 		// outDir = inDir + modelName + "/";
 		predPrefix = modelName + "_test";
-		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "")
-				+ predSuffix;
+		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "") + predSuffix;
 		curFoldRunTrainInFilePrefix = trainInFilePrefix
 				+ (testSingleFile ? "0" : "");
 		trainFile = inDir + curFoldRunTrainInFilePrefix + inFileSuffix;
