@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import be.ac.ulg.montefiore.run.jahmm.Observation;
 
 /**
@@ -80,24 +79,6 @@ public class FeatureHMM implements Serializable, Cloneable {
 	// }
 	// }
 
-	/**
-	 * @author hy
-	 * @date 10/06/13
-	 * 
-	 *       Creates a new Hmm. All the Hmm parameters are given as arguments.
-	 * 
-	 * @param pi
-	 *          The initial probability values. <code>pi[i]</code> is the initial
-	 *          probability of state <code>i</code>. This array is copied.
-	 * @param a
-	 *          The state transition probability array. <code>a[i][j]</code> is
-	 *          the probability of going from state <code>i</code> to state
-	 *          <code>j</code>. This array is copied.
-	 * @param opdfs
-	 *          The observation distributions. <code>opdfs.get(i)</code> is the
-	 *          observation distribution associated with state <code>i</code>. The
-	 *          distributions are not copied.
-	 */
 	public FeatureHMM(double[] pi, double[][] a,
 			ArrayList<OpdfContextAwareLogisticRegression> opdfs,
 			boolean parameterizedEmit) {
@@ -125,19 +106,6 @@ public class FeatureHMM implements Serializable, Cloneable {
 		this.parameterizedEmit = parameterizedEmit;
 	}
 
-	/**
-	 * @author hy
-	 * @date 10/06/13
-	 * 
-	 *       Change Opdf -> OpdfContextAware
-	 * 
-	 *       Creates a new Hmm. The parameters of the created Hmm set to
-	 *       <code>null</code> specified and must be set using the appropriate
-	 *       methods.
-	 * 
-	 * @param nbStates
-	 *          The (strictly positive) number of states of the Hmm.
-	 */
 	protected FeatureHMM(int nbStates) {
 		if (nbStates <= 0)
 			throw new IllegalArgumentException("Number of states must be "

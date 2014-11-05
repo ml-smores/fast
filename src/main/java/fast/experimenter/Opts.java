@@ -24,18 +24,24 @@ import fig.basic.Option;
 
 public class Opts {
 
-	@Option(gloss = "basicModelName is either \"FAST\" or \"KT\". ")
-			//+ "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
-	public String basicModelName = "FAST";
-	@Option(gloss = "variant1ModelName could be empty or contain any strings.")
-			//+ "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
-	public String variant1ModelName = "item";
-	@Option(gloss = "")
-	public String variant2ModelName = "";
-	public String basicDir = "./examples/example_data/";
-	@Option(gloss = "Human friendly description of the model")
-	public String modelName = basicModelName + (variant1ModelName.equals("") ? "" : ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
-							: ("-" + variant2ModelName))));//
+	// @Option(gloss = "basicModelName is either \"FAST\" or \"KT\". ")
+	// +
+	// "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
+	// public String basicModelName = "FAST";
+	// @Option(gloss = "variant1ModelName could be empty or contain any strings.")
+	// +
+	// "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
+	// public String variant1ModelName = "item";
+	// @Option(gloss = "")
+	// public String variant2ModelName = "";
+	public String basicDir = "./input/";
+	// @Option(gloss = "Human friendly description of the model")
+	@Option(gloss = "modelName should contain either \"FAST\" or \"KT\" in the string (capital letters). ")
+	public String modelName = "FAST";
+	// basicModelName
+	// + (variant1ModelName.equals("") ? ""
+	// : ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
+	// : ("-" + variant2ModelName))));//
 	@Option(gloss = "testSingleFile is used to decide just run one train test pair or multiple train, test pairs.")
 	public boolean testSingleFile = true;
 	@Option(gloss = "numFolds and numRuns are used to decide how many times FAST runs. For testSingleFile=true, numFolds and numRuns should be set to 1. The code uses foldID to change the train, test file name (e.g. train0.txt~train9.txt are for two runs of 5 fold CV or one run of 10 fold CV) foldId = runID * opts.numFolds + foldID")
@@ -141,13 +147,12 @@ public class Opts {
 	// @Option(gloss =
 	// "ensureStopForLBFGS stops LBFGS by force when LL changes smaller than LBFGS tolerance.")
 	// public boolean ensureStopForLBFGS = true;
-	@Option(gloss = "forceSetInstanceWeightForLBFGS>0 will set the instance weight by the value by force only for LBFGS.")
-	public double forceSetInstanceWeightForLBFGS = -1.0;
+	// @Option(gloss =
+	// "forceSetInstanceWeightForLBFGS>0 will set the instance weight by the value by force only for LBFGS.")
+	// public double forceSetInstanceWeightForLBFGS = -1.0;
+	// public double LIBLINEAR_C_PENALTY = 1;
 
-	public double LIBLINEAR_C_PENALTY = 1;
-
-
-	public double INSTANCE_WEIGHT_ROUNDING_THRESHOLD =  -1.0;// : 1.0E-4;// -1.0;//
+	public double INSTANCE_WEIGHT_ROUNDING_THRESHOLD = -1.0;// : 1.0E-4;// -1.0;//
 	public double INSTANCE_WEIGHT_MULTIPLIER = 1.0;
 
 	// @Option(gloss =
@@ -171,15 +176,19 @@ public class Opts {
 	public boolean verbose = false;
 
 	/*
-	@Option(gloss = "To decide printing out verbose information for LBFGS optimization result or not.")
-	public boolean LBFGSverbose = false;
-	@Option(gloss = "To decide printing out verbose information for LBFGS optimization iteration or not.")
-	
-	public boolean LBFGS_PRINT_MINIMIZER = false; */
+	 * @Option(gloss =
+	 * "To decide printing out verbose information for LBFGS optimization result or not."
+	 * ) public boolean LBFGSverbose = false;
+	 * 
+	 * @Option(gloss =
+	 * "To decide printing out verbose information for LBFGS optimization iteration or not."
+	 * )
+	 * 
+	 * public boolean LBFGS_PRINT_MINIMIZER = false;
+	 */
 	@Option(gloss = "EPS is for avoiding divided by 0.")
 	public double EPS = 1e-10;
-	
-	
+
 	@Option(gloss = "EXPECTED_COUNT_SMALL_VALUE is used to decide whether expected count is too small and if so print out warning in log files.")
 	public double EXPECTED_COUNT_SMALL_VALUE = 1.0E-4;// 1.0E-6;
 	@Option(gloss = "ACCETABLE_LL_DECREASE is used to decide whether LL decreas is too small and if so print out warning in log files.")
@@ -396,7 +405,10 @@ public class Opts {
 
 	public void configure() {
 
-		modelName = basicModelName + (variant1ModelName.equals("") ? "" : ("-" + variant1ModelName + (variant2ModelName.equals("") ? "": ("-" + variant2ModelName))));//
+		// modelName = basicModelName
+		// + (variant1ModelName.equals("") ? ""
+		// : ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
+		// : ("-" + variant2ModelName))));//
 		checkConfig();
 
 		allModelComparisonOutDir = outDir;// basicDir;
@@ -407,7 +419,8 @@ public class Opts {
 		// : (variant1ModelName + "/" + datasplit + "/"));
 		// outDir = inDir + modelName + "/";
 		predPrefix = modelName + "_test";
-		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "") + predSuffix;
+		predictionFile = outDir + predPrefix + (testSingleFile ? "0" : "")
+				+ predSuffix;
 		curFoldRunTrainInFilePrefix = trainInFilePrefix
 				+ (testSingleFile ? "0" : "");
 		trainFile = inDir + curFoldRunTrainInFilePrefix + inFileSuffix;
@@ -534,6 +547,11 @@ public class Opts {
 	}
 
 	public void checkConfig() {
+		if (!(modelName.contains("FAST") || modelName.contains("KT"))) {
+			System.out
+					.println("\nError: modelName should contain either \"FAST\" or \"KT\" in the string (capital letters).");
+			System.exit(1);
+		}
 		File curActionD = new File(outDir);
 		if (!curActionD.exists()) {
 			System.out.println("\noutDir doesn't exist, creating this directory: "

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
 import fast.common.Bijection;
 import fast.data.StudentList;
 import fast.evaluation.EvaluationGeneral;
@@ -64,20 +63,19 @@ public class Run implements Runnable {
 		if (args != null && args.length > 0) {
 			if (args.length == 1)
 				Execution.run(args, runner, runner.opts);
-			else if (args.length >= 4) {// #realArguments
-				opts.basicModelName = args[0];
-				opts.variant1ModelName = args[1];
-				opts.variant2ModelName = args[2].equals("NULL") ? "" : args[2];
-				opts.basicDir = args[3];
-				if (args.length == 5)
-					opts.generateLRInputs = args[4].equals("true") ? true : false;
-				else {
-					System.out
-							.println("ERROR: AUGUMENTS: studentModel/basicModelName variant1ModelName variant2ModelName basicDir [generateLRInputs]");
-					System.exit(1);
-				}
-				opts.configure();
-				runner.run();
+			else {// if (args.length >= 4) {// #realArguments
+				// opts.basicModelName = args[0];
+				// opts.variant1ModelName = args[1];
+				// opts.variant2ModelName = args[2].equals("NULL") ? "" : args[2];
+				// opts.basicDir = args[3];
+				// if (args.length == 5)
+				// opts.generateLRInputs = args[4].equals("true") ? true : false;
+				// else {
+				System.out.println("ERROR: AUGUMENTS: ++input/your_configuration_file");
+				System.exit(1);
+				// }
+				// opts.configure();
+				// runner.run();
 			}
 		}
 		else if (args == null || args.length == 0) {
@@ -85,8 +83,7 @@ public class Run implements Runnable {
 			runner.run();
 		}
 		else {
-			System.out
-					.println("ERROR: AUGUMENTS: studentModel/basicModelName variant1ModelName [variant2ModelName] or give correct conf file!");
+			System.out.println("ERROR: AUGUMENTS: ++input/your_configuration_file");
 			System.exit(1);
 		}
 
@@ -357,8 +354,8 @@ public class Run implements Runnable {
 			// train one hmm using aHmmSequences
 			opts.currentKc = preSkill;
 			opts.currentKCIndex = hmmId;
-			FeatureHMM trainHmm = trainOneHmm(foldId, runId, curSkill, hmmId, aHmmSequences,
-					null, null);
+			FeatureHMM trainHmm = trainOneHmm(foldId, runId, curSkill, hmmId,
+					aHmmSequences, null, null);
 			hmms.add(trainHmm);
 			while ((testLine = testReader.readLine()) != null) {
 				String newLineOnTest = testLine.trim();
@@ -473,8 +470,8 @@ public class Run implements Runnable {
 		predict(trainSkills, testSkills, getTrainHmms(), hmmsSequences);
 	}
 
-	public FeatureHMM trainOneHmm(int foldId, int runId, String currentKc_, int hmmId,
-			ArrayList<String> aHmmSequences, Bijection devSkills,
+	public FeatureHMM trainOneHmm(int foldId, int runId, String currentKc_,
+			int hmmId, ArrayList<String> aHmmSequences, Bijection devSkills,
 			ArrayList<ArrayList<String>> devHmmsSequences) throws IOException {
 		opts.currentKc = currentKc_;
 		opts.currentKCIndex = hmmId;
@@ -768,8 +765,8 @@ public class Run implements Runnable {
 	 * @throws IOException
 	 */
 	public void predict(Bijection trainSkills, Bijection testSkills,
-			ArrayList<FeatureHMM> trainHmms, ArrayList<ArrayList<String>> hmmsSequences)
-			throws IOException {
+			ArrayList<FeatureHMM> trainHmms,
+			ArrayList<ArrayList<String>> hmmsSequences) throws IOException {
 
 		if (hmmsSequences.size() > trainHmms.size()
 				|| testSkills.getSize() > trainSkills.getSize()) {

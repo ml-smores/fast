@@ -15,7 +15,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import fast.common.Bijection;
 import fast.experimenter.Opts;
 
@@ -130,9 +129,8 @@ public class LogisticRegression {
 				e.printStackTrace();
 			}
 
-		
 		featureWeights = useLBFGS(features, featureWeights, labels, expectedCounts);
-		
+
 		if (featureWeights.length != featureMapping.getSize()
 				|| featureWeights.length != features[0].length) {
 			System.out
@@ -144,8 +142,12 @@ public class LogisticRegression {
 
 	public double[] useLBFGS(double[][] features, double[] initialFeatureWeights,
 			int[] outcomes, double[] expectedCounts) {
-		LBFGS LBFGSTrain = new LBFGS(features, initialFeatureWeights, expectedCounts, outcomes, opdf, opts.regularizationBiasesForLBFGS, opts.LBFGS_MAX_ITERS, opts.verbose, opts.LBFGS_TOLERANCE );
+		LBFGS LBFGSTrain = new LBFGS(features, initialFeatureWeights,
+				expectedCounts, outcomes, opdf, opts.regularizationWeightsForLBFGS,
+				opts.regularizationBiasesForLBFGS, opts.LBFGS_MAX_ITERS, opts.verbose,
+				opts.LBFGS_TOLERANCE);
 		featureWeights = LBFGSTrain.run();
+		opts.parameterizedEmit = LBFGSTrain.parameterizedEmit;
 		return featureWeights;
 	}
 

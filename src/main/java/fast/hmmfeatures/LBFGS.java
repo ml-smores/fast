@@ -16,9 +16,7 @@ import edu.berkeley.nlp.math.LBFGSMinimizer;
 import edu.berkeley.nlp.util.Logger;
 import edu.berkeley.nlp.util.Pair;
 
-
 public class LBFGS {
-
 
 	private double[][] featureValues;
 	public double[] featureWeights;
@@ -26,49 +24,48 @@ public class LBFGS {
 	private int[] outcomes;
 	private int numFeatures;
 	private OpdfContextAwareLogisticRegression opdf;
-	
-	double regularization[];
+	public boolean parameterizedEmit = true;
+
+	double regularizationWeights[];
+	double regularizationBiases[];
 	private int max_iters;
 	boolean verbose;
 	double tol;
 
-	public LBFGS(double[][] featureValues_, 
-                 double[] initialFeatureWeights_,
-			     double[] expectedCounts_, 
-			     int[] outcomes_,
-			     OpdfContextAwareLogisticRegression opdf_,
-			     double[] regularization_,
-			     int max_iters_,
-			     boolean verbose_,
-			     double tolerance_
-			     ) 
-	{
+	public LBFGS(double[][] featureValues_, double[] initialFeatureWeights_,
+			double[] expectedCounts_, int[] outcomes_,
+			OpdfContextAwareLogisticRegression opdf_,
+			double[] regularizationWeights_, double[] regularizationBiases_,
+			int max_iters_, boolean verbose_, double tolerance_) {
 		this.featureValues = featureValues_;
 		this.featureWeights = initialFeatureWeights_;
 		this.expectedCounts = expectedCounts_;
 		this.outcomes = outcomes_;
 		this.opdf = new OpdfContextAwareLogisticRegression(opdf_);
 		this.numFeatures = initialFeatureWeights_.length;
-		
-		this.regularization = regularization_;
+
+		this.regularizationWeights = regularizationWeights_;
+		this.regularizationBiases = regularizationBiases_;
 		this.max_iters = max_iters_;
 		this.verbose = verbose_;
 		this.tol = tolerance_;
-		
+
 	}
 
 	public double[] run() {
 		NegativeRegularizedExpectedLogLikelihood negativeLikelihood = new NegativeRegularizedExpectedLogLikelihood();
 
 		LBFGSMinimizer minimizer = new LBFGSMinimizer();
-		minimizer.setMaxIterations(this.max_iters);
+		minimizer.setMaxIterations(max_iters);
 		minimizer.setVerbose(verbose);
 
 		try {
 			minimizer.minimize(negativeLikelihood, featureWeights, tol);
 		}
-		catch (RuntimeException ex) {			
-			Logger.err("RuntimeException probably caused by [LBFGSMinimizer.implicitMultiply]: Curvature problem.");
+		catch (RuntimeException ex) {
+			parameterizedEmit = false;
+			Logger
+					.err("RuntimeException probably caused by [LBFGSMinimizer.implicitMultiply]: Curvature problem.");
 		}
 
 		return featureWeights;
@@ -85,7 +82,8 @@ public class LBFGS {
 	}
 
 	// hy:computes one LL consisting of transition and emission
-	private class NegativeRegularizedExpectedLogLikelihood extends CachingDifferentiableFunction {
+	private class NegativeRegularizedExpectedLogLikelihood extends
+			CachingDifferentiableFunction {
 
 		// Pair.makePair(negativeRegularizedExpectedLogLikelihood, gradient), both
 		// of them are updated in every iteration
@@ -96,27 +94,24 @@ public class LBFGS {
 
 			// hy: just get the small ll as the paper shows
 			double negativeRegularizedExpectedLogLikelihood = 0.0;
-			
-			//JPG removed this:
-			//if (opts.oneLogisticRegression)
-			negativeRegularizedExpectedLogLikelihood = -(opdf.calculateExpectedLogLikelihood(expectedCounts, featureValues, outcomes) - calculateRegularizer());
-			
+
+			// JPG removed this:
+			// if (opts.oneLogisticRegression)
+			negativeRegularizedExpectedLogLikelihood = -(opdf
+					.calculateExpectedLogLikelihood(expectedCounts, featureValues,
+							outcomes) - calculateRegularizer());
 
 			// Calculate gradient
 			double[] gradient = new double[featureWeights.length];
 			// Gradient of emit weights (hy: doesn't have transition part ;-)
 			int nbDatapoints = expectedCounts.length;
-			
+
 			/*
-			 * JPG COMMENTED THIS:
-			if (opts.forceSetInstanceWeightForLBFGS > 0) {
-				for (int e = 0; e < expectedCounts.length; e++) {
-					expectedCounts[e] = opts.forceSetInstanceWeightForLBFGS;
-				}
-			}
-			*/
-			
-			
+			 * JPG COMMENTED THIS: if (opts.forceSetInstanceWeightForLBFGS > 0) { for
+			 * (int e = 0; e < expectedCounts.length; e++) { expectedCounts[e] =
+			 * opts.forceSetInstanceWeightForLBFGS; } }
+			 */
+
 			// print(expectedCounts, "expected counts:");
 			for (int i = 0; i < nbDatapoints; i++) {
 				// System.out.println("dp id=" + i);
@@ -161,7 +156,8 @@ public class LBFGS {
 
 			// Add gradient of regularizer
 			for (int f = 0; f < numFeatures; ++f) {
-				gradient[f] += 2.0 * regularization[f] * (featureWeights[f] - regularization[f]);
+				gradient[f] += 2.0 * regularizationWeights[f]
+						* (featureWeights[f] - regularizationBiases[f]);
 			}
 			// print(gradient, "RegGradient");
 			// print(x, "featureWeights");
@@ -188,7 +184,9 @@ public class LBFGS {
 	public double calculateRegularizer() {
 		double result = 0.0;
 		for (int f = 0; f < numFeatures; ++f) {
-			result += regularization[f] * (featureWeights[f] - regularization[f]) * (featureWeights[f] - regularization[f]);
+			result += regularizationWeights[f]
+					* (featureWeights[f] - regularizationBiases[f])
+					* (featureWeights[f] - regularizationBiases[f]);
 		}
 		return result;
 	}
