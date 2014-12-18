@@ -1265,7 +1265,8 @@ public class EvaluationGeneral {
 				printAndLog("\tFile: " + fileName + "\n");
 
 				int pos = fileName.indexOf(".");
-				String foldIDStr = fileName.substring(pos - 1, pos);
+				//String foldIDStr = fileName.substring(pos - 1, pos);
+				String foldIDStr = fileName.substring(fileName.indexOf(standardFilePrefix) + standardFilePrefix.length()).replace(suffix, "");
 				int foldID = Integer.parseInt(foldIDStr);
 				realID = foldID;
 
