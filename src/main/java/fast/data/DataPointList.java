@@ -86,7 +86,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 
 			int aStudent = students.put(columns[student]);
 			int aOutcome = outcomes.get(columns[outcome]);
-			int aFold, aProb, aStep;
+			int aFold, aProb, aStep, aSkill=-1;
 
 			if (fold == -1)
 				aFold = 1;
@@ -100,16 +100,25 @@ public class DataPointList extends LinkedList<DataPoint> {
 				aStep = steps.put("meow");
 			else
 				aStep = steps.put(columns[stepName]);
-			if (skill == -1)
+			if (skill == -1){
 				if (stepName == -1)
 					cognitiveModel.put(aProb, new HashSet<Integer>());
 				else
 					cognitiveModel.put(aStep, new HashSet<Integer>());
+			aSkill = skills.put("");
+		}
 			else {
 				HashSet<Integer> s = new HashSet<Integer>();
-				for (String aSkill : columns[skill].split("-")) {
-					skills.put(aSkill.trim());
-					s.add(skills.get(aSkill));
+				if (opts.oneKcInKcColumn) {
+					aSkill = skills.put(columns[skill]);
+					s.add(aSkill);
+				}
+				else { // TODO: now only treat the kcs in kc_column as one kc; Now its
+								// not correct to put aSkill = skills.put... directly
+					for (String a : columns[skill].split("-")) {
+						aSkill = skills.put(a.trim());
+						s.add(aSkill);
+					}
 				}
 				if (stepName == -1)
 					cognitiveModel.put(aProb, s);
@@ -123,7 +132,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 				// if (finalFeatures == null)
 				// finalFeatures = new Bijection();
 				finalFeatures.put("bias");
-				this.add(new DataPoint(aStudent, aProb, aStep, aFold, aOutcome,
+				this.add(new DataPoint(aStudent, aSkill, aProb, aStep, aFold, aOutcome,
 						finalFeatureValues));
 			}
 			else if (opts.parameterizedEmit && featureColumnToName != null
@@ -157,7 +166,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 						finalFeatureValues[hiddenStateIndex] = expandFeatureVector(
 								aFeatures_, hiddenStateIndex, nonNullInputFeatures,
 								finalFeatures);
-					this.add(new DataPoint(aStudent, aProb, aStep, aFold, aOutcome,
+					this.add(new DataPoint(aStudent, aSkill, aProb, aStep, aFold, aOutcome,
 							finalFeatureValues));
 				}
 				else {// not oneLogisticRegression
@@ -178,7 +187,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 						finalFeatureValues[i] = 1.0;
 						finalFeatures.put("bias");
 					}
-					this.add(new DataPoint(aStudent, aProb, aStep, aFold, aOutcome,
+					this.add(new DataPoint(aStudent, aSkill, aProb, aStep, aFold, aOutcome,
 							finalFeatureValues));
 				}
 				// aFeatures = new double[aFeatures_.size()];
@@ -188,7 +197,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 			else {// not (opts.parameterizedEmit && featureColumnToName != null &&
 						// featureColumnToName.size() > 0); not oneBiasFeature
 				// finalFeatures = null;
-				this.add(new DataPoint(aStudent, aProb, aStep, aFold, aOutcome));
+				this.add(new DataPoint(aStudent, aSkill, aProb, aStep, aFold, aOutcome));
 			}
 			// Here it only gets the full space of student or item dummies, later in
 			// StudentList will reput the featureValues into DataPoint
@@ -374,7 +383,7 @@ public class DataPointList extends LinkedList<DataPoint> {
 			// + problemName + ",step:" + stepName + ",outcome:" + outcome
 			// + ",fold:" + fold + ",last feature:" + feature + ")"); // hy
 			System.out.println("Cannot find column (student:" + student + ",outcome:"
-					+ outcome + ",KC:" + skill + ")");
+					+ outcome + ",KC:" + skill + ",feature:" + feature + ")");
 			// ("Cannot find column (student:" + student
 			// + ", problem:" + problemName + ",step:" + stepName + ",outcome:"
 			// + outcome + ",fold:" + fold + ",last feature:" + feature + ")");

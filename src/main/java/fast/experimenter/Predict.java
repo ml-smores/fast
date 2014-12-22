@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import fast.common.Bijection;
 import fast.data.DataPoint;
 import fast.data.StudentList;
 import fast.hmmfeatures.FeatureHMM;
@@ -66,52 +67,105 @@ public class Predict {
 		this.skillsToCheck = opts.skillsToCheck;
 
 	}
+//
+//	public int doPredict(FeatureHMM hmm, StudentList testSequences,
+//			ArrayList<Double> probs, ArrayList<Integer> labels,
+//			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator,
+//			int lineID, String KCName, ArrayList<double[]> features) {
+//		this.features = features;
+//		return doPredict(hmm, testSequences, probs, labels, actualLabels,
+//				trainTestIndicator, lineID, KCName);
+//	}
+	
+//	public void doPredict(FeatureHMM hmm, StudentList testSequences,
+//			ArrayList<Double> probs, ArrayList<Integer> labels,
+//			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator,
+//			ArrayList<String> students, ArrayList<String> kcs,
+//			ArrayList<double[]> features) { // int lineID, String KCName,
+//		this.features = features;
+//		doPredict(hmm, testSequences, probs, labels, actualLabels,
+//				trainTestIndicator, students, kcs);// , lineID, KCName);
+//	}
 
-	public int doPredict(FeatureHMM hmm, StudentList testSequences,
-			ArrayList<Double> probs, ArrayList<Integer> labels,
-			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator,
-			int lineID, String KCName, ArrayList<double[]> features) {
-		this.features = features;
-		return doPredict(hmm, testSequences, probs, labels, actualLabels,
-				trainTestIndicator, lineID, KCName);
-	}
+//	public void doPredict(FeatureHMM hmm, StudentList testSequences,
+//			ArrayList<ArrayList<Double>> studentListProbs,
+//			ArrayList<ArrayList<Integer>> studentListLabels,
+//			ArrayList<ArrayList<Integer>> studentListActualLabels,
+//			ArrayList<Integer> studentIndexList, String KCName) {
+//		// this.features = features;
+//		this.studentListProbs = studentListProbs;
+//		this.studentListLabels = studentListLabels;
+//		this.studentListActualLabels = studentListActualLabels;
+//		this.studentIndexList = studentIndexList;
+//		ArrayList<Integer> trainTestIndicator = null;
+//		ArrayList<Double> probs = new ArrayList<Double>();
+//		ArrayList<Integer> labels = new ArrayList<Integer>();
+//		ArrayList<Integer> actualLabels = new ArrayList<Integer>();
+//		int lineID = 1;
+//		doPredict(hmm, testSequences, probs, labels, actualLabels,
+//				trainTestIndicator, lineID, KCName);
+//	}
+//	public void doPredict(FeatureHMM hmm, StudentList testSequences,
+//			ArrayList<ArrayList<Double>> studentListProbs,
+//			ArrayList<ArrayList<Integer>> studentListLabels,
+//			ArrayList<ArrayList<Integer>> studentListActualLabels,
+//			ArrayList<Integer> studentIndexList) {// , String KCName) {
+//		// this.features = features;
+//		this.studentListProbs = studentListProbs;
+//		this.studentListLabels = studentListLabels;
+//		this.studentListActualLabels = studentListActualLabels;
+//		this.studentIndexList = studentIndexList;
+//		ArrayList<Integer> trainTestIndicator = null;
+//		ArrayList<Double> probs = new ArrayList<Double>();
+//		ArrayList<Integer> labels = new ArrayList<Integer>();
+//		ArrayList<Integer> actualLabels = new ArrayList<Integer>();
+//		ArrayList<String> students = new ArrayList<String>();
+//		ArrayList<String> kcs = new ArrayList<String>();
+//		// int lineID = 1;
+//		doPredict(hmm, testSequences, probs, labels, actualLabels,
+//				trainTestIndicator, students, kcs);// , lineID, KCName);
+//	}
 
-	public void doPredict(FeatureHMM hmm, StudentList testSequences,
-			ArrayList<ArrayList<Double>> studentListProbs,
-			ArrayList<ArrayList<Integer>> studentListLabels,
-			ArrayList<ArrayList<Integer>> studentListActualLabels,
-			ArrayList<Integer> studentIndexList, String KCName) {
-		// this.features = features;
-		this.studentListProbs = studentListProbs;
-		this.studentListLabels = studentListLabels;
-		this.studentListActualLabels = studentListActualLabels;
-		this.studentIndexList = studentIndexList;
-		ArrayList<Integer> trainTestIndicator = null;
-		ArrayList<Double> probs = new ArrayList<Double>();
-		ArrayList<Integer> labels = new ArrayList<Integer>();
-		ArrayList<Integer> actualLabels = new ArrayList<Integer>();
-		int lineID = 1;
-		doPredict(hmm, testSequences, probs, labels, actualLabels,
-				trainTestIndicator, lineID, KCName);
-	}
-
-	public void doPredictAndWritePredFile(FeatureHMM hmm, StudentList testSequences,
-			ArrayList<Double> probs, ArrayList<Integer> labels,
-			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicators,
-			int lineID, String KCName, BufferedWriter predWriter,
-			BufferedWriter trainPredWriter) throws IOException {
+//	public void doPredictAndWritePredFile(FeatureHMM hmm, StudentList testSequences,
+//			ArrayList<Double> probs, ArrayList<Integer> labels,
+//			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicators,
+//			int lineID, String KCName, BufferedWriter predWriter,
+//			BufferedWriter trainPredWriter) throws IOException {
+//		this.predWriter = predWriter;
+//		this.trainPredWriter = trainPredWriter;
+//		doPredict(hmm, testSequences, probs, labels, actualLabels,
+//				trainTestIndicators, 2, KCName);
+//		// this.predWriter.close();
+//	}
+	
+	public void doPredictAndWritePredFile(FeatureHMM hmm,
+			StudentList testSequences, ArrayList<Double> probs,
+			ArrayList<Integer> labels, ArrayList<Integer> actualLabels,
+			ArrayList<Integer> trainTestIndicators, ArrayList<Double> pknow, ArrayList<String> students,
+			ArrayList<String> kcs, BufferedWriter predWriter,
+			BufferedWriter trainPredWriter)// , int lineID, String KCName
+			throws IOException {
 		this.predWriter = predWriter;
 		this.trainPredWriter = trainPredWriter;
 		doPredict(hmm, testSequences, probs, labels, actualLabels,
-				trainTestIndicators, 2, KCName);
+				trainTestIndicators, pknow, students, kcs);// , 2, KCName);
 		// this.predWriter.close();
 	}
 
-	// receiving one hmm
-	public int doPredict(FeatureHMM hmm, StudentList testSequences,
+
+
+	/**
+	 * Final Actual function to do prediction for one HMM
+	 */
+	public void doPredict(FeatureHMM hmm, StudentList testSequences,
 			ArrayList<Double> probs, ArrayList<Integer> labels,
-			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator,
-			int lineID, String KCName) {
+			ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator, ArrayList<Double> pknow, 
+			ArrayList<String> students, ArrayList<String> kcs) {
+		// receiving one hmm
+//		public int doPredict(FeatureHMM hmm, StudentList testSequences,
+//				ArrayList<Double> probs, ArrayList<Integer> labels,
+//				ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator,
+//				int lineID, String KCName) {
 
 		double[][] emitFeatureWeights = new double[hmm.nbStates()][];
 		int[] emitClass1 = new int[hmm.nbStates()];
@@ -144,29 +198,36 @@ public class Predict {
 			System.out.println(hmm);
 		// print(hmm);
 
+		Bijection skills = testSequences.getExpertSkills();
+		Bijection stus = testSequences.getOriStudents();
 		boolean hiddenStateChecked = false;
 		double priorProbState1_n = 0.0;
-		double nbTrainDataPointsInTestInOneHmm = 0;
-		for (int i = 0; i < testSequences.size(); i++) {
+		//int nbTrainDataPointsInTestInOneHmm = 0;
+		for (int i = 0; i < testSequences.size(); i++) {//i:student
 			// before checking hiddenstate, may be wrong;
 			priorProbState1_n = hmm.getPi(hiddenState1);
 			ArrayList<Double> aStudentProbs = new ArrayList<Double>();
 			ArrayList<Integer> aStudentLabels = new ArrayList<Integer>();
 			ArrayList<Integer> aStudentActualLabels = new ArrayList<Integer>();
-			for (int j = 0; j < testSequences.get(i).size(); j++) {
+			
+			for (int j = 0; j < testSequences.get(i).size(); j++) {//j:dp within a seq
 				DataPoint dp = testSequences.get(i).get(j);
-
+				String stu = stus.get(dp.getStudent());
+				String kc = skills.get(dp.getSkill());
+				students.add(stu);
+				kcs.add(kc);
+				
 				int fold = dp.getFold();
 				if (trainTestIndicator != null)
 					trainTestIndicator.add(fold);
-				if (fold == -1)
-					nbTrainDataPointsInTestInOneHmm++;
+//				if (fold == -1)
+//					nbTrainDataPointsInTestInOneHmm++;
 				// if (fold != -1) {
 				// for 2LR
-				if (opts.generateLRInputs) {
-					double[] afeatures = dp.getFeatures(0);
-					features.add(afeatures);
-				}
+//				if (opts.generateLRInputs) {
+//					double[] afeatures = dp.getFeatures(0);
+//					features.add(afeatures);
+//				}
 				// }
 				// get outcome and features
 				int outcome = dp.getOutcome();
@@ -184,11 +245,11 @@ public class Predict {
 						double hidden1obs1 = hmm.getOpdf(1).probability(dp.getFeatures(1),
 								obsClass1);
 						if (hidden0obs1 > hidden1obs1) {
-							hiddenState1 = 0;
+							hiddenState1 = 0;//known
 							hiddenState0 = 1;
 						}
 						else {
-							hiddenState1 = 1;
+							hiddenState1 = 1;//known
 							hiddenState0 = 0;
 						}
 						if (verbose)
@@ -198,8 +259,8 @@ public class Predict {
 					}
 					else {
 						double a01 = hmm.getAij(0, 1);
-						double a10 = hmm.getAij(1, 0);
-						if (a01 < a10) {
+						double a11 = hmm.getAij(1, 1);
+						if (a01 > a11) {
 							hiddenState1 = 0;// know
 							hiddenState0 = 1;// notknow
 						}
@@ -208,7 +269,7 @@ public class Predict {
 							hiddenState0 = 0;// unknow
 						}
 						if (verbose)
-							System.out.println("a01=" + a01 + "\ta10=" + a10
+							System.out.println("a01=" + a01 + "\ta11=" + a11
 									+ "\thiddenState1=" + hiddenState1 + "\thiddenState0="
 									+ hiddenState0 + "\n");
 					}
@@ -233,12 +294,13 @@ public class Predict {
 				int predLabel = (probClass1_n > cutoff) ? 1 : 0;
 				probs.add(probClass1_n);
 				labels.add(predLabel);
+				pknow.add(priorProbState1_n);
 				aStudentProbs.add(probClass1_n);
 				aStudentLabels.add(predLabel);
 
 				try {
 					String s = outcome + "," + predLabel + ","
-							+ opts.formatter2.format(probClass1_n);
+							+ opts.formatter2.format(probClass1_n) + "," + opts.formatter2.format(priorProbState1_n) + "," + stu + "," + kc;
 					if (predWriter != null && fold != -1)
 						predWriter.write(s + "\n");
 					else if (trainPredWriter != null && fold == -1)
@@ -269,33 +331,33 @@ public class Predict {
 						* (1 - probState1State0) + (1 - posteriorProbState1_n)
 						* probState0State1, 1.0);
 
-				if (verbose) {
-					if (parameterizedEmit) {
-						System.out.print("Line:\t" + lineID + "\thidden0 features:\t");
-						for (int k = 0; k < dp.getFeatures(hiddenState0).length; k++)
-							System.out.print(dp.getFeatures(hiddenState0)[k] + "\t");
-						System.out.print("\tseqID:\t" + j);
-						System.out.print("Line:\t" + lineID + "\thidden1 features:\t");
-						for (int k = 0; k < dp.getFeatures(hiddenState1).length; k++)
-							System.out.print(dp.getFeatures(hiddenState1)[k] + "\t");
-						System.out.print("\tseqID:\t" + j);
-					}
-					else {
-						System.out.print("Line:\t" + lineID + "\tseqID:\t" + j);
-					}
-					System.out.println("\toutcome:\t" + dp.getOutcome()
-							+ "\tP(Correct):\t" + probClass1_n + "\tPprior('K'):\t"
-							+ priorProbState1_n + "\tP('slip'):\t" + probState1Class0
-							+ "\tP('guess'):\t" + probState0Class1 + "\tP('learn'):\t"
-							+ probState0State1 + "\tP('forget'):\t" + probState1State0
-							+ "\tP(Correct):\t" + probClass1_n + "\tPpost('K'):\t"
-							+ posteriorProbState1_n + "\tPprior('K')_next:\t"
-							+ priorProbState1_n1);
-				}
+//				if (verbose) {
+//					if (parameterizedEmit) {
+//						System.out.print("Line:\t" + lineID + "\thidden0 features:\t");
+//						for (int k = 0; k < dp.getFeatures(hiddenState0).length; k++)
+//							System.out.print(dp.getFeatures(hiddenState0)[k] + "\t");
+//						System.out.print("\tseqID:\t" + j);
+//						System.out.print("Line:\t" + lineID + "\thidden1 features:\t");
+//						for (int k = 0; k < dp.getFeatures(hiddenState1).length; k++)
+//							System.out.print(dp.getFeatures(hiddenState1)[k] + "\t");
+//						System.out.print("\tseqID:\t" + j);
+//					}
+//					else {
+//						System.out.print("Line:\t" + lineID + "\tseqID:\t" + j);
+//					}
+//					System.out.println("\toutcome:\t" + dp.getOutcome()
+//							+ "\tP(Correct):\t" + probClass1_n + "\tPprior('K'):\t"
+//							+ priorProbState1_n + "\tP('slip'):\t" + probState1Class0
+//							+ "\tP('guess'):\t" + probState0Class1 + "\tP('learn'):\t"
+//							+ probState0State1 + "\tP('forget'):\t" + probState1State0
+//							+ "\tP(Correct):\t" + probClass1_n + "\tPpost('K'):\t"
+//							+ posteriorProbState1_n + "\tPprior('K')_next:\t"
+//							+ priorProbState1_n1);
+//				}
 				if (probClass1_n == 0.0 || probClass1_n == 1.0) {
 					System.out.println("\tWarning: probClass1_n=" + probClass1_n);
 				}
-				lineID++;
+				//lineID++;
 				priorProbState1_n = priorProbState1_n1;
 			}
 			if (verbose)
@@ -304,23 +366,23 @@ public class Predict {
 			studentListLabels.add(aStudentLabels);
 			studentListActualLabels.add(aStudentActualLabels);
 		}
-		if (skillsToCheck.contains(KCName)) {
-			try {
-				if (opts.writeMainLog) {
-					opts.mainLogWriter.write("\nKC=" + KCName
-							+ "\tnbTrainDataPointsInTestInOneHmm="
-							+ nbTrainDataPointsInTestInOneHmm + "\n");
-					opts.mainLogWriter.flush();
-				}
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (verbose)
-			System.out.println("\n");
-		return lineID;
+//		if (skillsToCheck.contains(KCName)) {
+//			try {
+//				if (opts.writeMainLog) {
+//					opts.mainLogWriter.write("\nKC=" + KCName
+//							+ "\tnbTrainDataPointsInTestInOneHmm="
+//							+ nbTrainDataPointsInTestInOneHmm + "\n");
+//					opts.mainLogWriter.flush();
+//				}
+//			}
+//			catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		if (verbose)
+//			System.out.println("\n");
+//		return lineID;
 	}
 	// public void print(Hmm hmm) {
 	// double priorProbState1 = hmm.getPi(hiddenState1); // assuming it's P(K)

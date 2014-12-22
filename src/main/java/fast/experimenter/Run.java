@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+//import java.util.Map;
 import fast.common.Bijection;
 import fast.data.StudentList;
 import fast.evaluation.EvaluationGeneral;
@@ -131,33 +131,33 @@ public class Run implements Runnable {
 	}
 
 	public void printAndWrite() throws IOException {
-		if (opts.getAucOnDevPerKc)
-			System.out.println("\nopts.bestAucOnDevAllKcsSum="
-					+ opts.bestAucOnDevAllKcsSum);
-		if (opts.writePerKcTestSetAUC) {
-			String str = "\naverage auc On test across allKcs="
-					+ (opts.aucOnTestAllKcsSum / opts.nbHmms * 1.0);
-			System.out.println(str);
-			String evalOutFile = opts.outDir + opts.modelName + ".eval";
-			BufferedWriter writer = new BufferedWriter(new FileWriter(evalOutFile,
-					true));
-			writer.write(str);
-			writer.close();
-			evalOutFile = opts.outDir + "evaluation.log";
-			writer = new BufferedWriter(new FileWriter(evalOutFile, true));
-			writer.write(str);
-			writer.close();
-		}
-		if (opts.writePerKcAucVsAvgDeltaGamma) {
-			for (Map.Entry<String, Double> iter : opts.kcAvgDeltaGammaMap.entrySet()) {
-				String kc = iter.getKey();
-				double avgDeltaGamma = iter.getValue();
-				double testAuc = opts.kcTestAucMap.get(kc);
-				opts.perKcAucVsAvgDeltaGammaWriter.write(kc + "\t" + avgDeltaGamma
-						+ "\t" + testAuc + "\n");
-				opts.perKcAucVsAvgDeltaGammaWriter.flush();
-			}
-		}
+//		if (opts.getAucOnDevPerKc)
+//			System.out.println("\nopts.bestAucOnDevAllKcsSum="
+//					+ opts.bestAucOnDevAllKcsSum);
+//		if (opts.writePerKcTestSetAUC) {
+//			String str = "\naverage auc On test across allKcs="
+//					+ (opts.aucOnTestAllKcsSum / opts.nbHmms * 1.0);
+//			System.out.println(str);
+//			String evalOutFile = opts.outDir + opts.modelName + ".eval";
+//			BufferedWriter writer = new BufferedWriter(new FileWriter(evalOutFile,
+//					true));
+//			writer.write(str);
+//			writer.close();
+//			evalOutFile = opts.outDir + "evaluation.log";
+//			writer = new BufferedWriter(new FileWriter(evalOutFile, true));
+//			writer.write(str);
+//			writer.close();
+//		}
+//		if (opts.writePerKcAucVsAvgDeltaGamma) {
+//			for (Map.Entry<String, Double> iter : opts.kcAvgDeltaGammaMap.entrySet()) {
+//				String kc = iter.getKey();
+//				double avgDeltaGamma = iter.getValue();
+//				double testAuc = opts.kcTestAucMap.get(kc);
+//				opts.perKcAucVsAvgDeltaGammaWriter.write(kc + "\t" + avgDeltaGamma
+//						+ "\t" + testAuc + "\n");
+//				opts.perKcAucVsAvgDeltaGammaWriter.flush();
+//			}
+//		}
 		if (opts.writeMainLog) {
 			if (opts.hmmsForcedToNonParmTrainDueToLBFGSException.size() > 0) {
 				opts.mainLogWriter
@@ -398,9 +398,13 @@ public class Run implements Runnable {
 		ArrayList<Integer> labels = new ArrayList<Integer>();
 		ArrayList<Integer> actualLabels = new ArrayList<Integer>();
 		ArrayList<Integer> trainTestIndicators = new ArrayList<Integer>();
+		ArrayList<Double> pknow = new ArrayList<Double>();
+		ArrayList<String> students = new ArrayList<String>();
+		ArrayList<String> kcs = new ArrayList<String>();
 		ArrayList<double[]> features = new ArrayList<double[]>();
 		predictOneHmm(trainHmm, kcName, aHmmSequences, probs, labels, actualLabels,
-				trainTestIndicators, features);
+				trainTestIndicators, pknow, students, kcs, features);
+
 	}
 
 	public void runBatch(int foldId, int runId) throws IOException {
@@ -477,7 +481,7 @@ public class Run implements Runnable {
 		opts.currentKCIndex = hmmId;
 		// the first one is the header
 		opts.nbDataPointsInTrainPerHmm = aHmmSequences.size() - 1;
-		Experimenter featureHMM = new Experimenter(opts);
+		Train featureHMM = new Train(opts);
 
 		String str = "\n\n******** Training: hmmID=" + hmmId + ", skill="
 				+ currentKc_ + ", foldID=" + foldId + ", runID=" + runId
@@ -515,21 +519,21 @@ public class Run implements Runnable {
 			opts.mainLogWriter.flush();
 		}
 
-		StudentList devAHmmSeqs = null;
-		if (opts.useDev) {
-			int curKcDevSkillsIndex = devSkills.get(opts.currentKc);// devSkillIndex
-			System.out.println("\nINFO: Loading devSet KC");
-			devAHmmSeqs = StudentList.loadData(
-					devHmmsSequences.get(curKcDevSkillsIndex), opts);
-			System.out.println("\n");
-		}
+//		StudentList devAHmmSeqs = null;
+//		if (opts.useDev) {
+//			int curKcDevSkillsIndex = devSkills.get(opts.currentKc);// devSkillIndex
+//			System.out.println("\nINFO: Loading devSet KC");
+//			devAHmmSeqs = StudentList.loadData(
+//					devHmmsSequences.get(curKcDevSkillsIndex), opts);
+//			System.out.println("\n");
+//		}
 
 		// Per skill will have one HMM
 		FeatureHMM hmm = null;
-		if (!opts.useDev)
-			hmm = featureHMM.doTrain(aHmmSeqs, opts.currentKc);
-		else
-			hmm = featureHMM.doTrain(aHmmSeqs, devAHmmSeqs, opts.currentKc);
+//		if (!opts.useDev)
+		hmm = featureHMM.doTrain(aHmmSeqs, opts.currentKc);
+//		else
+			//hmm = featureHMM.doTrain(aHmmSeqs, devAHmmSeqs, opts.currentKc);
 		return hmm;
 	}
 
@@ -752,17 +756,11 @@ public class Run implements Runnable {
 	}
 
 	/**
-	 * one fold, all skills
+	 * By default, here is the function to start predicting for one fold, all
+	 * skills
 	 * 
-	 * @param trainSkills
-	 * @param testSkills
-	 * @param hmms
-	 * @param hmmsSequences
-	 *          : hmms are ordered according to test file, can be different from
-	 *          that of train file
-	 * @param opts
-	 * 
-	 * @throws IOException
+	 * hmmsSequences : hmms are ordered according to test file, can be different
+	 * from that of train file
 	 */
 	public void predict(Bijection trainSkills, Bijection testSkills,
 			ArrayList<FeatureHMM> trainHmms,
@@ -792,6 +790,9 @@ public class Run implements Runnable {
 		ArrayList<Integer> allLabels = new ArrayList<Integer>();
 		ArrayList<Integer> allActualLabels = new ArrayList<Integer>();
 		ArrayList<Integer> allTrainTestIndicator = new ArrayList<Integer>();
+		ArrayList<Double>  allProbKnow = new ArrayList<Double>();
+		ArrayList<String> allStudents = new ArrayList<String>();
+		ArrayList<String> allKcs = new ArrayList<String>();
 
 		opts.aucOnTestAllKcsSum = 0.0;
 
@@ -800,6 +801,9 @@ public class Run implements Runnable {
 			ArrayList<Integer> labels = new ArrayList<Integer>();
 			ArrayList<Integer> actualLabels = new ArrayList<Integer>();
 			ArrayList<Integer> trainTestIndicators = new ArrayList<Integer>();
+			ArrayList<Double> pknow = new ArrayList<Double>();
+			ArrayList<String> students = new ArrayList<String>();
+			ArrayList<String> kcs = new ArrayList<String>();
 			ArrayList<double[]> features = new ArrayList<double[]>();
 
 			String currentTestSkill = testSkills.get(i);
@@ -811,13 +815,13 @@ public class Run implements Runnable {
 			if (opts.writeMainLog)
 				opts.mainLogWriter.write(str + "\n");
 
-			if (opts.skillsToCheck.contains(currentTestSkill)) {
-				if (opts.writeMainLog) {
-					opts.mainLogWriter.write("\nKC=" + currentTestSkill
-							+ "\t#attempts(records)=" + (hmmsSequences.get(i).size() - 1));
-					opts.mainLogWriter.flush();
-				}
-			}
+			// if (opts.skillsToCheck.contains(currentTestSkill)) {
+			// if (opts.writeMainLog) {
+			// opts.mainLogWriter.write("\nKC=" + currentTestSkill
+			// + "\t#attempts(records)=" + (hmmsSequences.get(i).size() - 1));
+			// opts.mainLogWriter.flush();
+			// }
+			// }
 
 			if (!trainSkills.contains(currentTestSkill)) {
 				System.out.println("ERROR: testset contains new KC ("
@@ -841,17 +845,20 @@ public class Run implements Runnable {
 
 			FeatureHMM hmm = trainHmms.get(trainSkillID);
 			predictOneHmm(hmm, currentTestSkill, hmmsSequences.get(i), probs, labels,
-					actualLabels, trainTestIndicators, features);
+					actualLabels, trainTestIndicators, pknow, students, kcs, features);
 			allProbs.addAll(probs);
 			allLabels.addAll(labels);
 			allActualLabels.addAll(actualLabels);
 			allTrainTestIndicator.addAll(trainTestIndicators);
+			allProbKnow.addAll(pknow);
+			allStudents.addAll(students);
+			allKcs.addAll(kcs);
 		}
 
 		// evaluation (one fold all skills)
 		Evaluation evaluation = new Evaluation(opts);
-		evaluation.doEvaluationAndWritePred(allProbs, allLabels, allActualLabels,
-				allTrainTestIndicator);
+		evaluation.doEvaluate(allProbs, allLabels, allActualLabels,
+				allTrainTestIndicator, allProbKnow, allStudents, allKcs);
 		// String str = "\t#test instances:" + totalNbTest;
 		// System.out.println(str);
 		// if (opts.writeMainLog)
@@ -859,10 +866,15 @@ public class Run implements Runnable {
 
 	}
 
+//	public void predictOneHmm(FeatureHMM hmm, String kcName,
+//			ArrayList<String> aHmmSequence, ArrayList<Double> probs,
+//			ArrayList<Integer> labels, ArrayList<Integer> actualLabels,
+//			ArrayList<Integer> trainTestIndicators, ArrayList<double[]> features)
 	public void predictOneHmm(FeatureHMM hmm, String kcName,
 			ArrayList<String> aHmmSequence, ArrayList<Double> probs,
 			ArrayList<Integer> labels, ArrayList<Integer> actualLabels,
-			ArrayList<Integer> trainTestIndicators, ArrayList<double[]> features)
+			ArrayList<Integer> trainTestIndicators, ArrayList<Double> pknow, ArrayList<String> students,
+			ArrayList<String> kcs, ArrayList<double[]> features) 
 			throws IOException {
 		StudentList hmmSequences = null;
 		if (!opts.inputProvideFeatureColumns) {
@@ -924,94 +936,94 @@ public class Run implements Runnable {
 			opts.mainLogWriter.flush();
 		}
 
-		int lineID = 0;
+		//int lineID = 0;
 		Predict pred = new Predict(opts);
-		if (opts.generateLRInputs) {
-			// in order to get features and trainTestIndicators
-			lineID = pred.doPredict(hmm, hmmSequences, probs, labels, actualLabels,
-					trainTestIndicators, lineID, kcName, features);
-		}
-		else {
-			if (opts.writePerKcTestSetAUC) {
-				BufferedWriter predWriter = new BufferedWriter(new FileWriter(
-						opts.outDir + opts.currentKc + "." + opts.currentKc));
-				predWriter.write("actualLabel,predLabel, predProb\n");
-				pred.doPredictAndWritePredFile(hmm, hmmSequences, probs, labels,
-						actualLabels, trainTestIndicators, 2, kcName, predWriter, null);
-				predWriter.close();
-				EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
-				opts.allModelComparisonOutDir = opts.outDir;
-				String curModelName = opts.currentKc;
-				double auc = -1.0;
-				auc = allFoldRunsEval.evaluateOnMultiFiles(curModelName, opts.numRuns,
-						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
-						opts.outDir + curModelName + ".eval", "." + opts.currentKc, "");
-				System.out.println("currentKc=" + opts.currentKc + "\tauc=" + auc
-						+ "\n");
-				opts.kcTestAucMap.put(opts.currentKc, auc);
-				opts.aucOnTestAllKcsSum += auc;
-			}
-			if (opts.readOneHmmOneTime) {
-				BufferedWriter predWriter = null;
-				File curActionD = new File(opts.predictionFile);
-				if (!curActionD.exists()) {
-					predWriter = new BufferedWriter(new FileWriter(opts.predictionFile,
-							true));
-					predWriter.write("actualLabel,predLabel, predProb\n");
-				}
-				else {
-					predWriter = new BufferedWriter(new FileWriter(opts.predictionFile,
-							true));
-				}
-
-				BufferedWriter trainPredWriter = null;
-				if (opts.writeTrainPredFile) {
-					String file = opts.predictionFile + ".train";
-					curActionD = new File(file);
-					if (!curActionD.exists()) {
-						trainPredWriter = new BufferedWriter(new FileWriter(file, true));
-						trainPredWriter.write("actualLabel,predLabel, predProb\n");
-					}
-					else {
-						trainPredWriter = new BufferedWriter(new FileWriter(file, true));
-					}
-				}
-
-				if (opts.writePerKcTestSetAUC) {
-					for (int index = 0; index < probs.size(); index++) {
-						String s = actualLabels.get(index) + "," + labels.get(index) + ","
-								+ opts.formatter2.format(probs.get(index));
-						if (trainTestIndicators.get(index) == -1) {
-							if (opts.writeTrainPredFile)
-								trainPredWriter.write(s + "\n");
-						}
-						else {
-							predWriter.write(s + "\n");
-						}
-					}
-				}
-				else
-					pred.doPredictAndWritePredFile(hmm, hmmSequences, probs, labels,
-							actualLabels, trainTestIndicators, lineID, kcName, predWriter,
-							trainPredWriter);
-				predWriter.close();
-				trainPredWriter.close();
+//		if (opts.generateLRInputs) {
+//			// in order to get features and trainTestIndicators
+//			pred.doPredict(hmm, hmmSequences, probs, labels, actualLabels,
+//					trainTestIndicators, students, kcs);// , lineID, kcName);
+//		}
+//		else {
+//			if (opts.writePerKcTestSetAUC) {
+//				BufferedWriter predWriter = new BufferedWriter(new FileWriter(
+//						opts.outDir + opts.currentKc + "." + opts.currentKc));
+//				predWriter.write("actualLabel,predLabel,predProb,pknow,student,kc\n");
+//				pred.doPredictAndWritePredFile(hmm, hmmSequences, probs, labels,
+//						actualLabels, trainTestIndicators, pknow, students, kcs, predWriter, null);
+//				predWriter.close();
+//				EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
+//				opts.allModelComparisonOutDir = opts.outDir;
+//				String curModelName = opts.currentKc;
+//				double auc = -1.0;
+//				auc = allFoldRunsEval.evaluateOnMultiFiles(curModelName, opts.numRuns,
+//						opts.numFolds, opts.allModelComparisonOutDir, opts.outDir,
+//						opts.outDir + curModelName + ".eval", "." + opts.currentKc, "");
+//				System.out.println("currentKc=" + opts.currentKc + "\tauc=" + auc
+//						+ "\n");
+//				opts.kcTestAucMap.put(opts.currentKc, auc);
+//				opts.aucOnTestAllKcsSum += auc;
+//			}
+		if (opts.readOneHmmOneTime) {
+			BufferedWriter predWriter = null;
+			File curActionD = new File(opts.predictionFile);
+			if (!curActionD.exists()) {
+				predWriter = new BufferedWriter(new FileWriter(opts.predictionFile,
+						true));
+				predWriter.write("actualLabel,predLabel,predProb,probKnow,student,kc\n");
 			}
 			else {
-				lineID = pred.doPredict(hmm, hmmSequences, probs, labels, actualLabels,
-						trainTestIndicators, lineID, kcName);
+				predWriter = new BufferedWriter(new FileWriter(opts.predictionFile,
+						true));
 			}
-		}// !opts.generateLRInputs
 
-		if (opts.generateLRInputs)
-			try {
-				generateTestLROutSideFile(hmmSequences.getFeatures(), actualLabels,
-						features, trainTestIndicators);
-			}
-			catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			BufferedWriter trainPredWriter = null;
+//				if (opts.writeTrainPredFile) {
+//					String file = opts.predictionFile + ".train";
+//					curActionD = new File(file);
+//					if (!curActionD.exists()) {
+//						trainPredWriter = new BufferedWriter(new FileWriter(file, true));
+//						trainPredWriter.write("actualLabel,predLabel,predProb,student,kc\n");
+//					}
+//					else {
+//						trainPredWriter = new BufferedWriter(new FileWriter(file, true));
+//					}
+//				}
+
+//				if (opts.writePerKcTestSetAUC) {
+//					for (int index = 0; index < probs.size(); index++) {
+//						String s = actualLabels.get(index) + "," + labels.get(index) + ","
+//								+ opts.formatter2.format(probs.get(index));
+//						if (trainTestIndicators.get(index) == -1) {
+//							if (opts.writeTrainPredFile)
+//								trainPredWriter.write(s + "\n");
+//						}
+//						else {
+//							predWriter.write(s + "\n");
+//						}
+//					}
+//				}
+//				else
+			pred.doPredictAndWritePredFile(hmm, hmmSequences, probs, labels,
+					actualLabels, trainTestIndicators, pknow, students, kcs, predWriter,
+					trainPredWriter);
+			predWriter.close();
+			//trainPredWriter.close();
+		}
+		else {
+			pred.doPredict(hmm, hmmSequences, probs, labels, actualLabels,
+					trainTestIndicators, pknow, students, kcs);
+		}
+		//}// !opts.generateLRInputs
+
+//		if (opts.generateLRInputs)
+//			try {
+//				generateTestLROutSideFile(hmmSequences.getFeatures(), actualLabels,
+//						features, trainTestIndicators);
+//			}
+//			catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 	}
 
 	// public static void print(StudentList sequences) {
@@ -1023,84 +1035,84 @@ public class Run implements Runnable {
 	// System.out.println("");
 	// }
 	// }
-	public void generateTestLROutSideFile(Bijection featureMapping,
-			ArrayList<Integer> actualLabels, ArrayList<double[]> features,
-			ArrayList<Integer> trainTestIndicators) throws Exception {
-		// String generalLRFeatureStr = "";
-		// String generalLRLabelStr = "";
-		// String liblinearDataStr = "";
-		String wekaDataStr = "";
-		ArrayList<String> wekaDataStrs = new ArrayList<String>();
-		ArrayList<Integer> nonTrainInstanceActualLabels = new ArrayList<Integer>();
-		opts.testByWekaInputDataFile = opts.outDir
-				+ (opts.nowInTrain ? opts.curFoldRunTrainInFilePrefix
-						: opts.curFoldRunTestInFilePrefix) + "_" + opts.currentKc + ".csv";
-		opts.testByWekaInputDataWriter = new BufferedWriter(new FileWriter(
-				opts.testByWekaInputDataFile));
-		boolean writeHeader = false;
-
-		for (int ins = 0; ins < actualLabels.size(); ins++) {
-			if (trainTestIndicators.get(ins) == -1)
-				continue;
-			if (ins % 1000 == 0)
-				System.out.println("generateTestLROutSideFile: ins=" + ins);
-			double[] curInsFeatures = features.get(ins);
-			for (int f = 0; f < curInsFeatures.length; f++) {
-				double aFeature = curInsFeatures[f];
-				wekaDataStr += aFeature + ",";
-			}
-			wekaDataStr += (actualLabels.get(ins) == 0 ? "incorrect" : "correct");
-
-			nonTrainInstanceActualLabels.add(actualLabels.get(ins));
-			if (opts.swapData)
-				wekaDataStrs.add(wekaDataStr);
-			else {
-				if (!writeHeader) {
-					String header = "";
-					for (int f = 0; f < featureMapping.getSize(); f++)
-						header += featureMapping.get(f) + ",";
-					header += "label";
-					opts.testByWekaInputDataWriter.write(header + "\n");
-					writeHeader = true;
-				}
-				opts.testByWekaInputDataWriter.write(wekaDataStr + "\n");
-				opts.testByWekaInputDataWriter.flush();
-			}
-			// generalLRFeatureStr = "";
-			// generalLRLabelStr = "";
-			// liblinearDataStr = "";
-			wekaDataStr = "";
-		}
-		// swap targets to make 1 ("correct") appears first, so that Cp(which
-		// corresponds to prob.y>0 and weighted_C[0](which corresponds to the
-		// first
-		// appearing label)) can always correspond to 1 ("correct"))
-		if (nonTrainInstanceActualLabels.size() == 0) {
-			System.out.println("INFO: nonTrainInstanceActualLabels.size() == 0!");
-			return;
-		}
-		if (opts.swapData) {
-			if (nonTrainInstanceActualLabels.get(0) != opts.obsClass1) {
-				for (int k = 1; k < nonTrainInstanceActualLabels.size(); k++)
-					if (nonTrainInstanceActualLabels.get(k) == opts.obsClass1) {
-						// targets[k] == opts.obsClass1
-						swap(wekaDataStrs, 0, k);
-						System.out.println("swap");
-						break;
-					}
-			}
-			String header = "";
-			for (int f = 0; f < featureMapping.getSize(); f++)
-				header += featureMapping.get(f) + ",";
-			header += "label";
-			opts.testByWekaInputDataWriter.write(header + "\n");
-			for (int ins = 0; ins < wekaDataStrs.size(); ins++) {
-				opts.testByWekaInputDataWriter.write(wekaDataStrs.get(ins) + "\n");
-				opts.testByWekaInputDataWriter.flush();
-			}
-		}
-		opts.testByWekaInputDataWriter.close();
-	}
+//	public void generateTestLROutSideFile(Bijection featureMapping,
+//			ArrayList<Integer> actualLabels, ArrayList<double[]> features,
+//			ArrayList<Integer> trainTestIndicators) throws Exception {
+//		// String generalLRFeatureStr = "";
+//		// String generalLRLabelStr = "";
+//		// String liblinearDataStr = "";
+//		String wekaDataStr = "";
+//		ArrayList<String> wekaDataStrs = new ArrayList<String>();
+//		ArrayList<Integer> nonTrainInstanceActualLabels = new ArrayList<Integer>();
+//		opts.testByWekaInputDataFile = opts.outDir
+//				+ (opts.nowInTrain ? opts.curFoldRunTrainInFilePrefix
+//						: opts.curFoldRunTestInFilePrefix) + "_" + opts.currentKc + ".csv";
+//		opts.testByWekaInputDataWriter = new BufferedWriter(new FileWriter(
+//				opts.testByWekaInputDataFile));
+//		boolean writeHeader = false;
+//
+//		for (int ins = 0; ins < actualLabels.size(); ins++) {
+//			if (trainTestIndicators.get(ins) == -1)
+//				continue;
+//			if (ins % 1000 == 0)
+//				System.out.println("generateTestLROutSideFile: ins=" + ins);
+//			double[] curInsFeatures = features.get(ins);
+//			for (int f = 0; f < curInsFeatures.length; f++) {
+//				double aFeature = curInsFeatures[f];
+//				wekaDataStr += aFeature + ",";
+//			}
+//			wekaDataStr += (actualLabels.get(ins) == 0 ? "incorrect" : "correct");
+//
+//			nonTrainInstanceActualLabels.add(actualLabels.get(ins));
+//			if (opts.swapData)
+//				wekaDataStrs.add(wekaDataStr);
+//			else {
+//				if (!writeHeader) {
+//					String header = "";
+//					for (int f = 0; f < featureMapping.getSize(); f++)
+//						header += featureMapping.get(f) + ",";
+//					header += "label";
+//					opts.testByWekaInputDataWriter.write(header + "\n");
+//					writeHeader = true;
+//				}
+//				opts.testByWekaInputDataWriter.write(wekaDataStr + "\n");
+//				opts.testByWekaInputDataWriter.flush();
+//			}
+//			// generalLRFeatureStr = "";
+//			// generalLRLabelStr = "";
+//			// liblinearDataStr = "";
+//			wekaDataStr = "";
+//		}
+//		// swap targets to make 1 ("correct") appears first, so that Cp(which
+//		// corresponds to prob.y>0 and weighted_C[0](which corresponds to the
+//		// first
+//		// appearing label)) can always correspond to 1 ("correct"))
+//		if (nonTrainInstanceActualLabels.size() == 0) {
+//			System.out.println("INFO: nonTrainInstanceActualLabels.size() == 0!");
+//			return;
+//		}
+//		if (opts.swapData) {
+//			if (nonTrainInstanceActualLabels.get(0) != opts.obsClass1) {
+//				for (int k = 1; k < nonTrainInstanceActualLabels.size(); k++)
+//					if (nonTrainInstanceActualLabels.get(k) == opts.obsClass1) {
+//						// targets[k] == opts.obsClass1
+//						swap(wekaDataStrs, 0, k);
+//						System.out.println("swap");
+//						break;
+//					}
+//			}
+//			String header = "";
+//			for (int f = 0; f < featureMapping.getSize(); f++)
+//				header += featureMapping.get(f) + ",";
+//			header += "label";
+//			opts.testByWekaInputDataWriter.write(header + "\n");
+//			for (int ins = 0; ins < wekaDataStrs.size(); ins++) {
+//				opts.testByWekaInputDataWriter.write(wekaDataStrs.get(ins) + "\n");
+//				opts.testByWekaInputDataWriter.flush();
+//			}
+//		}
+//		opts.testByWekaInputDataWriter.close();
+//	}
 
 	public void swap(ArrayList<String> dataStrs, int i, int j) {
 		String temp = dataStrs.get(i);

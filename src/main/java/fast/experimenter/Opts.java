@@ -24,24 +24,11 @@ import fig.basic.Option;
 
 public class Opts {
 
-	// @Option(gloss = "basicModelName is either \"FAST\" or \"KT\". ")
-	// +
-	// "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
-	// public String basicModelName = "FAST";
-	// @Option(gloss = "variant1ModelName could be empty or contain any strings.")
-	// +
-	// "basicModelName, variant1ModelName and variant2ModelName are used to configure modelName and in/out directories. However, you can specify modelName and inDir/outDir directly.")
-	// public String variant1ModelName = "item";
-	// @Option(gloss = "")
-	// public String variant2ModelName = "";
-	public String basicDir = "./input/";
-	// @Option(gloss = "Human friendly description of the model")
+	
 	@Option(gloss = "modelName should contain either \"FAST\" or \"KT\" in the string (capital letters). ")
 	public String modelName = "FAST";
-	// basicModelName
-	// + (variant1ModelName.equals("") ? ""
-	// : ("-" + variant1ModelName + (variant2ModelName.equals("") ? ""
-	// : ("-" + variant2ModelName))));//
+	public String basicDir = "./input/";
+	// @Option(gloss = "Human friendly description of the model")
 	@Option(gloss = "testSingleFile is used to decide just run one train test pair or multiple train, test pairs.")
 	public boolean testSingleFile = true;
 	@Option(gloss = "numFolds and numRuns are used to decide how many times FAST runs. For testSingleFile=true, numFolds and numRuns should be set to 1. The code uses foldID to change the train, test file name (e.g. train0.txt~train9.txt are for two runs of 5 fold CV or one run of 10 fold CV) foldId = runID * opts.numFolds + foldID")
@@ -52,11 +39,6 @@ public class Opts {
 	public String datasplit = testSingleFile ? "datasets" : "CVdatasets";
 	@Option(gloss = "inDir is where FAST get input files(train and test).")
 	public String inDir = basicDir;
-	// basicDir
-	// + basicModelName
-	// + "/"
-	// + (variant1ModelName.equals("") ? (datasplit + "/") : (variant1ModelName
-	// + "/" + datasplit + "/"));
 	@Option(gloss = "outDir is where FAST output prediction files and log files.")
 	public String outDir = "./output/";// inDir + modelName + "/";
 	@Option(gloss = "allModelComparisonOutDir is where all different models are compared (by the average evaluation metric).")
@@ -94,6 +76,7 @@ public class Opts {
 	public boolean useDev = false;
 	public boolean combineTrainAndDev = false;
 	public boolean tuneByTestset = false;
+	public boolean oneKcInKcColumn = true;
 
 	@Option(gloss = "By default, configure baumWelchScaledLearner=true meaning that we use baumWelchScaledLearner.")
 	public boolean baumWelchScaledLearner = true;
@@ -197,8 +180,8 @@ public class Opts {
 	public double INIT_LL = -1.0E10;
 	// @Option(gloss =
 	// "To decide print out intermediate files for testing liblinear or LBFGS outside.")
-	public boolean testLiblinear = false;
-	public boolean testLogsticRegression = false;
+	//public boolean testLiblinear = false;
+	//public boolean testLogsticRegression = false;
 	public String skillToTest = "ArrayList";
 
 	public boolean useEmissionToJudgeHiddenStates = false;
@@ -211,6 +194,9 @@ public class Opts {
 	// don't allow forget)
 	// public int realHiddenState1 = 1;// known
 	// public int realHiddenState0 = 1 - realHiddenState1;// unknown
+	/**
+	 * so far, never reassigns the hidden states during training and the final Hmm paramters or weights files outputs hidden states with the same specification, but reassign hiddenstates during prediction on test.
+	 */
 	public int hiddenState1 = 1;// known
 	public int hiddenState0 = 1 - hiddenState1;// unknown
 	// [obsClass1] correspond to "correct", decides: (1)reading input, put
@@ -226,7 +212,7 @@ public class Opts {
 	public int nbObsStates = 2;
 
 	@Option(gloss = "for decising what information to log.")
-	public boolean writeFinalHmmParameters = false;
+	public boolean writeFinalHmmParameters = true;
 	@Option(gloss = "for decising what information to log.")
 	public boolean writeMainLog = true;
 	// @Option(gloss = "for decising what information to log.")
@@ -255,24 +241,24 @@ public class Opts {
 	// These configuration determine later how to write
 	public boolean writeDeltaGamma = false;
 	public boolean writeOnlyDeltaGamma = false;
-	public boolean writePerKcAucVsAvgDeltaGamma = false;
+	//public boolean writePerKcAucVsAvgDeltaGamma = false;
 	// one delta is for one student on one skill, they are arranged in one column
 	public boolean writeEachDeltaGamma = false;
 	// one delta is for one student on one skill, they are arranged in one column
 	// public boolean writePerKcAucVsDeltaGamma3 = false;
-	public boolean writePerKcTestSetAUC = false;
+	//public boolean writePerKcTestSetAUC = false;
 	// TODO: later use it: public boolean perkcaucontest = true;// true
-	public boolean getAucOnDevPerKc = false;
+	//public boolean getAucOnDevPerKc = false;
 
 	// determines later how to write
 	// TODO: formatting the output:
 	@Option(gloss = "for decising what information to log.")
-	public boolean writeFinalFeatureWeights = false;
+	public boolean writeFinalFeatureWeights = true;
 	// TODO: formatting the output: Option(gloss =
 	// "writeOnlyOriginalFinalFeatureWeights=False but writeFinalFeatureWeights=True, then will write also the difference of feature weights between two states.")
 	public boolean writeOnlyOriginalFinalFeatureWeights = true;
 	public boolean coefficientWeightedByGamma = false;
-	public boolean writeDeltaPCorrectOnTrain = false;
+	//public boolean writeDeltaPCorrectOnTrain = false;
 	public boolean pCorrectOnTrainUsingGamma = false;
 	public boolean turnOffItemFeaturesWhenWritingDeltaPCorrect = false;
 
@@ -280,7 +266,7 @@ public class Opts {
 	public boolean shareAddress = false;
 	public boolean readOneHmmOneTime = false;
 	// This is for generating IRT (weka) input per HMM.
-	public boolean generateLRInputs = false;
+	//public boolean generateLRInputs = false;
 	public boolean swapData = false;
 	// if inputProvideFeatureColumns=true, then train and test files should have
 	// same # and order of features
@@ -290,7 +276,7 @@ public class Opts {
 	public HashSet<String> upTillNowNewStudents = new HashSet<String>();
 	public HashSet<String> upTillNowNewItems = new HashSet<String>();
 
-	public boolean writeTrainPredFile = false;
+	//public boolean writeTrainPredFile = false;
 	// TODO: by default, it is adding in a shared (by both hidden states) way, so
 	// opts.modelName should contain("dupbias"); haven't tested completely
 	public boolean addSharedStuDummyFeatures = false;
@@ -331,7 +317,7 @@ public class Opts {
 	public String llLogFile = outDir + "ll.log";
 	public String expectedCountLogFile = outDir + "expectedCount.log";
 	public String featureWeightsLogFile = outDir + "featureWeights.log";
-	public String finalFeatureWeightsFile = outDir + "finalFeatureWeights.log";
+	public String finalFeatureWeightsFile = outDir + "finalFeatureWeights.txt";
 	public String datapointsLogFile = outDir + "dataPoints.log";
 	public String datapointsLogFile2 = outDir + "dataPoints2.txt";
 	public String learningCurveFile = outDir + "learningCurve.txt";
@@ -500,22 +486,22 @@ public class Opts {
 						guessSlipProbLogFile2, true));
 			if (writeGammaLog)
 				gammaWriter = new BufferedWriter(new FileWriter(gammaLogFile, true));
-			if (testLiblinear) {
-				testLRInstanceWeightsWriter = new BufferedWriter(new FileWriter(
-						testLRInstanceWeightsFile));
-				liblinearInputDataWriter = new BufferedWriter(new FileWriter(
-						liblinearInputDataFile));
-			}
-			if (testLogsticRegression) {
-				testLRInstanceWeightsWriter = new BufferedWriter(new FileWriter(
-						testLRInstanceWeightsFile));
-				testLRLabelWriter = new BufferedWriter(new FileWriter(testLRLabelFile));
-				testLRFeatureWriter = new BufferedWriter(new FileWriter(
-						testLRFeaturesFile));
-			}
-			if (writeDeltaPCorrectOnTrain)
-				deltaPCorrectWriter = new BufferedWriter(new FileWriter(
-						deltaPCorrectFile, true));
+//			if (testLiblinear) {
+//				testLRInstanceWeightsWriter = new BufferedWriter(new FileWriter(
+//						testLRInstanceWeightsFile));
+//				liblinearInputDataWriter = new BufferedWriter(new FileWriter(
+//						liblinearInputDataFile));
+//			}
+//			if (testLogsticRegression) {
+//				testLRInstanceWeightsWriter = new BufferedWriter(new FileWriter(
+//						testLRInstanceWeightsFile));
+//				testLRLabelWriter = new BufferedWriter(new FileWriter(testLRLabelFile));
+//				testLRFeatureWriter = new BufferedWriter(new FileWriter(
+//						testLRFeaturesFile));
+//			}
+//			if (writeDeltaPCorrectOnTrain)
+//				deltaPCorrectWriter = new BufferedWriter(new FileWriter(
+//						deltaPCorrectFile, true));
 			if (writeDeltaGamma && !writeEachDeltaGamma)
 				deltaGammaWriter = new BufferedWriter(new FileWriter(deltaGammaFile,
 						true));
@@ -525,9 +511,9 @@ public class Opts {
 			if (writeBestRegWeightLog)
 				bestRegWeightWriter = new BufferedWriter(new FileWriter(
 						bestRegWeightFile, true));
-			if (writePerKcAucVsAvgDeltaGamma)
-				perKcAucVsAvgDeltaGammaWriter = new BufferedWriter(new FileWriter(
-						perKcAucVsAvgDeltaGammaFile, true));
+//			if (writePerKcAucVsAvgDeltaGamma)
+//				perKcAucVsAvgDeltaGammaWriter = new BufferedWriter(new FileWriter(
+//						perKcAucVsAvgDeltaGammaFile, true));
 
 			if (writeForLearningCurve)
 				learningCurveWriter = new BufferedWriter(new FileWriter(
@@ -591,32 +577,32 @@ public class Opts {
 		}
 
 		// This is for generating IRT (weka) input per HMM.
-		if (generateLRInputs) {
-			oneLogisticRegression = false;
-			EM_MAX_ITERS = 1;
-			LBFGS_MAX_ITERS = 0;
-			getAucOnDevPerKc = false;
-			randomRestartPerHmmTimes = 1;
-			swapData = false;
-			shareAddress = true;
-			writeFinalHmmParameters = false;
-			writeDeltaGamma = false;
-			writeFinalFeatureWeights = false;
-			writeDeltaPCorrectOnTrain = false;
-			writeMainLog = false;
-			writeLlLog = false;
-			writeExpectedCountLog = false;
-			writeFeatureWeightsLog = false;
-			writeGammaLog = false;
-			writeInitLearnForgetProbLog = false;
-			writeGuessSlipProbLog = false;
-			writeGuessSlipProbLog2 = false;
-			writeDatapointsLog = false;
-			writeDatapointsLog2 = false;
-			writePerKcAucVsAvgDeltaGamma = false;
-			writeEachDeltaGamma = false;
-			writeForLearningCurve = false;
-		}
+//		if (generateLRInputs) {
+//			oneLogisticRegression = false;
+//			EM_MAX_ITERS = 1;
+//			LBFGS_MAX_ITERS = 0;
+//			getAucOnDevPerKc = false;
+//			randomRestartPerHmmTimes = 1;
+//			swapData = false;
+//			shareAddress = true;
+//			writeFinalHmmParameters = false;
+//			writeDeltaGamma = false;
+//			writeFinalFeatureWeights = false;
+//			//writeDeltaPCorrectOnTrain = false;
+//			writeMainLog = false;
+//			writeLlLog = false;
+//			writeExpectedCountLog = false;
+//			writeFeatureWeightsLog = false;
+//			writeGammaLog = false;
+//			writeInitLearnForgetProbLog = false;
+//			writeGuessSlipProbLog = false;
+//			writeGuessSlipProbLog2 = false;
+//			writeDatapointsLog = false;
+//			writeDatapointsLog2 = false;
+//			writePerKcAucVsAvgDeltaGamma = false;
+//			writeEachDeltaGamma = false;
+//			writeForLearningCurve = false;
+//		}
 		if (tuneL2)
 			writeBestRegWeightLog = true;
 
@@ -717,25 +703,25 @@ public class Opts {
 				guessSlipProbLogWriter2.close();
 			if (writeGammaLog)
 				gammaWriter.close();
-			if (testLiblinear) {
-				liblinearInputDataWriter.close();
-				testLRInstanceWeightsWriter.close();
-			}
-			if (testLogsticRegression) {
-				testLRInstanceWeightsWriter.close();
-				testLRLabelWriter.close();
-				testLRFeatureWriter.close();
-			}
-			if (writeDeltaPCorrectOnTrain)
-				deltaPCorrectWriter.close();
+//			if (testLiblinear) {
+//				liblinearInputDataWriter.close();
+//				testLRInstanceWeightsWriter.close();
+//			}
+//			if (testLogsticRegression) {
+//				testLRInstanceWeightsWriter.close();
+//				testLRLabelWriter.close();
+//				testLRFeatureWriter.close();
+//			}
+//			if (writeDeltaPCorrectOnTrain)
+//				deltaPCorrectWriter.close();
 			if (writeDeltaGamma && !writeEachDeltaGamma)
 				deltaGammaWriter.close();
 			if (writeEachDeltaGamma)
 				eachDeltaGammaWriter.close();
 			if (writeBestRegWeightLog)
 				bestRegWeightWriter.close();
-			if (writePerKcAucVsAvgDeltaGamma)
-				perKcAucVsAvgDeltaGammaWriter.close();
+//			if (writePerKcAucVsAvgDeltaGamma)
+//				perKcAucVsAvgDeltaGammaWriter.close();
 			if (writeForLearningCurve)
 				learningCurveWriter.close();
 
@@ -772,8 +758,8 @@ public class Opts {
 			gammaWriter.write(str);
 		if (writeDeltaGamma && !writeEachDeltaGamma)
 			deltaGammaWriter.write(str);
-		if (writeDeltaPCorrectOnTrain)
-			deltaPCorrectWriter.write(str);
+//		if (writeDeltaPCorrectOnTrain)
+//			deltaPCorrectWriter.write(str);
 		if (writeBestRegWeightLog)
 			bestRegWeightWriter.write(str);
 		if (writeForLearningCurve)

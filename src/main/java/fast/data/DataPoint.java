@@ -16,7 +16,7 @@ import be.ac.ulg.montefiore.run.jahmm.Observation;
 
 public class DataPoint extends Observation {
 
-	private final int student, problem, step;
+	private final int student, problem, step, skill;
 	private int nbStates;
 	// hy: expandedFeatures[0] will be null without initialization
 	private double[][] expandedFeatures = null;
@@ -41,21 +41,23 @@ public class DataPoint extends Observation {
 		this.problem = -1;
 		this.step = -1;
 		this.fold = -1;
+		this.skill = -1;
 		this.outcome = aOutcome;
 	}
 
-	public DataPoint(int aStudent, int aProb, int aStep, int aFold, int aOutcome) {
+	public DataPoint(int aStudent, int aSkill, int aProb, int aStep, int aFold, int aOutcome) {
 		this.student = aStudent;
+		this.skill = aSkill;
 		this.problem = aProb;
 		this.step = aStep;
 		this.fold = aFold;
 		this.outcome = aOutcome;
 	}
 
-	// hy:
-	public DataPoint(int aStudent, int aProb, int aStep, int aFold, int aOutcome,
+	public DataPoint(int aStudent, int aSkill, int aProb, int aStep, int aFold, int aOutcome,
 			double[][] aFeatures) {
 		this.student = aStudent;
+		this.skill = aSkill;
 		this.problem = aProb;
 		this.step = aStep;
 		this.fold = aFold;
@@ -64,9 +66,10 @@ public class DataPoint extends Observation {
 		this.oneLogisticRegression = true;
 	}
 
-	public DataPoint(int aStudent, int aProb, int aStep, int aFold, int aOutcome,
+	public DataPoint(int aStudent, int aSkill,  int aProb, int aStep, int aFold, int aOutcome,
 			double[] aFeatures) {
 		this.student = aStudent;
+		this.skill = aSkill;
 		this.problem = aProb;
 		this.step = aStep;
 		this.fold = aFold;
@@ -75,9 +78,10 @@ public class DataPoint extends Observation {
 		this.oneLogisticRegression = false;
 	}
 
-	public DataPoint(int studentId, int problemId, int stepId, int groundTruth,
+	public DataPoint(int studentId, int skillId, int problemId, int stepId, int groundTruth,
 			double llAprox, double llExact) {
 		this.student = studentId;
+		this.skill = skillId;
 		this.problem = problemId;
 		this.step = stepId;
 
@@ -96,6 +100,11 @@ public class DataPoint extends Observation {
 
 	public int getStudent() {
 		return student;
+	}
+	
+
+	public int getSkill() {
+		return skill;
 	}
 
 	public int getProblem() {

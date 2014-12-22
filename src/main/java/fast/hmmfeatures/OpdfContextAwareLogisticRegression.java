@@ -682,8 +682,8 @@ public class OpdfContextAwareLogisticRegression implements
 	// for one LR
 	public double calculateExpectedLogLikelihood(double[] instanceWeights,
 			double[][] featureValues, int[] outcomes) {
-		if (opts.generateLRInputs)
-			return 0.0;
+//		if (opts.generateLRInputs)
+//			return 0.0;
 		if (!opts.oneLogisticRegression) {
 			System.out
 					.println("WARNING: calculateExpectedLogLikelihood but !opts.oneLogisticRegression!");

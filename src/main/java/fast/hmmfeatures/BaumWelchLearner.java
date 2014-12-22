@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
+//import java.util.TreeSet;
 
 
 
@@ -34,7 +34,7 @@ import fast.common.Bijection;
 import fast.data.DataPoint;
 import fast.data.StudentList;
 import fast.experimenter.Opts;
-import fast.experimenter.Predict;
+//import fast.experimenter.Predict;
 
 /**
  * An implementation of the Baum-Welch learning algorithm. This algorithm finds
@@ -298,8 +298,8 @@ public class BaumWelchLearner {
 				flatGammaForStates[i] = flatGammaForStateI;
 
 			if (!opts.parameterizedEmit
-					|| (opts.parameterizedEmit && !opts.oneLogisticRegression && !opts.generateLRInputs)
-					|| (opts.generateLRInputs && i != 0)) {
+					|| (opts.parameterizedEmit && !opts.oneLogisticRegression)){ // && !opts.generateLRInputs
+					//|| (opts.generateLRInputs && i != 0)) {
 				OpdfContextAware<DataPoint> opdf = nhmm.getOpdf(i);
 				if (verbose) {
 					System.out.println("\nBefore fitting (state " + i + "):");
@@ -332,43 +332,43 @@ public class BaumWelchLearner {
 
 	}
 
-	public void reassignRealHiddenState(FeatureHMM hmm,
-			List<? extends List<DataPoint>> sequences) {
-		//double p0 = hmm.getPi(0);
-		//double a00 = hmm.getAij(0, 0);
-		double a01 = hmm.getAij(0, 1);
-		// double Opdf00 =
-		// double Opdf01 =
-		//double p1 = hmm.getPi(1);
-		double a10 = hmm.getAij(1, 0);
-		//double a11 = hmm.getAij(1, 1);
-
-		DataPoint dp = sequences.get(0).get(0);
-		if (opts.useEmissionToJudgeHiddenStates) {
-			double hidden0obs1 = hmm.getOpdf(0).probability(dp.getFeatures(0),
-					opts.obsClass1);
-			double hidden1obs1 = hmm.getOpdf(1).probability(dp.getFeatures(1),
-					opts.obsClass1);
-			if (hidden0obs1 > hidden1obs1) {
-				opts.hiddenState1 = 0;// real know
-				opts.hiddenState0 = 1;// real notknow
-			}
-			else {
-				opts.hiddenState1 = 1;// know
-				opts.hiddenState0 = 0;// unknow
-			}
-		}
-		else {
-			if (a01 < a10) {
-				opts.hiddenState1 = 0;// know
-				opts.hiddenState0 = 1;// notknow
-			}
-			else {
-				opts.hiddenState1 = 1;// know
-				opts.hiddenState0 = 0;// unknow
-			}
-		}
-	}
+//	public void reassignRealHiddenState(FeatureHMM hmm,
+//			List<? extends List<DataPoint>> sequences) {
+//		//double p0 = hmm.getPi(0);
+//		//double a00 = hmm.getAij(0, 0);
+//		double a01 = hmm.getAij(0, 1);
+//		// double Opdf00 =
+//		// double Opdf01 =
+//		//double p1 = hmm.getPi(1);
+//		double a10 = hmm.getAij(1, 0);
+//		//double a11 = hmm.getAij(1, 1);
+//
+//		DataPoint dp = sequences.get(0).get(0);
+//		if (opts.useEmissionToJudgeHiddenStates) {
+//			double hidden0obs1 = hmm.getOpdf(0).probability(dp.getFeatures(0),
+//					opts.obsClass1);
+//			double hidden1obs1 = hmm.getOpdf(1).probability(dp.getFeatures(1),
+//					opts.obsClass1);
+//			if (hidden0obs1 > hidden1obs1) {
+//				opts.hiddenState1 = 0;// real know
+//				opts.hiddenState0 = 1;// real notknow
+//			}
+//			else {
+//				opts.hiddenState1 = 1;// know
+//				opts.hiddenState0 = 0;// unknow
+//			}
+//		}
+//		else {
+//			if (a01 < a10) {
+//				opts.hiddenState1 = 0;// know
+//				opts.hiddenState0 = 1;// notknow
+//			}
+//			else {
+//				opts.hiddenState1 = 1;// know
+//				opts.hiddenState0 = 0;// unknow
+//			}
+//		}
+//	}
 
 	protected boolean converged(double value, double nextValue, double tolerance) {
 		if (value == nextValue)
@@ -574,9 +574,9 @@ public class BaumWelchLearner {
 			opts.mainLogWriter.flush();
 		}
 
-		if (opts.writeDeltaPCorrectOnTrain) {
-			writeDeltaPCorrect(hmm, sequences);
-		}
+//		if (opts.writeDeltaPCorrectOnTrain) {
+//			writeDeltaPCorrect(hmm, sequences);
+//		}
 		if (opts.writeFinalFeatureWeights && opts.parameterizedEmit) {
 			writeFinalFeatureWeights(hmm, sequences);
 		}
@@ -641,142 +641,142 @@ public class BaumWelchLearner {
 		opts.kcAvgDeltaGammaMap.put(opts.currentKc, avgDeltaGamma);
 	}
 
-	public void writeDeltaPCorrect(FeatureHMM hmm,
-			List<? extends List<DataPoint>> sequences) throws IOException {
-		// ArrayList<Integer> trainTestIndicators = new ArrayList<Integer>();
-		// ArrayList<double[]> features = new ArrayList<double[]>();
-		// if (
-		TreeSet<Integer> turnOffFeatureIndexes = new TreeSet<Integer>();
-		Bijection featureMapping = null;
-		if (opts.oneLogisticRegression && opts.parameterizedEmit) {
-			featureMapping = hmm.getOpdf(0).featureMapping;
-		}
-		else {
-			System.out
-					.println("WARNING: no configuration for opts.writeDeltaPCorrectOnTrain && opts.parameterizedEmit!");
-			// System.exit(1);
-		}
-		if (opts.turnOffItemFeaturesWhenWritingDeltaPCorrect
-				&& opts.parameterizedEmit) {
-			for (int i = 0; i < featureMapping.getSize(); i++) {
-				String featureName = featureMapping.get(i);
-				if (featureName.contains("*features_")) {
-					// featureName = featureName.replace("*features_", "");
-					turnOffFeatureIndexes.add(i);
-				}
-			}
-			for (int stuSeqIndex = 0; stuSeqIndex < sequences.size(); stuSeqIndex++) {
-				for (int timeIndex = 0; timeIndex < sequences.get(stuSeqIndex).size(); timeIndex++) {
-					DataPoint dp = sequences.get(stuSeqIndex).get(timeIndex);
-					for (int hiddenStateIndex = 0; hiddenStateIndex < opts.nbHiddenStates; hiddenStateIndex++) {
-						double[] features = dp.getFeatures(hiddenStateIndex);
-						for (int featureIndex = 0; featureIndex < features.length; featureIndex++) {
-							if (turnOffFeatureIndexes.contains(featureIndex))
-								features[featureIndex] = 0.0;
-						}
-					}
-				}
-			}
-			// just to print out
-			// for (int stuSeqIndex = 0; stuSeqIndex < sequences.size();
-			// stuSeqIndex++) {
-			// for (int timeIndex = 0; timeIndex <
-			// sequences.get(stuSeqIndex).size(); timeIndex++) {
-			// DataPoint dp = sequences.get(stuSeqIndex).get(timeIndex);
-			// // if (opts.oneLogisticRegression) {
-			// // }
-			// // else {
-			// for (int hiddenStateIndex = 0; hiddenStateIndex <
-			// opts.nbHiddenStates; hiddenStateIndex++) {
-			// double[] features = dp.getFeatures(hiddenStateIndex);
-			// printArray(features, "after turning off (hidden"
-			// + hiddenStateIndex + ")");
-			// }
-			// }
-			// }
-		}
-
-		String header = opts.currentKc + " students\t";
-		String firstPCorrectStr = opts.currentKc + " first PCorrect\t";
-		String deltaPCorrectStr = opts.currentKc + " delta PCorrect\t";
-		String lastPCorrectStr = opts.currentKc + " last PCorrect\t";
-		StudentList stuListSequences = (StudentList) sequences;
-		Bijection finalStudents = stuListSequences.getFinalStudents();
-		Bijection oriStudents = stuListSequences.getOriStudents();
-
-		if (opts.pCorrectOnTrainUsingGamma) {
-			for (int stuSeqIndex = 0; stuSeqIndex < sequences.size(); stuSeqIndex++) {
-				header += oriStudents.get(finalStudents.get(stuSeqIndex)) + "\t";
-				int curSeqLength = sequences.get(stuSeqIndex).size();
-				// allGamma[o][0][i]: stuSeqindex, timeIndex, hiddenState
-				double firstRealHiddenState0Gamma = allGamma[stuSeqIndex][0][opts.hiddenState0];
-				double firstRealHiddenState1Gamma = allGamma[stuSeqIndex][0][opts.hiddenState1];
-				double lastRealHiddenState0Gamma = allGamma[stuSeqIndex][curSeqLength - 1][opts.hiddenState0];
-				double lastRealHiddenState1Gamma = allGamma[stuSeqIndex][curSeqLength - 1][opts.hiddenState1];
-
-				DataPoint firstAttDp = sequences.get(stuSeqIndex).get(0);
-				DataPoint lastAttDp = sequences.get(stuSeqIndex).get(curSeqLength - 1);
-
-				double firstRealSlip = hmm.getOpdf(opts.hiddenState1).probability(
-						firstAttDp.getFeatures(opts.hiddenState1), 1 - opts.obsClass1);
-				double firstRealGuess = hmm.getOpdf(opts.hiddenState0).probability(
-						firstAttDp.getFeatures(opts.hiddenState0), opts.obsClass1);
-				double lastRealSlip = hmm.getOpdf(opts.hiddenState1).probability(
-						lastAttDp.getFeatures(opts.hiddenState1), 1 - opts.obsClass1);
-				double lastRealGuess = hmm.getOpdf(opts.hiddenState0).probability(
-						lastAttDp.getFeatures(opts.hiddenState0), opts.obsClass1);
-
-				double firstAttPcorrect = firstRealHiddenState1Gamma
-						* (1 - firstRealSlip) + firstRealHiddenState0Gamma * firstRealGuess;
-				double lastAttPcorrect = lastRealHiddenState1Gamma * (1 - lastRealSlip)
-						+ lastRealHiddenState0Gamma * lastRealGuess;
-				double deltaPcorrect = lastAttPcorrect - firstAttPcorrect;
-				firstPCorrectStr += firstAttPcorrect + "\t";
-				deltaPCorrectStr += deltaPcorrect + "\t";
-				lastPCorrectStr += lastAttPcorrect + "\t";
-			}
-
-		}
-		else {
-			Predict pred = new Predict(opts);
-
-			ArrayList<ArrayList<Double>> probs = new ArrayList<ArrayList<Double>>();
-			ArrayList<ArrayList<Integer>> labels = new ArrayList<ArrayList<Integer>>();
-			ArrayList<ArrayList<Integer>> actualLabels = new ArrayList<ArrayList<Integer>>();
-			ArrayList<Integer> studentIndexList = new ArrayList<Integer>();
-			pred.doPredict(hmm, (StudentList) sequences, probs, labels, actualLabels,
-					studentIndexList, opts.currentKc);
-			if (probs.size() != labels.size() || labels.size() != actualLabels.size()) {
-				System.out
-						.println("ERROR:probs.size() != labels.size() ||labels.size() !=actualLabels.size()!");
-				System.exit(1);
-			}
-
-			for (int stuSeqIndex = 0; stuSeqIndex < probs.size(); stuSeqIndex++) {
-				header += oriStudents.get(finalStudents.get(stuSeqIndex)) + "\t";
-				ArrayList<Double> aStudentProbs = probs.get(stuSeqIndex);
-				ArrayList<Integer> aStudentLabels = labels.get(stuSeqIndex);
-				ArrayList<Integer> aStudentActualLabels = actualLabels.get(stuSeqIndex);
-				// int realStuIndex = studentIndexList.get(stuSeqIndex);
-				if (aStudentProbs.size() != aStudentLabels.size()
-						|| aStudentLabels.size() != aStudentActualLabels.size()) {
-					System.out
-							.println("ERROR:probs.size() != labels.size() ||labels.size() !=actualLabels.size()!");
-					System.exit(1);
-				}
-				double firstPCorrect = aStudentProbs.get(0);
-				double lastPCorrect = aStudentProbs.get(aStudentProbs.size() - 1);
-				double deltaPCorrect = lastPCorrect - firstPCorrect;
-
-				firstPCorrectStr += firstPCorrect + "\t";
-				deltaPCorrectStr += deltaPCorrect + "\t";
-				lastPCorrectStr += lastPCorrect + "\t";
-			}
-		}
-		opts.deltaPCorrectWriter.write(header + "\n" + firstPCorrectStr + "\n"
-				+ deltaPCorrectStr + "\n" + lastPCorrectStr + "\n");
-		opts.deltaPCorrectWriter.flush();
-	}
+//	public void writeDeltaPCorrect(FeatureHMM hmm,
+//			List<? extends List<DataPoint>> sequences) throws IOException {
+//		// ArrayList<Integer> trainTestIndicators = new ArrayList<Integer>();
+//		// ArrayList<double[]> features = new ArrayList<double[]>();
+//		// if (
+//		TreeSet<Integer> turnOffFeatureIndexes = new TreeSet<Integer>();
+//		Bijection featureMapping = null;
+//		if (opts.oneLogisticRegression && opts.parameterizedEmit) {
+//			featureMapping = hmm.getOpdf(0).featureMapping;
+//		}
+//		else {
+//			System.out
+//					.println("WARNING: no configuration for opts.writeDeltaPCorrectOnTrain && opts.parameterizedEmit!");
+//			// System.exit(1);
+//		}
+//		if (opts.turnOffItemFeaturesWhenWritingDeltaPCorrect
+//				&& opts.parameterizedEmit) {
+//			for (int i = 0; i < featureMapping.getSize(); i++) {
+//				String featureName = featureMapping.get(i);
+//				if (featureName.contains("*features_")) {
+//					// featureName = featureName.replace("*features_", "");
+//					turnOffFeatureIndexes.add(i);
+//				}
+//			}
+//			for (int stuSeqIndex = 0; stuSeqIndex < sequences.size(); stuSeqIndex++) {
+//				for (int timeIndex = 0; timeIndex < sequences.get(stuSeqIndex).size(); timeIndex++) {
+//					DataPoint dp = sequences.get(stuSeqIndex).get(timeIndex);
+//					for (int hiddenStateIndex = 0; hiddenStateIndex < opts.nbHiddenStates; hiddenStateIndex++) {
+//						double[] features = dp.getFeatures(hiddenStateIndex);
+//						for (int featureIndex = 0; featureIndex < features.length; featureIndex++) {
+//							if (turnOffFeatureIndexes.contains(featureIndex))
+//								features[featureIndex] = 0.0;
+//						}
+//					}
+//				}
+//			}
+//			// just to print out
+//			// for (int stuSeqIndex = 0; stuSeqIndex < sequences.size();
+//			// stuSeqIndex++) {
+//			// for (int timeIndex = 0; timeIndex <
+//			// sequences.get(stuSeqIndex).size(); timeIndex++) {
+//			// DataPoint dp = sequences.get(stuSeqIndex).get(timeIndex);
+//			// // if (opts.oneLogisticRegression) {
+//			// // }
+//			// // else {
+//			// for (int hiddenStateIndex = 0; hiddenStateIndex <
+//			// opts.nbHiddenStates; hiddenStateIndex++) {
+//			// double[] features = dp.getFeatures(hiddenStateIndex);
+//			// printArray(features, "after turning off (hidden"
+//			// + hiddenStateIndex + ")");
+//			// }
+//			// }
+//			// }
+//		}
+//
+//		String header = opts.currentKc + " students\t";
+//		String firstPCorrectStr = opts.currentKc + " first PCorrect\t";
+//		String deltaPCorrectStr = opts.currentKc + " delta PCorrect\t";
+//		String lastPCorrectStr = opts.currentKc + " last PCorrect\t";
+//		StudentList stuListSequences = (StudentList) sequences;
+//		Bijection finalStudents = stuListSequences.getFinalStudents();
+//		Bijection oriStudents = stuListSequences.getOriStudents();
+//
+//		if (opts.pCorrectOnTrainUsingGamma) {
+//			for (int stuSeqIndex = 0; stuSeqIndex < sequences.size(); stuSeqIndex++) {
+//				header += oriStudents.get(finalStudents.get(stuSeqIndex)) + "\t";
+//				int curSeqLength = sequences.get(stuSeqIndex).size();
+//				// allGamma[o][0][i]: stuSeqindex, timeIndex, hiddenState
+//				double firstRealHiddenState0Gamma = allGamma[stuSeqIndex][0][opts.hiddenState0];
+//				double firstRealHiddenState1Gamma = allGamma[stuSeqIndex][0][opts.hiddenState1];
+//				double lastRealHiddenState0Gamma = allGamma[stuSeqIndex][curSeqLength - 1][opts.hiddenState0];
+//				double lastRealHiddenState1Gamma = allGamma[stuSeqIndex][curSeqLength - 1][opts.hiddenState1];
+//
+//				DataPoint firstAttDp = sequences.get(stuSeqIndex).get(0);
+//				DataPoint lastAttDp = sequences.get(stuSeqIndex).get(curSeqLength - 1);
+//
+//				double firstRealSlip = hmm.getOpdf(opts.hiddenState1).probability(
+//						firstAttDp.getFeatures(opts.hiddenState1), 1 - opts.obsClass1);
+//				double firstRealGuess = hmm.getOpdf(opts.hiddenState0).probability(
+//						firstAttDp.getFeatures(opts.hiddenState0), opts.obsClass1);
+//				double lastRealSlip = hmm.getOpdf(opts.hiddenState1).probability(
+//						lastAttDp.getFeatures(opts.hiddenState1), 1 - opts.obsClass1);
+//				double lastRealGuess = hmm.getOpdf(opts.hiddenState0).probability(
+//						lastAttDp.getFeatures(opts.hiddenState0), opts.obsClass1);
+//
+//				double firstAttPcorrect = firstRealHiddenState1Gamma
+//						* (1 - firstRealSlip) + firstRealHiddenState0Gamma * firstRealGuess;
+//				double lastAttPcorrect = lastRealHiddenState1Gamma * (1 - lastRealSlip)
+//						+ lastRealHiddenState0Gamma * lastRealGuess;
+//				double deltaPcorrect = lastAttPcorrect - firstAttPcorrect;
+//				firstPCorrectStr += firstAttPcorrect + "\t";
+//				deltaPCorrectStr += deltaPcorrect + "\t";
+//				lastPCorrectStr += lastAttPcorrect + "\t";
+//			}
+//
+//		}
+//		else {
+//			Predict pred = new Predict(opts);
+//
+//			ArrayList<ArrayList<Double>> probs = new ArrayList<ArrayList<Double>>();
+//			ArrayList<ArrayList<Integer>> labels = new ArrayList<ArrayList<Integer>>();
+//			ArrayList<ArrayList<Integer>> actualLabels = new ArrayList<ArrayList<Integer>>();
+//			ArrayList<Integer> studentIndexList = new ArrayList<Integer>();
+//			pred.doPredict(hmm, (StudentList) sequences, probs, labels, actualLabels,
+//					studentIndexList, opts.currentKc);
+//			if (probs.size() != labels.size() || labels.size() != actualLabels.size()) {
+//				System.out
+//						.println("ERROR:probs.size() != labels.size() ||labels.size() !=actualLabels.size()!");
+//				System.exit(1);
+//			}
+//
+//			for (int stuSeqIndex = 0; stuSeqIndex < probs.size(); stuSeqIndex++) {
+//				header += oriStudents.get(finalStudents.get(stuSeqIndex)) + "\t";
+//				ArrayList<Double> aStudentProbs = probs.get(stuSeqIndex);
+//				ArrayList<Integer> aStudentLabels = labels.get(stuSeqIndex);
+//				ArrayList<Integer> aStudentActualLabels = actualLabels.get(stuSeqIndex);
+//				// int realStuIndex = studentIndexList.get(stuSeqIndex);
+//				if (aStudentProbs.size() != aStudentLabels.size()
+//						|| aStudentLabels.size() != aStudentActualLabels.size()) {
+//					System.out
+//							.println("ERROR:probs.size() != labels.size() ||labels.size() !=actualLabels.size()!");
+//					System.exit(1);
+//				}
+//				double firstPCorrect = aStudentProbs.get(0);
+//				double lastPCorrect = aStudentProbs.get(aStudentProbs.size() - 1);
+//				double deltaPCorrect = lastPCorrect - firstPCorrect;
+//
+//				firstPCorrectStr += firstPCorrect + "\t";
+//				deltaPCorrectStr += deltaPCorrect + "\t";
+//				lastPCorrectStr += lastPCorrect + "\t";
+//			}
+//		}
+//		opts.deltaPCorrectWriter.write(header + "\n" + firstPCorrectStr + "\n"
+//				+ deltaPCorrectStr + "\n" + lastPCorrectStr + "\n");
+//		opts.deltaPCorrectWriter.flush();
+//	}
 
 	public void writeFinalFeatureWeights(FeatureHMM hmm,
 			List<? extends List<DataPoint>> sequences) throws IOException {
@@ -953,7 +953,7 @@ public class BaumWelchLearner {
 	// KC \t iter \t LL: \t LLVALUE \t message \t realnfo..
 	public void storeAndWriteInfoPerHmmPerIter(FeatureHMM hmm,
 			List<? extends List<DataPoint>> sequences, double ll) throws IOException {
-		reassignRealHiddenState(hmm, sequences);
+		//reassignRealHiddenState(hmm, sequences);
 
 		String basicOutStr = "KC=" + opts.currentKc + "\titer="
 				+ opts.currentBaumWelchIteration + "\tLL:\t"

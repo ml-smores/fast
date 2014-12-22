@@ -21,7 +21,7 @@ public class ForwardBackward
 	 */
 	// Scaling factors
 	protected double[] ctFactors; // JPG
-	private Double probability, lnProbability;
+	public double probability, lnProbability;
 
 	/**
 	 * Computes the probability of occurence of an observation sequence given a

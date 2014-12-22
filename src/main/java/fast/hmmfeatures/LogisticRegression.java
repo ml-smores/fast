@@ -11,9 +11,9 @@
 
 package fast.hmmfeatures;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+//import java.io.BufferedWriter;
+//import java.io.FileWriter;
+//import java.io.IOException;
 import java.util.ArrayList;
 import fast.common.Bijection;
 import fast.experimenter.Opts;
@@ -117,17 +117,17 @@ public class LogisticRegression {
 	public double[] train() {
 
 		// && opts.currentKc.equals(opts.skillToTest)) {
-		if (opts.testLiblinear || opts.testLogsticRegression
-				|| opts.generateLRInputs)
-			try {
-				generateTrainLROutSideFile();// expectedCounts, features, labels);
-				return featureWeights;
-
-			}
-			catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//		if (opts.testLiblinear || opts.testLogsticRegression
+//				|| opts.generateLRInputs)
+//			try {
+//				generateTrainLROutSideFile();// expectedCounts, features, labels);
+//				return featureWeights;
+//
+//			}
+//			catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 
 		featureWeights = useLBFGS(features, featureWeights, labels, expectedCounts);
 
@@ -222,148 +222,148 @@ public class LogisticRegression {
 		return targets;
 	}
 
-	public void generateTrainLROutSideFile() throws Exception {
-		// double[] expectedCounts_,
-		// double[][] featureValues_, int[] outcomes_) throws Exception {
-		// System.out.println("generateTestLROutSideFile...");
-		// double[] expectedCounts = null;
-		// if (!(opts.generateLRInputs || opts.shareAddress)) {
-		// expectedCounts = new double[expectedCounts_.length];
-		// for (int i = 0; i < expectedCounts_.length; i++) {
-		// expectedCounts[i] = expectedCounts_[i];
-		// }
-		//
-		// double[][] features = new
-		// double[featureValues_.length][featureValues_[0].length];
-		// for (int i = 0; i < featureValues_.length; i++) {
-		// for (int j = 0; j < featureValues_[0].length; j++) {
-		// features[i][j] = featureValues_[i][j];
-		// }
-		// }
-		// int[] labels = new int[outcomes_.length];
-		// for (int i = 0; i < outcomes_.length; i++) {
-		// labels[i] = outcomes_[i];
-		// }
-		// }
-
-		String wgtStr = "";
-		String generalLRFeatureStr = "";
-		String generalLRLabelStr = "";
-		String liblinearDataStr = "";
-		ArrayList<String> wekaDataStrs = new ArrayList<String>();
-		String wekaDataStr = "";
-		// boolean noNeedWeka = false;
-		if (opts.generateLRInputs) {
-			opts.testByWekaInputDataFile = opts.outDir
-					+ (opts.nowInTrain ? opts.curFoldRunTrainInFilePrefix
-							: opts.curFoldRunTestInFilePrefix) + "_" + opts.currentKc
-					+ ".csv";
-			opts.testByWekaInputDataWriter = new BufferedWriter(new FileWriter(
-					opts.testByWekaInputDataFile));
-		}
-		boolean writeHeader = false;
-
-		for (int ins = 0; ins < labels.length; ins++) {
-			if (ins % 1000 == 0)
-				System.out.println("generateTrainLROutSideFile: ins=" + ins);
-			if (opts.testLiblinear) {
-				if (opts.useInstanceWeightToTrainParamterezdEmit)
-					wgtStr += expectedCounts[ins] + "\n";
-				if (opts.testLogsticRegression)
-					generalLRLabelStr += labels[ins] + "\n";
-				if (opts.testLiblinear)
-					liblinearDataStr += (labels[ins] == 0.0 ? "-1" : "+1") + " ";
-			}
-			double[] curInsFeatures = features[ins];
-			for (int f = 0; f < curInsFeatures.length; f++) {
-				double aFeature = curInsFeatures[f];
-				if (opts.generateLRInputs)
-					wekaDataStr += aFeature + ",";
-				else if (opts.testLiblinear) {
-					if (aFeature != 0.0)
-						liblinearDataStr += (f + 1) + ":" + aFeature
-								+ ((f == curInsFeatures.length - 1) ? "\n" : " ");
-				}
-				else if (opts.testLogsticRegression)
-					generalLRFeatureStr += aFeature
-							+ ((f == curInsFeatures.length - 1) ? "\n" : "\t");
-			}
-			if (opts.generateLRInputs)
-				wekaDataStr += (labels[ins] == 0.0 ? "incorrect" : "correct");
-			try {
-				if (opts.generateLRInputs) {
-					if (opts.swapData)
-						wekaDataStrs.add(wekaDataStr);
-					else {
-						String header = "";
-						if (!writeHeader) {
-							for (int f = 0; f < featureMapping.getSize(); f++)
-								header += featureMapping.get(f) + ",";
-							header += "label";
-							opts.testByWekaInputDataWriter.write(header + "\n");
-							writeHeader = true;
-						}
-						opts.testByWekaInputDataWriter.write(wekaDataStr + "\n");
-						opts.testByWekaInputDataWriter.flush();
-					}
-				}
-				else if (opts.testLiblinear) {
-					if (opts.useInstanceWeightToTrainParamterezdEmit)
-						opts.testLRInstanceWeightsWriter.write(wgtStr);
-					opts.liblinearInputDataWriter.write(liblinearDataStr);
-					opts.testLRInstanceWeightsWriter.flush();
-					opts.liblinearInputDataWriter.flush();
-				}
-				else if (opts.testLogsticRegression) {
-					opts.testLRInstanceWeightsWriter.write(wgtStr);
-					opts.testLRFeatureWriter.write(generalLRFeatureStr);
-					opts.testLRLabelWriter.write(generalLRLabelStr);
-					opts.testLRInstanceWeightsWriter.flush();
-					opts.testLRFeatureWriter.flush();
-					opts.testLRLabelWriter.flush();
-				}
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			wgtStr = "";
-			generalLRFeatureStr = "";
-			generalLRLabelStr = "";
-			liblinearDataStr = "";
-			wekaDataStr = "";
-		}
-		if (opts.generateLRInputs) {
-			if (opts.swapData) {
-				// double[] targets = intToDoubleArray(labels);
-				// swap targets to make 1 ("correct") appears first, so that Cp(which
-				// corresponds to prob.y>0 and weighted_C[0](which corresponds to the
-				// first
-				// appearing label)) can always correspond to 1 ("correct"))
-				if (labels[0] != opts.obsClass1) {
-					for (int k = 1; k < labels.length; k++)
-						if (labels[k] == opts.obsClass1) {
-							// targets[k] == opts.obsClass1
-							swap(wekaDataStrs, 0, k);
-							// System.out.println("swap");
-							break;
-						}
-				}
-				String header = "";
-				for (int f = 0; f < featureMapping.getSize(); f++)
-					header += featureMapping.get(f) + ",";
-				header += "label";
-				opts.testByWekaInputDataWriter.write(header + "\n");
-				for (int ins = 0; ins < wekaDataStrs.size(); ins++) {
-					// if (ins % 1000 == 0)
-					System.out.println("ins=" + ins);
-					opts.testByWekaInputDataWriter.write(wekaDataStrs.get(ins) + "\n");
-					opts.testByWekaInputDataWriter.flush();
-				}
-			}
-			opts.testByWekaInputDataWriter.close();
-		}
-	}
+//	public void generateTrainLROutSideFile() throws Exception {
+//		// double[] expectedCounts_,
+//		// double[][] featureValues_, int[] outcomes_) throws Exception {
+//		// System.out.println("generateTestLROutSideFile...");
+//		// double[] expectedCounts = null;
+//		// if (!(opts.generateLRInputs || opts.shareAddress)) {
+//		// expectedCounts = new double[expectedCounts_.length];
+//		// for (int i = 0; i < expectedCounts_.length; i++) {
+//		// expectedCounts[i] = expectedCounts_[i];
+//		// }
+//		//
+//		// double[][] features = new
+//		// double[featureValues_.length][featureValues_[0].length];
+//		// for (int i = 0; i < featureValues_.length; i++) {
+//		// for (int j = 0; j < featureValues_[0].length; j++) {
+//		// features[i][j] = featureValues_[i][j];
+//		// }
+//		// }
+//		// int[] labels = new int[outcomes_.length];
+//		// for (int i = 0; i < outcomes_.length; i++) {
+//		// labels[i] = outcomes_[i];
+//		// }
+//		// }
+//
+//		String wgtStr = "";
+//		String generalLRFeatureStr = "";
+//		String generalLRLabelStr = "";
+//		String liblinearDataStr = "";
+//		ArrayList<String> wekaDataStrs = new ArrayList<String>();
+//		String wekaDataStr = "";
+//		// boolean noNeedWeka = false;
+//		if (opts.generateLRInputs) {
+//			opts.testByWekaInputDataFile = opts.outDir
+//					+ (opts.nowInTrain ? opts.curFoldRunTrainInFilePrefix
+//							: opts.curFoldRunTestInFilePrefix) + "_" + opts.currentKc
+//					+ ".csv";
+//			opts.testByWekaInputDataWriter = new BufferedWriter(new FileWriter(
+//					opts.testByWekaInputDataFile));
+//		}
+//		boolean writeHeader = false;
+//
+//		for (int ins = 0; ins < labels.length; ins++) {
+//			if (ins % 1000 == 0)
+//				System.out.println("generateTrainLROutSideFile: ins=" + ins);
+//			if (opts.testLiblinear) {
+//				if (opts.useInstanceWeightToTrainParamterezdEmit)
+//					wgtStr += expectedCounts[ins] + "\n";
+//				if (opts.testLogsticRegression)
+//					generalLRLabelStr += labels[ins] + "\n";
+//				if (opts.testLiblinear)
+//					liblinearDataStr += (labels[ins] == 0.0 ? "-1" : "+1") + " ";
+//			}
+//			double[] curInsFeatures = features[ins];
+//			for (int f = 0; f < curInsFeatures.length; f++) {
+//				double aFeature = curInsFeatures[f];
+//				if (opts.generateLRInputs)
+//					wekaDataStr += aFeature + ",";
+//				else if (opts.testLiblinear) {
+//					if (aFeature != 0.0)
+//						liblinearDataStr += (f + 1) + ":" + aFeature
+//								+ ((f == curInsFeatures.length - 1) ? "\n" : " ");
+//				}
+//				else if (opts.testLogsticRegression)
+//					generalLRFeatureStr += aFeature
+//							+ ((f == curInsFeatures.length - 1) ? "\n" : "\t");
+//			}
+//			if (opts.generateLRInputs)
+//				wekaDataStr += (labels[ins] == 0.0 ? "incorrect" : "correct");
+//			try {
+//				if (opts.generateLRInputs) {
+//					if (opts.swapData)
+//						wekaDataStrs.add(wekaDataStr);
+//					else {
+//						String header = "";
+//						if (!writeHeader) {
+//							for (int f = 0; f < featureMapping.getSize(); f++)
+//								header += featureMapping.get(f) + ",";
+//							header += "label";
+//							opts.testByWekaInputDataWriter.write(header + "\n");
+//							writeHeader = true;
+//						}
+//						opts.testByWekaInputDataWriter.write(wekaDataStr + "\n");
+//						opts.testByWekaInputDataWriter.flush();
+//					}
+//				}
+//				else if (opts.testLiblinear) {
+//					if (opts.useInstanceWeightToTrainParamterezdEmit)
+//						opts.testLRInstanceWeightsWriter.write(wgtStr);
+//					opts.liblinearInputDataWriter.write(liblinearDataStr);
+//					opts.testLRInstanceWeightsWriter.flush();
+//					opts.liblinearInputDataWriter.flush();
+//				}
+//				else if (opts.testLogsticRegression) {
+//					opts.testLRInstanceWeightsWriter.write(wgtStr);
+//					opts.testLRFeatureWriter.write(generalLRFeatureStr);
+//					opts.testLRLabelWriter.write(generalLRLabelStr);
+//					opts.testLRInstanceWeightsWriter.flush();
+//					opts.testLRFeatureWriter.flush();
+//					opts.testLRLabelWriter.flush();
+//				}
+//			}
+//			catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			wgtStr = "";
+//			generalLRFeatureStr = "";
+//			generalLRLabelStr = "";
+//			liblinearDataStr = "";
+//			wekaDataStr = "";
+//		}
+//		if (opts.generateLRInputs) {
+//			if (opts.swapData) {
+//				// double[] targets = intToDoubleArray(labels);
+//				// swap targets to make 1 ("correct") appears first, so that Cp(which
+//				// corresponds to prob.y>0 and weighted_C[0](which corresponds to the
+//				// first
+//				// appearing label)) can always correspond to 1 ("correct"))
+//				if (labels[0] != opts.obsClass1) {
+//					for (int k = 1; k < labels.length; k++)
+//						if (labels[k] == opts.obsClass1) {
+//							// targets[k] == opts.obsClass1
+//							swap(wekaDataStrs, 0, k);
+//							// System.out.println("swap");
+//							break;
+//						}
+//				}
+//				String header = "";
+//				for (int f = 0; f < featureMapping.getSize(); f++)
+//					header += featureMapping.get(f) + ",";
+//				header += "label";
+//				opts.testByWekaInputDataWriter.write(header + "\n");
+//				for (int ins = 0; ins < wekaDataStrs.size(); ins++) {
+//					// if (ins % 1000 == 0)
+//					System.out.println("ins=" + ins);
+//					opts.testByWekaInputDataWriter.write(wekaDataStrs.get(ins) + "\n");
+//					opts.testByWekaInputDataWriter.flush();
+//				}
+//			}
+//			opts.testByWekaInputDataWriter.close();
+//		}
+//	}
 
 	// /**
 	// *

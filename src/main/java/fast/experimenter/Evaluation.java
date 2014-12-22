@@ -26,9 +26,10 @@ public class Evaluation {
 	}
 
 	// one fold all skills
-	public int doEvaluationAndWritePred(ArrayList<Double> probs,
-			ArrayList<Integer> labels, ArrayList<Integer> actualLabels,
-			ArrayList<Integer> trainTestIndicator) throws IOException {
+	// one fold all skills
+		public int doEvaluate(ArrayList<Double> probs, ArrayList<Integer> labels,
+				ArrayList<Integer> actualLabels, ArrayList<Integer> trainTestIndicator, ArrayList<Double> pknow,
+				ArrayList<String> students, ArrayList<String> kcs)throws IOException {
 		// evaluate and print out
 		if (probs.size() != labels.size() || labels.size() != actualLabels.size()
 				|| actualLabels.size() != trainTestIndicator.size()) {
@@ -43,7 +44,7 @@ public class Evaluation {
 		double correctRatio = 0.0;
 		BufferedWriter predWriter = new BufferedWriter(new FileWriter(
 				opts.predictionFile));
-		predWriter.write("actualLabel,predLabel, predProb\n");
+		predWriter.write("actualLabel,predLabel,predProb,probKnow,student,kc\n");
 
 		// System.out.println("number of intances: " + probs.size());
 		int realSize = 0;
@@ -55,7 +56,7 @@ public class Evaluation {
 			if (trainTestIndicator.get(i) != -1) {
 				realSize++;
 				predWriter.write(actualLabels.get(i) + "," + labels.get(i) + ","
-						+ probs.get(i) + "\n");
+						+ probs.get(i) + "," + pknow.get(i) + "," + students.get(i) + "," + kcs.get(i) + "\n");
 				sumSquareError += Math.pow((actualLabels.get(i) - probs.get(i)), 2);
 				nbMisclassification += Math.abs(actualLabels.get(i) - labels.get(i));
 				if (actualLabels.get(i) == 1)
