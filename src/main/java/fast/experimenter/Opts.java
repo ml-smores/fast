@@ -157,7 +157,8 @@ public class Opts {
 	public boolean allowForget = true;
 	@Option(gloss = "To decide printing out verbose information or not.")
 	public boolean verbose = false;
-
+	@Option(gloss = "To print initial hmm.")
+	public boolean printInitialHmm = true;
 	/*
 	 * @Option(gloss =
 	 * "To decide printing out verbose information for LBFGS optimization result or not."
@@ -287,6 +288,8 @@ public class Opts {
 	// "These are all for storing information dynamically, no need to configure.")
 	// [nowInTrain] is for dynamcially recording whether it is in train or test.")
 	public int wholeProcessRunId = 0;
+	@Option(gloss = "If true, use current date transfered into 1/10 of miniseconds representing by long; otherwise, always is set as processId.")
+	public boolean useTimeAsSeed = true;
 	public int randomRestartId = 0;
 	public int currentKCIndex = -1;
 	public String currentKc = "";
@@ -656,12 +659,12 @@ public class Opts {
 		// }
 	}
 
-	public void resetRandom(int wholeProcessRunId) {
-		wholeProcessBaseRand = new Random();// (43569);
+	public void resetRandom(long seed) {
+		//wholeProcessBaseRand = new Random();// (43569);
 		perHmmBaseRand = new Random[randomRestartPerHmmTimes];
 		featureWeightsRands = new Random[nbHmms][randomRestartPerHmmTimes];
 		nonFeatureParasRands = new Random[nbHmms][randomRestartPerHmmTimes];
-		wholeProcessBaseRand = new Random(wholeProcessRunId);
+		wholeProcessBaseRand = new Random(seed);
 		for (int hmmIndex = 0; hmmIndex < nbHmms; ++hmmIndex) {
 			for (int randomRestartIndex = 0; randomRestartIndex < randomRestartPerHmmTimes; randomRestartIndex++) {
 				perHmmBaseRand[randomRestartIndex] = new Random(

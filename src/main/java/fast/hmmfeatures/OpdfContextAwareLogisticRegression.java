@@ -524,14 +524,14 @@ public class OpdfContextAwareLogisticRegression implements
 			nbRoundTo0 = 0;
 		}
 
-		if (opts.verbose) {
-			String info = "finalOutcomes:";
-			// printArray(finalOutcomes, info);
-			// info = "finalInstanceWeights:";
-			// printArray(finalInstanceWeights, info);
-			info = "finalFeatureValues:";
-			printArray(finalFeatureValues, featureMapping, info);
-		}
+//		if (opts.verbose) {
+//			String info = "finalOutcomes:";
+//			// printArray(finalOutcomes, info);
+//			// info = "finalInstanceWeights:";
+//			// printArray(finalInstanceWeights, info);
+//			info = "finalFeatureValues:";
+//			printArray(finalFeatureValues, featureMapping, info);
+//		}
 
 		if (opts.writeExpectedCountLog)
 			opts.currentIterHiddenStatesExpectedCount_ = finalInstanceWeights;

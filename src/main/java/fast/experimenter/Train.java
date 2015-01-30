@@ -184,7 +184,7 @@ public class Train {
 		// 2. train Hmm
 		FeatureHMM hmm_ = null;
 		// can be deleted, just to make sure
-		opts.resetRandom(opts.wholeProcessRunId);
+		//opts.resetRandom(opts.wholeProcessRunId);
 		RandomSampler rs = new RandomSampler(new Random(
 				opts.nonFeatureParasRands[opts.currentKCIndex][opts.randomRestartId]
 						.nextInt()));
@@ -739,7 +739,7 @@ public class Train {
 		}
 
 		FeatureHMM hmm = new FeatureHMM(k0, transitions, emissions, opts.parameterizedEmit);
-		if (opts.verbose) {
+		if (opts.verbose || opts.printInitialHmm) {
 			System.out.println("\ninitial outcomes:\t" + outcomes);
 			System.out.println("initial emissions:\t" + emissions);
 			String str = "\ninitial randomHMM:\t" + hmm;

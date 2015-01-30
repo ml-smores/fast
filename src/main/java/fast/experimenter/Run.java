@@ -95,7 +95,12 @@ public class Run implements Runnable {
 		try {
 			opts.wholeProcessRunId = 0;
 			for (; opts.wholeProcessRunId < opts.randomRestartWholeProcessTimes; opts.wholeProcessRunId++) {
-				opts.resetRandom(opts.wholeProcessRunId);
+				if (opts.useTimeAsSeed){
+					opts.resetRandom((new Date().getTime()/10)); 
+				}
+				else
+					opts.resetRandom(opts.wholeProcessRunId);
+
 				// System.out.println("\nMODEL NAME = " + opts.modelName);
 				if (!opts.testSingleFile)
 					for (int runID = 0; runID < opts.numRuns; runID++)
