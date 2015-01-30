@@ -26,7 +26,7 @@ public class Opts {
 
 	
 	@Option(gloss = "modelName should contain either \"FAST\" or \"KT\" in the string (capital letters). ")
-	public String modelName = "FAST";
+	public String modelName = "FAST+IRT";
 	public String basicDir = "./input/";
 	// @Option(gloss = "Human friendly description of the model")
 	@Option(gloss = "testSingleFile is used to decide just run one train test pair or multiple train, test pairs.")
@@ -44,9 +44,9 @@ public class Opts {
 	@Option(gloss = "allModelComparisonOutDir is where all different models are compared (by the average evaluation metric).")
 	public String allModelComparisonOutDir = outDir;// basicDir;
 	@Option(gloss = "If just one train test pair, then train(test) file will be \"train(test)InFilePreifix0.txt\". If there are multiple train, test pairs, then based on the configuration of numFolds and numRuns, train(test) file will be \"train(test)InFilePreifixFoldId.txt\", e.g. \"train1.txt\" or \"test1.txt\" for the second fold first run.")
-	public String trainInFilePrefix = "train";
+	public String trainInFilePrefix = "FAST+IRT_train";
 	@Option(gloss = "If just one train test pair, then train(test) file will be \"train(test)InFilePreifix0.txt\". If there are multiple train, test pairs, then based on the configuration of numFolds and numRuns, train(test) file will be \"train(test)InFilePreifixFoldId.txt\", e.g. \"train1.txt\" or \"test1.txt\" for the second fold first run.")
-	public String testInFilePrefix = "test";
+	public String testInFilePrefix = "FAST+IRT_test";
 	public String devInFilePrefix = "dev";
 	@Option(gloss = "The suffix for train and test files.")
 	public String inFileSuffix = ".txt";
@@ -158,7 +158,7 @@ public class Opts {
 	@Option(gloss = "To decide printing out verbose information or not.")
 	public boolean verbose = false;
 	@Option(gloss = "To print initial hmm.")
-	public boolean printInitialHmm = true;
+	public boolean printInitialHmm = false;
 	/*
 	 * @Option(gloss =
 	 * "To decide printing out verbose information for LBFGS optimization result or not."
@@ -288,8 +288,8 @@ public class Opts {
 	// "These are all for storing information dynamically, no need to configure.")
 	// [nowInTrain] is for dynamcially recording whether it is in train or test.")
 	public int wholeProcessRunId = 0;
-	@Option(gloss = "If true, use current date transfered into 1/10 of miniseconds representing by long; otherwise, always is set as processId.")
-	public boolean useTimeAsSeed = true;
+	@Option(gloss = "If true, use current date transfered into miniseconds representing by long as random start seed; otherwise, it is always set as processId which gives same initial parameters.")
+	public boolean differentRandomStartSeed = false;
 	public int randomRestartId = 0;
 	public int currentKCIndex = -1;
 	public String currentKc = "";

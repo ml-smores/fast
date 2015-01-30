@@ -95,8 +95,8 @@ public class Run implements Runnable {
 		try {
 			opts.wholeProcessRunId = 0;
 			for (; opts.wholeProcessRunId < opts.randomRestartWholeProcessTimes; opts.wholeProcessRunId++) {
-				if (opts.useTimeAsSeed){
-					opts.resetRandom((new Date().getTime()/10)); 
+				if (opts.differentRandomStartSeed){
+					opts.resetRandom((new Date().getTime())); 
 				}
 				else
 					opts.resetRandom(opts.wholeProcessRunId);
