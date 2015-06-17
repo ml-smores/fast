@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Properties of this program -->
+  <groupId>fast</groupId>
+  <artifactId>fast</artifactId>
+  <version>2.0.0</version>
+  <packaging>jar</packaging>
+  <name>Feature Aware Student knowledge Tracing</name>
+  <url>http://maven.apache.org</url>
+
+  <repositories>
+    <repository>
+      <id>Jahmm</id>
+      <name>Jahmm HMM library repository</name>
+      <url>http://jahmm.googlecode.com/svn/repo</url>
+    </repository>
+  </repositories>
+
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>edu.berkeley.nlp</groupId>
+      <artifactId>berkeleyparser</artifactId>
+      <version>r32</version>
+    </dependency>
+    
+   <dependency>
+     <groupId>be.ac.ulg.montefiore.run.jahmm</groupId>
+     <artifactId>jahmm</artifactId>
+     <version>0.6.2</version>
+   </dependency>  
+  </dependencies>
+
+  <build>
+    <!-- Include sample data -->
+    <resources>
+      <resource>
+        <directory>input</directory>
+	<targetPath>../input/</targetPath>      
+      </resource>
+    </resources>
+
+    <!-- Include dependencies on the JAR -->
+
+
+
+
+<plugins>
+<plugin>
+<artifactId>maven-assembly-plugin</artifactId>
+<configuration>
+    <archive>
+        <manifest>
+            <mainClass>fast.experimenter.Runner</mainClass>
+        </manifest>
+    </archive>
+    <descriptorRefs>
+        <descriptorRef>jar-with-dependencies</descriptorRef>
+    </descriptorRefs>
+    <descriptors>
+        <descriptor>src/main/assembly/jar.xml</descriptor>
+        <descriptor>src/main/assembly/zip.xml</descriptor>
+    </descriptors>
+</configuration>
+<executions>
+    <execution>
+        <id>make-assembly</id>
+        <phase>package</phase>
+        <goals>
+            <goal>single</goal>
+        </goals>
+    </execution>
+</executions>
+</plugin>
+</plugins>
+  </build>
+</project>
