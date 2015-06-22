@@ -10,8 +10,8 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
          <fileSet>
-            <directory>${project.basedir}/input</directory>
-            <outputDirectory> input </outputDirectory>
+            <directory>${project.basedir}/data</directory>
+            <outputDirectory> data </outputDirectory>
 	    <includes> 
 	      <include> **/* </include>
 	    </includes>

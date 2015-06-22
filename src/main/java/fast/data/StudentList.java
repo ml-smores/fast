@@ -35,9 +35,9 @@ public class StudentList extends LinkedList<CVStudent> {
 	//private final HashMap<Integer, Set<Integer>> cognitiveModel;
 	
 	public StudentList(ArrayList<String> training, boolean parameterizing, boolean parameterizedInit, boolean parameterizedTran, boolean parameterizedEmit,
-			boolean forceUsingInputFeatures, boolean bias, int nbHiddenStates) {//boolean differentBias, 
+			boolean forceUsingInputFeatures, boolean bias, int nbHiddenStates, Bijection students, Bijection items) {//boolean differentBias, 
 		this(new DataPointList(training, parameterizing, parameterizedInit, parameterizedTran, parameterizedEmit,
-				 forceUsingInputFeatures, bias, nbHiddenStates));//differentBias, 
+				 forceUsingInputFeatures, bias, nbHiddenStates, students, items));//differentBias, 
 	}
 	
 	public StudentList(DataPointList data) {
@@ -123,10 +123,10 @@ public class StudentList extends LinkedList<CVStudent> {
 			if (// reportError&&
 			(previousStudent == aStudent) && (previousProblem == aProblem)
 					&& (previousStep == aStep)) {
-				System.out.println("Repeated datum, student= "
+				System.out.println("WARNING: Repeated datum, student= "
 						+ data.getStudents().get(aStudent) + " problem="
 						+ data.getProblems().get(aProblem) + " step="
-						+ data.getSteps().get(aStep));// + "or features are repeated!");
+						+ data.getSteps().get(aStep) + ". Yet I still keep it in the dataset.");// + "or features are repeated!");
 			}
 			
 			previousStudent = aStudent;

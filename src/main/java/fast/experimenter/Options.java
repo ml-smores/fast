@@ -32,36 +32,7 @@ import fig.basic.Option;
 public class Options {
 
 	@Option(gloss = "modelName should contain either \"FAST\" or \"KT\" in the string (capital letters). ")
-	public String modelName = "KT";// "FAST";
-	@Option(gloss = "inDir is for getting input files(train and test).")
-	public String inDir = "./input/";
-	@Option(gloss = "outDir is for getting output prediction files and log files.")
-	public String outDir = "./output/";//inDir + modelName + "/";//
-//	@Option(gloss = "allModelComparisonOutDir is where all different models are compared (by the average evaluation metric).")
-//	public String allModelComparisonOutDir = outDir;
-	@Option(gloss = "trainInFilePrefix combined with nbFiles and inFileSuffix is used for retrieving train file. If trainInFilePrefix=\"train\" and inFileSuffix=\".csv\", then 1) if nbFiles=1, train file will be \"train0.csv\", 2) if nbFiles>1, train file will be automatically configured with an increasing id as surfix. e.g., \"train1.txt\" for the 2nd file.")
-	public String trainInFilePrefix = "FAST+item_SplitBySeq_train";
-	@Option(gloss = "testInFilePrefix combined with nbFiles and inFileSuffix is used for retrieving test file. If testInFilePrefix=\"test\" and inFileSuffix=\".csv\", then 1) if nbFiles=1, test file will be \"test0.csv\", 2) if nbFiles>1, test file will be automatically configured with an increasing id as surfix. e.g., \"test1.txt\" for the 2nd file.")
-	public String testInFilePrefix = "FAST+item_SplitBySeq_test";
-	@Option(gloss = "inFileSuffix is for specifying train and test file suffixes.")
-	public String inFileSuffix = ".txt";	
-//	@Option(gloss = "testSingleFile is used to decide just run one train test pair or multiple train, test pairs.")
-//	public boolean testSingleFile = true;
-	@Option(gloss = "nbFiles is used to decide how many train-test pairs so that the code can read train-test files automatically (e.g. if nbFiles=10, trainInFilePrefix=\"train\", testInFilePrefix=\"test\", inFileSuffix=\".csv\", then the code automatically reads train0.csv~train9.csv.")
-	public int nbFiles = 1;
-//	@Option(gloss = "nbFolds and nbRuns are used to decide how many times FAST runs. For testSingleFile=true, numFolds and numRuns should be set to 1. The code uses foldID to change the train, test file name (e.g. train0.txt~train9.txt are for two runs of 5 fold CV or one run of 10 fold CV) foldId = runID * opts.numFolds + foldID")
-//	public int nbFolds = 1;
-	@Option(gloss = "nbRandomRestart is used for specifying how many random starts (for initialing parameters) for each HMM(KC).")
-	public int nbRandomRestart = 1;// 20 //18s/time
-	
-
-	// public double[] initialWeightsBounds = { -10.0, 10.0 }; //{ { -0.1, 0.1 }, { -0.1, 0.1 } };
-	/* if true, evaluation file also contain every feature coef; otherwise, only the original K0, L, G, S. If there is "NULL" in input, will automatically set this option false. */
-	//public boolean outputFeatureCoefToEval = true;// if different hmms have differnt feature due to null, the code will break
-
-//	public HashSet<String> skillsToSkip = new HashSet<String>();
-//	public HashSet<String> stusToSkip = new HashSet<String>();
-
+	public String modelName = "KT";
 
 	@Option(gloss = "If use features(FAST), then please configure parameterizing=true.")
 	public boolean parameterizing = false;
@@ -75,7 +46,29 @@ public class Options {
 	@Option(gloss = "If forceUsingInputFeatures=true, it allows you to use all input features without differentiating which probability to be parameterized (initial/transition/emission); Otherwise the code uses \"init_\", \"tran_\" or \"emit_\" prefix to recognize corresponding feature columns for initial, transition or emission probabilities (e.g., \"tran_feature_XXX\").")
 	public boolean forceUsingAllInputFeatures = true;
 	
-	//public int startingRestartId = 0;
+	@Option(gloss = "generateStudentDummy is for automatically generating binary student dummies (indicators) based on training dataset.")
+	public boolean generateStudentDummy = false;
+	@Option(gloss = "generateItemDummy is for automatically generating binary item dummies (indicators) based on training dataset. By default, it treats the \"problem\" column as the item column (one problem is one item).")
+	public boolean generateItemDummy = false;
+
+	@Option(gloss = "nbRandomRestart is used for specifying how many random starts (for initialing parameters) for each HMM(KC).")
+	public int nbRandomRestart = 1;// 20 //18s/time
+	@Option(gloss = "nbFiles is used to decide how many train-test pairs so that the code can read train-test files automatically (e.g. if nbFiles=10, trainInFilePrefix=\"train\", testInFilePrefix=\"test\", inFileSuffix=\".csv\", then the code automatically reads train0.csv~train9.csv.")
+	public int nbFiles = 1;
+	
+	@Option(gloss = "inDir is for getting input files(train and test).")
+	public String inDir = "./data/IRT_exp/";
+	@Option(gloss = "outDir is for getting output prediction files and log files.")
+	public String outDir = "./data/IRT_exp/";//inDir + modelName + "/";//
+//	@Option(gloss = "allModelComparisonOutDir is where all different models are compared (by the average evaluation metric).")
+//	public String allModelComparisonOutDir = outDir;
+	@Option(gloss = "trainInFilePrefix combined with nbFiles and inFileSuffix is used for retrieving train file. If trainInFilePrefix=\"train\" and inFileSuffix=\".csv\", then 1) if nbFiles=1, train file will be \"train0.csv\", 2) if nbFiles>1, train file will be automatically configured with an increasing id as surfix. e.g., \"train1.txt\" for the 2nd file.")
+	public String trainInFilePrefix = "train";
+	@Option(gloss = "testInFilePrefix combined with nbFiles and inFileSuffix is used for retrieving test file. If testInFilePrefix=\"test\" and inFileSuffix=\".csv\", then 1) if nbFiles=1, test file will be \"test0.csv\", 2) if nbFiles>1, test file will be automatically configured with an increasing id as surfix. e.g., \"test1.txt\" for the 2nd file.")
+	public String testInFilePrefix = "test";
+	@Option(gloss = "inFileSuffix is for specifying train and test file suffixes.")
+	public String inFileSuffix = ".csv";	
+
 	@Option(gloss = "EMMaxIters is used for the maximum iteration of outer EM. Setting smaller value could make training stop earlier, yet could decrease accuracy.")
 	public int EMMaxIters = 500;// 500; EDM:400; doesn't influence auc that much.
 	/* original package: 20; EDM:500; doesn't influence speed that much; doesn't influence auc that much */
@@ -89,18 +82,47 @@ public class Options {
 	@Option(gloss = "LBFGSTolerance is used to decide the convergence of inner LBFGS. Setting bigger value could make training stop earlier, yet could decrease accuracy.")
 	public double LBFGSTolerance = 1.0E-6;// 1.0E-6;
 
+	
+	
+	
+	
+	/* Following are optional configurations*/
+	
 	@Option(gloss = "By default bias=true. bias=true means adding a bias(intercept) to the featue space (By default, different hidden states will use differnt biases). bias can only be false for KT.") 
 	public boolean bias = true;// -1.0
+	
 	// @Option(gloss = "differentBias=true means using one bias feature for \"known\" state and another bias feature for the \"unknown\" state. To set it true is necessary when other features are all shared by two states.")
 	//public boolean differentBias = bias ? true : false;
+	/*
+	 * TODO: for specifying initial values for HMM When assigning them, it assumes 0 is unknown 1 is known state, so the assigning is correct when !allowForget; 
+	 * TODO: However, when allowforget, these assignments may not be corresponding!
+	 */
+//	@Option(gloss = "specify_initial_values is for specifying the initial values of KT parameters. By default the code randomly generates this value (specify_initial_values=false).")
+//	public boolean specify_initial_values = false;
+	@Option(gloss = "initialK0 is for specifying KT init(Prob(known)). By default the code initializes randomly (initialK0=-1).")
+	public double initialK0 = -1;//0.68;// 0.68//0.60;//0.67;
+	@Option(gloss = "initialT is for specifying KT learn(Prob(known|unknown)). By default the code initializes randomly (initialT=-1).")
+	public double initialT = -1;//0.50;// 0.55;//0.48;
+	//public double INIT_FORGET = 0.0; // will be over written by allowForget configuration
+	@Option(gloss = "initialG is for specifying KT guess(Prob(correct|unknown)). By default the code initializes randomly (initialG=-1).")
+	public double initialG = -1;//0.1;// 0.30;//0.53;
+	@Option(gloss = "initialS is for specifying KT slip(Prob(incorrect|known)). By default the code initializes randomly (initialS=-1).")
+	public double initialS =-1;// 0.1;// 0.30;//0.33;
 
-
-
-	
-	
-	
 	@Option(gloss = "initialWeightsBounds is for deciding initial lower and upper bound for each feature coefficient. By default 10.0.")
 	public double initialFeatureWeightsBounds = 10.0;
+	
+	@Option(gloss = "If useReg=true, the logistic regression part uses regularization..")
+	public boolean useReg = true;
+	
+	@Option(gloss = "For LBFGS, regulariztion term is sum_i[ c *(w_i - b)^2 ] where c is regularization weight(LBFGSRegWeight) and b is regularization bias(LBFGSRegBias).")
+	public double LBFGSRegWeight = useReg ? 1.0 : 0.0;
+	//public double[] LBFGS_REGULARIZATION_WEIGHT_RANGE = { 0.01, 0.1, 1, 10, 100 };
+	// { 1.0E-5, 1.0E-4,1.0E-3, 0.01, 0.1, 1, 5, 10, 30, 50, 100 };//{ 1.0 };
+	//public double[] regularizationWeights;
+	@Option(gloss = "For LBFGS, regulariztion term is sum_i[ c *(w_i - b)^2 ] where c is regularization weight(LBFGSRegWeight) and b is regularization bias(LBFGSRegBias).")
+	public double LBFGSRegBias = 0.0;
+	//public double[] regularizationBiases;
 	
 	//@Option(gloss = "By default, the code does't allow forget.")
 	public boolean allowForget = false; //here by allowForget=false, we set p(0|1)=0, so we always have hidden state 1 as known state.	
@@ -159,9 +181,6 @@ public class Options {
 //	public String probGlobalOptimalAndNonDegStr = "p(" + globaloptima_judge_metric + "_global_optimal&" + ((degInequalityStr.equals("be") ? nondeg_judge_metric + "<1" : nondeg_judge_metric + "<=1")) + ")";
 //	public String outputILGSNameSurfix = "_feature_off";// must start with "_" because of later parsing
 
-	// This part is for configuring regularization.
-	public boolean useReg = true;
-	
 	//@Option(gloss = "By default, configure baumWelchScaledLearner=true meaning that we use baumWelchScaledLearner.")
 	public boolean useBaumWelchScaledLearner = true;
 	public final double PROBABILITY_MIN_VALUE = 0.0;// 1.0E-6;
@@ -178,14 +197,7 @@ public class Options {
 	
 //	@Option(gloss = "LBFGS=true means use LBFGS to optimize the logistic regression part; (deprecated: otherwise use LIBLINEAR.)")
 //	public boolean LBFGS = true;
-	@Option(gloss = "For LBFGS, regulariztion term is sum_i[ c *(w_i - b)^2 ] where c is regularization weight(LBFGSRegWeight) and b is regularization bias(LBFGSRegBias).")
-	public double LBFGSRegWeight = useReg ? 1.0 : 0.0;
-	//public double[] LBFGS_REGULARIZATION_WEIGHT_RANGE = { 0.01, 0.1, 1, 10, 100 };
-	// { 1.0E-5, 1.0E-4,1.0E-3, 0.01, 0.1, 1, 5, 10, 30, 50, 100 };//{ 1.0 };
-	//public double[] regularizationWeights;
-	@Option(gloss = "For LBFGS, regulariztion term is sum_i[ c *(w_i - b)^2 ] where c is regularization weight(LBFGSRegWeight) and b is regularization bias(LBFGSRegBias).")
-	public double LBFGSRegBias = 0.0;
-	//public double[] regularizationBiases;
+
 	
 	//public double INSTANCE_WEIGHT_ROUNDING_THRESHOLD = -1.0;// : 1.0E-4;// -1.0;//
 	//public double INSTANCE_WEIGHT_MULTIPLIER = 1.0;
@@ -206,21 +218,6 @@ public class Options {
 	//@Option(gloss = "To decide printing out verbose information or not.")
 	public boolean verbose = false;
 	
-	/*
-	 * TODO: for specifying initial values for HMM When assigning them, it assumes 0 is unknown 1 is known state, so the assigning is correct when !allowForget; 
-	 * TODO: However, when allowforget, these assignments may not be corresponding!
-	 */
-//	@Option(gloss = "specify_initial_values is for specifying the initial values of KT parameters. By default the code randomly generates this value (specify_initial_values=false).")
-//	public boolean specify_initial_values = false;
-	@Option(gloss = "initialK0 is for specifying KT init(Prob(known)). By default the code initializes randomly (initialK0=-1).")
-	public double initialK0 = -1;//0.68;// 0.68//0.60;//0.67;
-	@Option(gloss = "initialT is for specifying KT learn(Prob(known|unknown)). By default the code initializes randomly (initialT=-1).")
-	public double initialT = -1;//0.50;// 0.55;//0.48;
-	//public double INIT_FORGET = 0.0; // will be over written by allowForget configuration
-	@Option(gloss = "initialG is for specifying KT guess(Prob(correct|unknown)). By default the code initializes randomly (initialG=-1).")
-	public double initialG = -1;//0.1;// 0.30;//0.53;
-	@Option(gloss = "initialS is for specifying KT slip(Prob(incorrect|known)). By default the code initializes randomly (initialS=-1).")
-	public double initialS =-1;// 0.1;// 0.30;//0.33;
 
 	/*
 	 * @Option(gloss = "To decide printing out verbose information for LBFGS optimization result or not." ) public boolean LBFGSverbose = false;
@@ -292,6 +289,19 @@ public class Options {
 
 	// "These are all for storing information dynamically, no need to configure.")
 	//public String curHmmName = "";
+	
+//@Option(gloss = "testSingleFile is used to decide just run one train test pair or multiple train, test pairs.")
+//public boolean testSingleFile = true;
+//@Option(gloss = "nbFolds and nbRuns are used to decide how many times FAST runs. For testSingleFile=true, numFolds and numRuns should be set to 1. The code uses foldID to change the train, test file name (e.g. train0.txt~train9.txt are for two runs of 5 fold CV or one run of 10 fold CV) foldId = runID * opts.numFolds + foldID")
+//public int nbFolds = 1;
+
+// public double[] initialWeightsBounds = { -10.0, 10.0 }; //{ { -0.1, 0.1 }, { -0.1, 0.1 } };
+/* if true, evaluation file also contain every feature coef; otherwise, only the original K0, L, G, S. If there is "NULL" in input, will automatically set this option false. */
+//public boolean outputFeatureCoefToEval = true;// if different hmms have differnt feature due to null, the code will break
+//public HashSet<String> skillsToSkip = new HashSet<String>();
+//public HashSet<String> stusToSkip = new HashSet<String>();
+
+//public int startingRestartId = 0;
 
 //	public boolean preDpCurDpFromDifferentSet = false;// for split by sequence checking
 //	public int nbDataPointsInTrainPerHmm = 0;
@@ -367,6 +377,8 @@ public class Options {
 			parameterizingEmit = false;
 			parameterizingInit = false;
 			parameterizingTran = false;
+			generateStudentDummy = false;
+			generateItemDummy = false;
 			// oneBiasFeature = false;
 			//differentBias = false;
 			bias = false;			

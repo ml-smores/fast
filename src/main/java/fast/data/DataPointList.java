@@ -42,17 +42,28 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 	private Bijection finalInitFeatures;// nonNull for one HMM
 	private Bijection finalTranFeatures;// nonNull for one HMM
 	private Bijection finalEmitFeatures;// nonNull for one HMM
-	private Bijection students, problems, steps, outcomes, skills;
+	private Bijection students, problems;
+	private Bijection steps, outcomes, skills;
 	private HashMap<Integer, Set<Integer>> cognitiveModel; // aProb/aStep to a set of skills
+	/* Feature column index to feature name. Ordering is important.*/
 	private TreeMap<Integer, String> featureColumnToName;
 	
 	private int student = -1, problemName = -1, stepName = -1, outcome = -1, fold = -1, skill = -1;
 	private int feature = -1;
+	private boolean generateStudentDummy = false, generateItemDummy = false;
+	private static String delimiterStr = "\\s*[,\t]+\\s*";
 	private boolean verbose;
 	
 	public DataPointList(ArrayList<String> instances, 
 			boolean parameterizing, boolean parameterizedInit, boolean parameterizedTran, boolean parameterizedEmit, boolean forceUsingInputFeatures, 
 			boolean bias, int nbHiddenStates){
+		this(instances, parameterizing, parameterizedInit, parameterizedTran, parameterizedEmit,
+				 forceUsingInputFeatures, bias, nbHiddenStates, null, null);
+	}
+	
+	public DataPointList(ArrayList<String> instances, 
+			boolean parameterizing, boolean parameterizedInit, boolean parameterizedTran, boolean parameterizedEmit, boolean forceUsingInputFeatures, 
+			boolean bias, int nbHiddenStates, Bijection students, Bijection items){//, boolean generateStudentDummy, boolean generateItemDummy){
 		this.parameterizing = parameterizing;
 		this.parameterizedInit = parameterizedInit;
 		this.parameterizedTran = parameterizedTran;
@@ -61,12 +72,26 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 		//this.differentBias = differentBias;
 		this.bias = bias;
 		this.nbHiddenStates = nbHiddenStates;
-
-		students = new Bijection(); // Dont'save the index of students
+//		this.generateStudentDummy = generateStudentDummy;
+//		this.generateItemDummy = generateItemDummy;
+		if (students != null && students.getSize() > 0)
+			generateStudentDummy = true;
+		else{
+			generateStudentDummy = false;
+			students = new Bijection();
+		}
+		if (items != null && items.getSize() > 0)
+			generateItemDummy = true;
+		else{
+			generateItemDummy = false;
+			items = new Bijection();
+		}
+		this.students = students; // Dont'save the index of students
+		this.problems = items;
+		
 		// TODO: in the future, if trained by stu, may need to change
 		cognitiveModel = new HashMap<Integer, Set<Integer>>();
 		skills = new Bijection();
-		problems = new Bijection();
 		steps = new Bijection();
 		outcomes = new Bijection();
 		outcomes.put("incorrect");
@@ -80,16 +105,23 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 		finalInitFeatures = new Bijection();// nonNull for one HMM
 		finalTranFeatures = new Bijection();// nonNull for one HMM
 		finalEmitFeatures = new Bijection();
+			
+		inputFeatures = new Bijection();
+		featureColumnToName = new TreeMap<Integer, String>();
 		
 		int lineNumber = 0;
 		for (int ins = 0; ins < instances.size(); ins++) {
 			// System.out.println("ins=" + ins);
-			String columns[] = instances.get(ins).split("\\s*[,\t]+\\s*");
-			if (lineNumber++ == 0) {
-				// get Bijections input features (including null)
-				inputFeatures = parseColumns(columns);
-				continue;
+			String columns[] = instances.get(ins).split(delimiterStr);
+			if (lineNumber == 0) {
+//				if (!(inputFeatures != null && inputFeatures.getSize() > 0 && featureColumnToName != null && featureColumnToName.size() > 0))
+//					parseColumns(columns, inputFeatures, featureColumnToName);
+					parseColumns(columns, inputFeatures, featureColumnToName);
+					lineNumber++;
+					continue;	
 			}
+
+			/* use integer to save memory. Need the Bijection to recover the original string */
 
 			int aStudent = students.put(columns[student]);
 			Integer aOutcome = outcomes.get(columns[outcome]);
@@ -148,69 +180,64 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 			if (!parameterizing)
 				this.add(new DataPoint(aStudent, aSkill, aProb, aStep, aFold, aOutcome));
 			else {
-				if (featureColumnToName == null || featureColumnToName.size() <= 0) {
-					System.out.println("ERROR: please provide correct feature column names!");
-					System.exit(-1);
-				}
+				if ((featureColumnToName == null || featureColumnToName.size() <= 0) && !generateStudentDummy && !generateItemDummy)
+					throw new RuntimeException("ERROR: I can't read any features. Please provide correct feature column names!");
+				
 				/* inputFeaturesNonNull: nonNull; no bias features; it can be "features_", "init_features_", "tran_features", "emit_features_" */
 				ArrayList<Double> inputFeatureValuesNonNull = new ArrayList<Double>();
 				// int nbFeatures = 0;
-				for (Map.Entry<Integer, String> iter : featureColumnToName.entrySet()) {
-					// System.out.println("nbFeatures=" + nbFeatures++);
-					int column = iter.getKey();
-					String featureValue = columns[column];
-					if (!featureValue.matches("(?i)null") && !featureValue.matches("(?i)nan") && !featureValue.equals("")) {//columns[i].matches("(?i).*feature.*")
-						String featureName = iter.getValue();
-						// double value = 0.0;
-						// if (!(featureName.contains("stufield")
-						// ||featureName.contains("quefield") ))
-						// value = Double.parseDouble(featureValue);
-						inputFeatureValuesNonNull.add(Double.parseDouble(featureValue));
-						inputFeaturesNonNull.put(featureName);
+				if (featureColumnToName != null){
+					for (Map.Entry<Integer, String> iter : featureColumnToName.entrySet()) {
+						// System.out.println("nbFeatures=" + nbFeatures++);
+						int column = iter.getKey();
+						String featureValue = columns[column];
+						if (!featureValue.matches("(?i)null") && !featureValue.matches("(?i)nan") && !featureValue.equals("")) {//columns[i].matches("(?i).*feature.*")
+							String featureName = iter.getValue();
+							// double value = 0.0;
+							// if (!(featureName.contains("stufield")
+							// ||featureName.contains("quefield") ))
+							// value = Double.parseDouble(featureValue);
+							inputFeatureValuesNonNull.add(Double.parseDouble(featureValue));
+							inputFeaturesNonNull.put(featureName);
+						}
+						//else
+						//	outputFeatureCoefToEval = false;
 					}
-					//else
-					//	outputFeatureCoefToEval = false;
 				}
-				if (inputFeaturesNonNull.getSize() != inputFeatureValuesNonNull.size()) {
-					System.out.println("ERROR: inputFeaturesNonNull.getSize() != inputFeatureValuesNonNull.size(). Please make sure that the datapoints for the same HMM(KC) have the same NULL(NAN/empty) columns");
-					System.exit(1);
+				if (generateStudentDummy){
+					for (int stuId = 0; stuId < students.getSize(); stuId++){
+						Double featureValue = 0.0;
+						String studentStr = students.get(stuId);
+						if (studentStr.equals(columns[student]))
+							featureValue = 1.0;
+						inputFeatureValuesNonNull.add(featureValue);
+						//TODO: differentiate init, tran, emit
+						inputFeaturesNonNull.put("*feature_student_" + studentStr);
+					}
 				}
-				// if (oneLogisticRegression) {
+				if (generateItemDummy){
+					for (int itemId = 0; itemId < problems.getSize(); itemId++){
+						Double featureValue = 0.0;
+						String itemStr = problems.get(itemId);
+						if (itemStr.equals(columns[problemName]))
+							featureValue = 1.0;
+						inputFeatureValuesNonNull.add(featureValue);
+						//TODO: differentiate init, tran, emit
+						inputFeaturesNonNull.put("*feature_item_" + itemStr);
+					}
+				}
+				
+				/* Current line #non-null features should = all the lines #non-null features */
+				if (inputFeaturesNonNull.getSize() != inputFeatureValuesNonNull.size())
+					throw new RuntimeException("ERROR: inputFeaturesNonNull.getSize() != inputFeatureValuesNonNull.size(). Please make sure that the datapoints for the same HMM(KC) have the same NULL(NAN/empty) columns");
+			
 				// 1st: hiddenStates; 2nd: 0-init,1-tran,2-emit; 3rd:featureValues
 				// corresponding to current hiddenState;
 				double[][][] finalFeatureValues = new double[nbHiddenStates][3][];
 				finalFeatureValues = getExpandedFeatureVector(inputFeatureValuesNonNull, inputFeaturesNonNull, finalFeatures, finalInitFeatures, finalTranFeatures, finalEmitFeatures);
 				this.add(new DataPoint(aStudent, aSkill, aProb, aStep, aFold, aOutcome, finalFeatureValues));
 			}
-			// }
-			// else {// not oneLogisticRegression
-			// finalAllFeatures = inputFeaturesNonNull;
-			// double[] finalFeatureValues = new double[nonNullFeatures.size()];
-			// if (bias > 0) {
-			// finalFeatureValues = new double[nonNullFeatures.size() + 1];
-			// }
-			// int i = 0;
-			// for (; i < nonNullFeatures.size(); i++) {
-			// finalFeatureValues[i] = nonNullFeatures.get(i);
-			// }
-			// if (bias > 0) {
-			// finalFeatureValues[i] = 1.0;
-			// finalAllFeatures.put("bias");
-			// }
-			// this.add(new DataPoint(aStudent, aProb, aStep, aFold, aOutcome,
-			// finalFeatureValues));
-			// }
-			// aFeatures = new double[aFeatures_.size()];
-			// for (int k = 0; k < aFeatures_.size(); k++)
-			// aFeatures[k] = aFeatures_.get(k);
-
-			/*
-			 * // Here it only gets the full space of student or item dummies, later in // StudentList will reput the featureValues into DataPoint if (nowInTrain && !inputProvideFeatureColumns) { if (addSharedStuDummyFeatures) { if (finalFeatures == null) finalFeatures = new Bijection(); // TODO: may use "*features_" finalFeatures.put("*student" + columns[student]); } if (addSharedItemDummyFeatures) { if (finalFeatures == null) finalFeatures = new Bijection(); // TODO: may use "*features_" finalFeatures.put("*item" + columns[problemName]); } if (finalFeatures != null && finalFeatures.getSize() == 0) finalFeatures = null; } if (!nowInTrain && !inputProvideFeatureColumns) { if (!finalFeatures.contains("*student" + columns[student])) { newStudents.add(columns[student]); } if (!finalFeatures.contains("*item" + columns[problemName])) { newItems.add(columns[problemName]); } }
-			 */
-		}// per instance
-		/*
-		 * if (nowInTrain && !inputProvideFeatureColumns) { if (bias > 0 && finalFeatures != null) { if (!differentBias) finalFeatures.put("*bias"); else { finalFeatures.put("bias"); finalFeatures.put("bias_hidden1"); } } }
-		 */
+		}
 	}
 
 	/**
@@ -358,12 +385,26 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 		aTypeFeatures.put(featureName);
 		allFeatures.put(featureName);
 	}
+	
+	public static int[] parseColumns(String[] columns){
+		//String columns[] = header.split("\\s*[,\t]+\\s*");
+		int[] indexes = {-1, -1};
+		for (int i = 0; i < columns.length; i++) {
+			if (indexes[0] != -1 && indexes[1] != -1)
+				break;
+			if (columns[i].matches("(?i)student.*"))// (?i): ignore case sensitive
+				indexes[0] = i;
+			else if (columns[i].matches("(?i)problem.*"))
+				indexes[1] = i;
+		}
+		return indexes;
+	}
 
-	public Bijection parseColumns(String[] columns) {
-		inputFeatures = new Bijection();
+	public void parseColumns(String[] columns, Bijection inputFeatures, TreeMap<Integer, String> featureColumnToName) {
+		//inputFeatures = new Bijection();
 		String ignoredColumns = "";
 		ArrayList<Integer> ignoredColumnList = new ArrayList<Integer>();
-		featureColumnToName = null;
+		//featureColumnToName = null;
 
 		// Case-insensitive matching can also be enabled via the embedded flag
 		// expression (?i).
@@ -387,12 +428,14 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 				feature = i;// starting index
 				String featureName = columns[i];
 				if (featureColumnToName == null)
-					featureColumnToName = new TreeMap<Integer, String>();
+					throw new RuntimeException("ERROR: featureColumnToName==null!");
+					//featureColumnToName = new TreeMap<Integer, String>();
 				featureColumnToName.put(i, featureName);
 				// String featureName = columns[i].replace("features_", "");
 				// featureName = columns[i].replace("feature_", "");
 				if (inputFeatures == null)
-					inputFeatures = new Bijection();
+					throw new RuntimeException("ERROR: inputFeatures==null!");
+					//inputFeatures = new Bijection();
 				inputFeatures.put(featureName);
 			}
 			else {
@@ -415,34 +458,22 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 			System.out.println("#Ignored Column(s):\t" + ignoredColumnList.size());
 		}
 
-		if (student == -1
-		// || (problemName == -1 && !problemColumn.equalsIgnoreCase(""))
-		// hy: to change: problemColum?
-		// || (stepName == -1 && !stepColumn.equalsIgnoreCase(""))
-				|| outcome == -1
-				// || fold == -1
-				|| skill == -1 || (parameterizing
-				// && !oneBiasFeature
-				&& (feature == -1 || featureColumnToName == null))) {
-			// && (!addSharedItemDummyFeatures &&
-			// !addSharedStuDummyFeatures) )) {// hy
-			// logger.error("Cannot find column (student:" + student + ", problem:"
-			// + problemName + ",step:" + stepName + ",outcome:" + outcome
-			// + ",fold:" + fold + ",last feature:" + feature + ")"); // hy
-			System.out.println("Cannot find column (student:" + student + ",outcome:" + outcome + ",KC:" + skill + ")");
-			// ("Cannot find column (student:" + student
-			// + ", problem:" + problemName + ",step:" + stepName + ",outcome:"
-			// + outcome + ",fold:" + fold + ",last feature:" + feature + ")");
-			throw new RuntimeException("Missing column");
+		if (student == -1 || outcome == -1 || skill == -1 || 
+				(parameterizing && !generateStudentDummy && !generateItemDummy && (feature == -1 || featureColumnToName == null))) {
+			String str = "ERROR: Missing column in input data. Cannot find column ";
+			if (student == -1)
+				str += "'student' ";
+			if (outcome == -1)
+				str += "'outcome' ";
+			if (skill == -1)
+				str += "'KC' ";
+			if (parameterizing && !generateStudentDummy && !generateItemDummy && (feature == -1 || featureColumnToName == null))
+				str += "for features ";
+			str += "!";
+			//System.out.println(str);
+			throw new RuntimeException(str);
 		}
-
-//		if (verbose) {
-//			// logger.info("COLUMNS:\tstudent:" + student + ", problem:" + problemName
-//			// + ",step:" + stepName + ",outcome:" + outcome + ",last feature:"
-//			// + feature);// hy
-//			System.out.println("COLUMNS:\tstudent:" + student + ", problem:" + problemName + ",step:" + stepName + ",outcome:" + outcome + ",last feature:" + feature);
-//		}
-		return inputFeatures;
+		//return inputFeatures;
 	}
 
 	public Bijection getStudents() {
@@ -488,5 +519,36 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 	public HashMap<Integer, Set<Integer>> getCognitiveModel() {
 		return cognitiveModel;
 	}
-
+	
+	public static void readStudentsOrItems(ArrayList<String> instances, Bijection students, Bijection items){
+		boolean generateStudentDummy = false, generateItemDummy = false;
+		if (students != null)
+			generateStudentDummy = true;
+		if (items != null)
+			generateItemDummy = true;
+		int lineNumber = 0;
+		int[] indexes = {-1, -1}; //student, item
+			for (int ins = 0; ins < instances.size(); ins++) {
+				String columns[] = instances.get(ins).split(delimiterStr);
+				if (lineNumber == 0) {
+					indexes = parseColumns(columns);
+					lineNumber++;
+					continue;
+				}
+				int studentColumn = indexes[0];
+				int itemColumn = indexes[1];
+				if (generateStudentDummy){
+					if (studentColumn == -1)
+						throw new RuntimeException("ERROR: please provide \"student\" column so that I could generate student dummies for you.");
+					else
+						students.put(columns[studentColumn]);
+				}
+				if (generateItemDummy){
+					if (itemColumn == -1)
+						throw new RuntimeException("ERROR: please provide \"problem\" column so that I could generate item dummies for you.");
+					else
+						items.put(columns[itemColumn]);
+				}
+			}
+	}
 }

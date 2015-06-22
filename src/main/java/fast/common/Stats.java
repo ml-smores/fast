@@ -1,7 +1,7 @@
 package fast.common;
 //import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
+//import java.util.List;
 
 
 public final class Stats
@@ -31,7 +31,7 @@ public final class Stats
 		}
 	}
 
-	public static Double min (List<Double> a)
+	public static Double min (ArrayList<Double> a)
 	{	
 		if (a == null || a.size() == 0)
 			return null;
@@ -49,7 +49,7 @@ public final class Stats
 	    return min;
 	}
 	
-	public static Double max (List<Double> a)
+	public static Double max (ArrayList<Double> a)
 	{	
 		if (a == null || a.size() == 0)
 			return null;
@@ -68,7 +68,7 @@ public final class Stats
 	    return max;
 	}
 	
-	public static ValueIndexSummary max_with_index (List<Double> a)
+	public static ValueIndexSummary max_with_index (ArrayList<Double> a)
 	{	
 		if (a == null || a.size() == 0)
 			return null;
@@ -104,7 +104,7 @@ public final class Stats
 		return maxObj;
 	}
 	
-	public static ValueIndexSummary min_with_index (List<Double> a)
+	public static ValueIndexSummary min_with_index (ArrayList<Double> a)
 	{	
 		if (a == null || a.size() == 0)
 			return null;
@@ -140,7 +140,7 @@ public final class Stats
 		return minObj;
 	}
 	
-	public static Integer countLessThan (List<Double> a, int lessThanValue)
+	public static Integer countLessThan (ArrayList<Double> a, int lessThanValue)
 	{	
 		if (a == null || a.size() == 0)
 			return null;
@@ -158,7 +158,7 @@ public final class Stats
 	   return nb;
 	}
 	
-	public static Double sum (List<Double> a)
+	public static Double sum (ArrayList<Double> a)
 	{	
 		if (a == null || a.size() < 1) 
 			return null;
@@ -172,7 +172,7 @@ public final class Stats
     return sum;
 	}
 
-	public static Double mean (List<Double> a)
+	public static Double mean (ArrayList<Double> a)
 	{
 			if (a == null || a.size() < 1)
 				return null;
@@ -197,7 +197,7 @@ public final class Stats
 	* sample sd: When only a sample of data from a population is available, the term standard deviation of the sample or sample standard deviation can refer to either the above-mentioned quantity as applied to those data or to a modified quantity that is a better estimate of the population standard deviation (the standard deviation of the entire population).
 	* not se:The standard error of the mean (SEM) is the standard deviation of the sample-mean's estimate of a population mean. (It can also be viewed as the standard deviation of the error in the sample mean with respect to the true mean, since the sample mean is an unbiased estimator.) 
 	*/
-	public static Double sd (List<Double> a)
+	public static Double sd (ArrayList<Double> a)
 	{
 		if (a == null || a.size() < 2)
 			return null;

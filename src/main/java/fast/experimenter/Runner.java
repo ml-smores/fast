@@ -48,6 +48,8 @@ import fast.common.Functions;
 //import fast.common.Functions;
 import fast.common.Stats;
 import fast.common.Utility;
+//import fast.data.DataPoint;
+import fast.data.DataPointList;
 //import fast.common.Stats.ValueIndexSummary;
 //import fast.data.DataPoint;
 import fast.data.StudentList;
@@ -124,17 +126,13 @@ public class Runner implements Runnable {
 		logger.curFile =  logger.new OneFileLogger(fileId);
 
 		Bijection trainKcs = new Bijection();
-		ArrayList<StudentList> trainKcsStuLists  = getFormattedInputData(splitHMMs(opts.trainFile, trainKcs));
-		logger.curFile.trainAllHMMs = trainKcs;
-		
+		ArrayList<ArrayList<String>> trainAllKcArrayList = splitHMMs(opts.trainFile, trainKcs);//per kc, then per instance
 		Bijection testKcs = new Bijection();
-		ArrayList<StudentList> testKcsStuLists = getFormattedInputData(splitHMMs(opts.testFile, testKcs));
-		if (testKcsStuLists.size() > trainKcsStuLists.size() || testKcs.getSize() > trainKcs.getSize()) {
-			System.out.println("The # of hmms(KCs) in testset is bigger than that in trainset! Please remove new KCs on testset!");
-			System.exit(1);
-		}
+		ArrayList<ArrayList<String>> testAllKcArrayList = splitHMMs(opts.testFile, testKcs);
+		if (testAllKcArrayList.size() > trainAllKcArrayList.size() || testKcs.getSize() > trainKcs.getSize())
+			throw new RuntimeException("ERROR: The # of hmms(KCs) in testset is bigger than that in trainset! Please remove new KCs on testset!");
+		logger.curFile.trainAllHMMs = trainKcs;
 		opts.resetRandom(fileId, opts.nbRandomRestart, trainKcs.getSize());
-
 		
 		String fileProgress = "(" + Integer.toString(fileId + 1) + "/" + Integer.toString(opts.nbFiles) + ")";
 		String str = "\n\n\n***** Starting new file: fileId=" + fileId + fileProgress + " *****\n#HMMs(train)=" + trainKcs.getSize() 
@@ -144,13 +142,28 @@ public class Runner implements Runnable {
 		for (int hmmId = 0; hmmId < trainKcs.getSize(); hmmId++) {
 			String hmmName = trainKcs.get(hmmId);
 			if (!testKcs.contains(hmmName)){
-				System.out.println("Testset doesn't conatin " + hmmName + "!");
-				System.exit(1);
+				System.out.println("WARNING: Testset doesn't conatin " + hmmName + "!");
+				continue;
 			}
-			int curKcTestId = testKcs.get(hmmName);
-			StudentList curKcTrainStuList = trainKcsStuLists.get(hmmId);
-			StudentList curKcTestStuList = testKcsStuLists.get(curKcTestId);
+			int testHmmId = testKcs.get(hmmName);
+//			StudentList curKcTrainStuList = trainKcsStuLists.get(hmmId);
+//			StudentList curKcTestStuList = testKcsStuLists.get(curKcTestId);
+			ArrayList<String> curKcTrainArrayList = trainAllKcArrayList.get(hmmId);
+			ArrayList<String> curKcTestArrayList = testAllKcArrayList.get(testHmmId);
 			
+			Bijection students = null;
+			Bijection items = null;
+			if (opts.parameterizing){
+				students = opts.generateStudentDummy ? (new Bijection()):null;
+				items = opts.generateItemDummy ? (new Bijection()):null;
+				if (opts.generateStudentDummy || opts.generateItemDummy){
+					DataPointList.readStudentsOrItems(curKcTrainArrayList, students, items);
+					DataPointList.readStudentsOrItems(curKcTestArrayList, students, items);
+				}
+			}
+			StudentList curKcTrainStuList  = getFormattedInputData(curKcTrainArrayList, students, items);
+			StudentList curKcTestStuList = getFormattedInputData(curKcTestArrayList, students, items);
+		
 			checkTrainTestFeatures(curKcTrainStuList.getAllFeatures(), curKcTestStuList.getAllFeatures());
 			checkTrainTestFeatures(curKcTrainStuList.getInitFeatures(), curKcTestStuList.getInitFeatures());
 			checkTrainTestFeatures(curKcTrainStuList.getTranFeatures(), curKcTestStuList.getTranFeatures());
@@ -755,7 +768,7 @@ public class Runner implements Runnable {
 	
 
 	public ArrayList<ArrayList<String>> splitHMMs(String filename, Bijection kcs) throws IOException {
-
+		/* per kc, then per instance */
 		ArrayList<ArrayList<String>> allKcArrayList = new ArrayList<ArrayList<String>>();
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream(filename);
 		if (is == null) {
@@ -855,14 +868,10 @@ public class Runner implements Runnable {
 	}
 
 	
-	public ArrayList<StudentList> getFormattedInputData(ArrayList<ArrayList<String>> allKcArrayList){
-		ArrayList<StudentList> allKcStuLists = new ArrayList<StudentList>();
-		for (ArrayList<String> kcArrayList : allKcArrayList) {
-			StudentList curStuList = new StudentList(kcArrayList, opts.parameterizing, opts.parameterizingInit, opts.parameterizingTran, opts.parameterizingEmit,
-					opts.forceUsingAllInputFeatures, opts.bias, opts.Nb_HIDDEN_STATES);//opts.differentBias, 
-			allKcStuLists.add(curStuList);
-		}
-		return allKcStuLists;
+	public StudentList getFormattedInputData(ArrayList<String> oneKcArrayList, Bijection students, Bijection items){
+		StudentList oneKcStudentList = new StudentList(oneKcArrayList, opts.parameterizing, opts.parameterizingInit, opts.parameterizingTran, opts.parameterizingEmit,
+					opts.forceUsingAllInputFeatures, opts.bias, opts.Nb_HIDDEN_STATES, students, items);//opts.differentBias, 
+		return oneKcStudentList;
 	}
 
 	/** By default, here is the actual function to start predicting for one fold, one skill for all kinds of API */
