@@ -125,26 +125,46 @@ public class Runner implements Runnable {
 		opts.configure(fileId, 0, "");
 		logger.curFile =  logger.new OneFileLogger(fileId);
 
-		Bijection trainKcs = new Bijection();
-		ArrayList<ArrayList<String>> trainAllKcArrayList = splitHMMs(opts.trainFile, trainKcs);//per kc, then per instance
-		Bijection testKcs = new Bijection();
-		ArrayList<ArrayList<String>> testAllKcArrayList = splitHMMs(opts.testFile, testKcs);
-		if (testAllKcArrayList.size() > trainAllKcArrayList.size() || testKcs.getSize() > trainKcs.getSize())
+		Bijection oriTrainKcs = new Bijection();
+		ArrayList<ArrayList<String>> oriTrainAllKcArrayList = splitHMMs(opts.trainFile, oriTrainKcs);//per kc, then per instance
+		Bijection oriTestKcs = new Bijection();
+		ArrayList<ArrayList<String>> oriTestAllKcArrayList = splitHMMs(opts.testFile, oriTestKcs);
+		if (oriTestAllKcArrayList.size() > oriTrainAllKcArrayList.size() || oriTestKcs.getSize() > oriTestKcs.getSize())
 			throw new RuntimeException("ERROR: The # of hmms(KCs) in testset is bigger than that in trainset! Please remove new KCs on testset!");
+		Bijection trainKcs = new Bijection();
+		Bijection testKcs = new Bijection(); 
+		ArrayList<ArrayList<String>> trainAllKcArrayList = new ArrayList<ArrayList<String>>();
+		ArrayList<ArrayList<String>> testAllKcArrayList = new ArrayList<ArrayList<String>>();
+		
+		String fileProgress = "(" + Integer.toString(fileId + 1) + "/" + Integer.toString(opts.nbFiles) + ")";
+		String str = "\n\n\n***** Starting new file: fileId=" + fileId + fileProgress 
+							+ " *****\n#HMMs(train)=" + oriTrainKcs.getSize() 
+							+ "\n#HMMs(test)=" + oriTestKcs.getSize() +"\n";
+		logger.printAndLog(str);
+		
+		/* remove those KCs on train but not in test */
+		for (int hmmId = 0; hmmId < oriTrainKcs.getSize(); hmmId++){
+			String hmmName = oriTrainKcs.get(hmmId);
+			if (!oriTestKcs.contains(hmmName))
+				System.out.println("WARNING: Testset doesn't conatin kc=" + hmmName + "! I am skipping it.");
+			else{
+				int hmmIdOnTest = oriTestKcs.get(hmmName);
+				trainKcs.put(hmmName);
+				testKcs.put(hmmName);
+				trainAllKcArrayList.add(oriTrainAllKcArrayList.get(hmmId));
+				testAllKcArrayList.add(oriTestAllKcArrayList.get(hmmIdOnTest));
+			}
+		}
+		System.out.println("");
 		logger.curFile.trainAllHMMs = trainKcs;
 		opts.resetRandom(fileId, opts.nbRandomRestart, trainKcs.getSize());
 		
-		String fileProgress = "(" + Integer.toString(fileId + 1) + "/" + Integer.toString(opts.nbFiles) + ")";
-		String str = "\n\n\n***** Starting new file: fileId=" + fileId + fileProgress + " *****\n#HMMs(train)=" + trainKcs.getSize() 
-							+ "\n#HMMs(test)=" + testKcs.getSize() +"\n";
-		logger.printAndLog(str);
-
 		for (int hmmId = 0; hmmId < trainKcs.getSize(); hmmId++) {
 			String hmmName = trainKcs.get(hmmId);
-			if (!testKcs.contains(hmmName)){
-				System.out.println("WARNING: Testset doesn't conatin " + hmmName + "!");
-				continue;
-			}
+//			if (!testKcs.contains(hmmName)){
+//				System.out.println("WARNING: Testset doesn't conatin kc=" + hmmName + "! I am skipping it.");
+//			}
+//			else{
 			int testHmmId = testKcs.get(hmmName);
 //			StudentList curKcTrainStuList = trainKcsStuLists.get(hmmId);
 //			StudentList curKcTestStuList = testKcsStuLists.get(curKcTestId);
@@ -178,9 +198,8 @@ public class Runner implements Runnable {
 			logger.curFile.trainedHMMs.add(hmmName);
 			int nbTrainedHmms = logger.curFile.trainedHMMs.size();
 			writeOneHMMOneRestartSummary(curKcTestStuList, bestRestartLogger.testSummary, nbTrainedHmms);
-		
-			logger.curFile.add(hmmId, bestRestartLogger);
 			
+			logger.curFile.add(hmmId, bestRestartLogger);
 			//closeAndClearAllRestarts();
 		}
 		writeOneFileAllHMMSummary();//opts.allHmmsSummaryDir, opts.modelName);
@@ -188,202 +207,6 @@ public class Runner implements Runnable {
 		//closeOneFileLogger();
 	}
 
-	
-	// input should ordered by the hmm unit (e.g. skill)
-	//public void runOnebyOne(int foldId, int runId) throws IOException {
-		// String str = getConfigurationStr(foldId,runId);
-		// System.out.println(str);
-		// opts.writeLogFiles(str);
-		// InputStream is = this.getClass().getClassLoader()
-		// .getResourceAsStream(opts.trainFile);
-		// if (is == null) {
-		// is = new FileInputStream(opts.trainFile);
-		// }
-		// InputStreamReader isr = new InputStreamReader(is);
-		// BufferedReader trainReader = new BufferedReader(isr);
-		// BufferedReader testReader = new BufferedReader(
-		// new FileReader(opts.testFile));
-		// String line = "";
-		// System.out.println("Loading train file: " + opts.trainFile + "\n"
-		// + "Loading test file: " + opts.testFile);
-		// String header = trainReader.readLine().trim();
-		// String testHeader = testReader.readLine().trim();
-		// if (!header.equals(testHeader)) {
-		// System.out.println("trainHeader:" + header);
-		// System.out.println("testHeader:" + testHeader);
-		// System.out.println("ERROR: input files !header.equals(testHeader)");
-		// System.exit(1);
-		// }
-		//
-		// String[] headerColumns = header.split("\\s*[,\t]\\s*");// ("\\s*,\\t*\\s*");
-		// int skillColumn = -1;
-		// String reg = "KC.*";
-		// String reg2 = "skill.*";
-		// // assign KC column
-		// if (!header.contains("KC") && !header.contains("skill")) {
-		// System.out.println("Header doesn't contain KCs!");
-		// if (header.contains("problem"))
-		// reg = "problem";
-		// else if (header.contains("step"))
-		// reg = "step";
-		// else {
-		// System.out.println("Error: No problem or step!");
-		// System.exit(1);
-		// }
-		// }
-		// for (int i = 0; i < headerColumns.length; i++) {
-		// if (headerColumns[i].matches("(?i)" + reg)
-		// || headerColumns[i].matches("(?i)" + reg2))
-		// skillColumn = i;
-		// }
-		// kc = 0;
-		// String preSkill = "";
-		// String curSkill = "";
-		// String testLine = "";
-		// String preSkillOnTest = "";
-		// ArrayList<String> aHmmSequences = new ArrayList<String>();
-		// ArrayList<String> aHmmSequencesOnTest = new ArrayList<String>();
-		//
-		// trainHmms = new ArrayList<FeatureHMM>();
-		// while ((line = trainReader.readLine()) != null) {
-		// String newLine = line.trim();
-		// if (newLine.length() == 0)
-		// continue;
-		// // System.out.println(line);
-		// String[] columns = line.split("\\s*[,\t]\\s*");// ("\\s*,\\t*\\s*");
-		// if (columns.length <= skillColumn) {
-		// System.out.println("Error: incorrect line!");
-		// continue;
-		// }
-		// if (skillColumn == -1) {
-		// System.out.println("Error: No KCs!");
-		// System.exit(1);
-		// }
-		//
-		// curSkill = columns[skillColumn].trim();
-		// // one hmm
-		// if (preSkill.equals("") || preSkill.equals(curSkill)) {
-		// if (preSkill.equals(""))
-		// aHmmSequences.add(header);
-		// aHmmSequences.add(line);
-		// preSkill = curSkill;
-		// }
-		// else {
-		// // train one hmm using aHmmSequences
-		// opts.currentKc = preSkill;
-		// opts.currentKCId = kc;
-		// opts.nowInTrain = true;
-		// FeatureHMM trainHmm = trainOneHmm(wholeProcessRunId, foldId, runId, preSkill, kc,
-		// aHmmSequences, null, null);
-		// trainHmms.add(trainHmm);
-		//
-		// while ((testLine = testReader.readLine()) != null) {
-		// String newLineOnTest = testLine.trim();
-		// if (newLineOnTest.length() == 0)
-		// continue;
-		// columns = testLine.split("\\s*[,\t]\\s*");// ("\\s*,\\t*\\s*");
-		// String curSkillOnTest = columns[skillColumn].trim();
-		// if (!preSkillOnTest.equals("") && !preSkillOnTest.equals(preSkill)) {
-		// System.out
-		// .println("WARNING: !preSkillOnTest.equals(\"\") && !preSkillOnTest.equals(preSkill): preSkillOnTest="
-		// + preSkillOnTest + "," + "preSkill" + preSkill);
-		// System.exit(1);
-		// }
-		// if (!curSkillOnTest.equals(preSkill)
-		// && aHmmSequencesOnTest.size() == 0) {
-		// System.out
-		// .println("WARNING: !curSkillOnTest.equals(preSkill) && aHmmSequencesOnTest.size() == 0: curSkillOnTest="
-		// + curSkillOnTest + "," + "preSkill" + preSkill);
-		// System.exit(1);
-		//
-		// }
-		// if (preSkillOnTest.equals("")
-		// || preSkillOnTest.equals(curSkillOnTest)) {
-		// if (preSkillOnTest.equals(""))
-		// aHmmSequencesOnTest.add(header);
-		// aHmmSequencesOnTest.add(testLine);
-		// preSkillOnTest = curSkillOnTest;
-		// if (!preSkillOnTest.equals(preSkill)) {
-		// System.out
-		// .println("ERROR: !preSkillOnTest.equals(preSkill): preSkillOnTest="
-		// + preSkillOnTest + ",preSkill=" + preSkill);
-		// System.exit(1);
-		// }
-		// }
-		// else {
-		// if (!preSkillOnTest.equals(preSkill)) {
-		// System.out
-		// .println("ERROR: !preSkillOnTest.equals(preSkill): preSkillOnTest="
-		// + preSkillOnTest + ",preSkill=" + preSkill);
-		// System.exit(1);
-		// }
-		// opts.nowInTrain = false;
-		// opts.newStudents = new HashSet<String>();
-		// opts.newItems = new HashSet<String>();
-		// predictOneHmmForOneByOneMode(wholeProcessRunId, foldId, runId, kc, preSkill, trainHmm,
-		// aHmmSequencesOnTest);
-		// aHmmSequencesOnTest.clear();
-		// aHmmSequencesOnTest = new ArrayList<String>();
-		// aHmmSequencesOnTest.add(header);
-		// aHmmSequencesOnTest.add(testLine);
-		// preSkillOnTest = curSkillOnTest;
-		// EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
-		// double overallAuc = allFoldRunsEval.evaluateOnMultiFiles(
-		// (opts.nbRandomRestart > 1 ? currentrestartId + "_" : "") + opts.modelName, opts.nbRuns,
-		// opts.nbFolds, opts.allModelComparisonOutDir, opts.outDir,
-		// opts.evalFile, opts.predSuffix); // the first argument serves as a prefix to find files; while the last argument serves as a suffix to find files
-		// opts.perProcessOverallAuc.put(currentrestartId, overallAuc);
-		// break;
-		// }
-		// }// finish testing
-		// aHmmSequences.clear();
-		// aHmmSequences = new ArrayList<String>();
-		// aHmmSequences.add(header);
-		// aHmmSequences.add(line);
-		// preSkill = curSkill;
-		// kc++;
-		// opts.nowInTrain = true;
-		// }
-		// }
-		// trainReader.close();
-		// if (aHmmSequencesOnTest != null & aHmmSequencesOnTest.size() > 0) {
-		// // train one hmm using aHmmSequences
-		// opts.currentKc = preSkill;
-		// opts.currentKCId = kc;
-		// FeatureHMM trainHmm = trainOneHmm(wholeProcessRunId, foldId, runId, curSkill, kc,
-		// aHmmSequences, null, null);
-		// trainHmms.add(trainHmm);
-		// while ((testLine = testReader.readLine()) != null) {
-		// String newLineOnTest = testLine.trim();
-		// if (newLineOnTest.length() == 0)
-		// continue;
-		// String[] columns = testLine.split("\\s*[,\t]\\s*");// ("\\s*,\\t*\\s*");
-		// String curSkillOnTest = columns[skillColumn].trim();
-		// if (!curSkillOnTest.equals(preSkillOnTest)
-		// || !curSkillOnTest.equals(curSkill)) {
-		// System.out
-		// .println("ERROR: !curSkillOnTest.equals(preSkillOnTest) || !curSkillOnTest.equals(curSkill): curSkillOnTest="
-		// + curSkillOnTest
-		// + ",preSkillOnTest="
-		// + preSkillOnTest
-		// + ",curSkill=" + curSkill);
-		// System.exit(1);
-		// }
-		// aHmmSequencesOnTest.add(testLine);
-		// }
-		// predictOneHmmForOneByOneMode(wholeProcessRunId, foldId, runId, kc, preSkill, trainHmm,
-		// aHmmSequencesOnTest);
-		// EvaluationGeneral allFoldRunsEval = new EvaluationGeneral();
-		// double overallAuc = allFoldRunsEval.evaluateOnMultiFiles(
-		// (opts.nbRandomRestart > 1 ? currentrestartId + "_" : "") + opts.modelName, opts.nbRuns,
-		// opts.nbFolds, opts.allModelComparisonOutDir, opts.outDir,
-		// opts.evalFile, opts.predSuffix); // the first argument serves as a prefix to find files; while the last argument serves as a suffix to find files
-		// opts.perProcessOverallAuc.put(currentrestartId, overallAuc);
-		// aHmmSequencesOnTest.clear();
-		// aHmmSequences.clear();
-		// }
-		// testReader.close();
-	//}
 
 	// TODO: The design of fileId is weird
 	public OneRestartLogger runOneHMMMultiRestarts(int fileId, int hmmId, String hmmName, 
@@ -415,7 +238,7 @@ public class Runner implements Runnable {
 		
 		String fileProgress = "fileId=" + fileId + "(" + (fileId + 1) + "/" + opts.nbFiles + ")";
 		String restartProgress = (opts.nbRandomRestart > 1) ? (", restartId=" + restartId + "(" + (restartId + 1) + "/" + opts.nbRandomRestart + ")"):"";
-		String hmmProgress = ", kc=" + hmmName + "(" + (trainHMMs.get(hmmName) + 1) + "/" + trainHMMs.getSize() + ")";
+		String hmmProgress = ", kc=" + hmmName + "(" + (logger.curFile.trainedHMMs.size() + 1) + "/" + trainHMMs.getSize() + ")";
 //		for (String kc : logger.curFileLogger.trainedHmms)
 //			System.out.println(kc);
 		String progress = fileProgress + hmmProgress + restartProgress;

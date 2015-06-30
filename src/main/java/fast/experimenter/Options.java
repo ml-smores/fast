@@ -52,22 +52,22 @@ public class Options {
 	public boolean generateItemDummy = false;
 
 	@Option(gloss = "nbRandomRestart is used for specifying how many random starts (for initialing parameters) for each HMM(KC).")
-	public int nbRandomRestart = 1;// 20 //18s/time
+	public int nbRandomRestart = 3;// 20 //18s/time
 	@Option(gloss = "nbFiles is used to decide how many train-test pairs so that the code can read train-test files automatically (e.g. if nbFiles=10, trainInFilePrefix=\"train\", testInFilePrefix=\"test\", inFileSuffix=\".csv\", then the code automatically reads train0.csv~train9.csv.")
-	public int nbFiles = 1;
+	public int nbFiles = 3;
 	
 	@Option(gloss = "inDir is for getting input files(train and test).")
-	public String inDir = "./data/IRT_exp/";
+	public String inDir = "./data/temp/";//"./data/IRT_exp/";
 	@Option(gloss = "outDir is for getting output prediction files and log files.")
-	public String outDir = "./data/IRT_exp/";//inDir + modelName + "/";//
+	public String outDir = "./data/temp/";//"./data/IRT_exp/";
 //	@Option(gloss = "allModelComparisonOutDir is where all different models are compared (by the average evaluation metric).")
 //	public String allModelComparisonOutDir = outDir;
 	@Option(gloss = "trainInFilePrefix combined with nbFiles and inFileSuffix is used for retrieving train file. If trainInFilePrefix=\"train\" and inFileSuffix=\".csv\", then 1) if nbFiles=1, train file will be \"train0.csv\", 2) if nbFiles>1, train file will be automatically configured with an increasing id as surfix. e.g., \"train1.txt\" for the 2nd file.")
-	public String trainInFilePrefix = "train";
+	public String trainInFilePrefix = "KT_train";
 	@Option(gloss = "testInFilePrefix combined with nbFiles and inFileSuffix is used for retrieving test file. If testInFilePrefix=\"test\" and inFileSuffix=\".csv\", then 1) if nbFiles=1, test file will be \"test0.csv\", 2) if nbFiles>1, test file will be automatically configured with an increasing id as surfix. e.g., \"test1.txt\" for the 2nd file.")
-	public String testInFilePrefix = "test";
+	public String testInFilePrefix = "KT_test";
 	@Option(gloss = "inFileSuffix is for specifying train and test file suffixes.")
-	public String inFileSuffix = ".csv";	
+	public String inFileSuffix = ".txt";//".csv";	
 
 	@Option(gloss = "EMMaxIters is used for the maximum iteration of outer EM. Setting smaller value could make training stop earlier, yet could decrease accuracy.")
 	public int EMMaxIters = 500;// 500; EDM:400; doesn't influence auc that much.

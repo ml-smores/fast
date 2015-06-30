@@ -168,6 +168,7 @@ public class DataPointList extends LinkedList<DataPoint> {// loading per HMM
 				else
 					cognitiveModel.put(aStep, s);
 			}
+			//System.out.println(aSkill);
 
 			// if (oneBiasFeature) {
 			// double[][][] finalFeatureValues = new double[nbHiddenStates][3][];

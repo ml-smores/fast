@@ -159,6 +159,7 @@ public class Logger {
 //		public double trainMaxLLDecreaseRatio;
 //		public int trainNbStopByEMIteration = 0;
 		//public HashSet<String> trainParameterizingFailed = new HashSet<String>();
+		/* the index is corresponding to the original hmmId (even there are hmmIDs that are skipped, the code still add "fake" content) */
 		private ArrayList<LinkedHashMap<String, Double>> trainedParameters = new ArrayList<LinkedHashMap<String, Double>>(); //per HMM
 		//public Bijection outputParameterNamesForStats = new Bijection(); // in order to specify order of the features
 		//public HashMap<String, ArrayList<Double>> featureToAllKCValues = new HashMap<String, ArrayList<Double>>();// feature to values (ordered by kc)
@@ -185,19 +186,15 @@ public class Logger {
 			
 			if (trainedParameters.size() == hmmId)
 				trainedParameters.add(curHmmLogger.trainSummary.parameters);
-			else{
-				System.out.println("ERROR: trainedParameters.size() != hmmId");
-				System.exit(-1);
-			}
+			else
+				throw new RuntimeException("ERROR: trainedParameters.size() != hmmId");
 			
 			if (testEvals.size() == hmmId){
 				testEvals.add(curHmmLogger.testSummary.eval);
 				//testEvals.get(testEvals.size() - 1).
 			}
-			else{
-				System.out.println("ERROR: testEvals.size() == hmmId");
-				System.exit(-1);
-			}			
+			else
+				throw new RuntimeException("ERROR: testEvals.size() == hmmId");	
 			testActualLabels.addAll(curHmmLogger.testSummary.actualLabels);
 			testPredLabels.addAll(curHmmLogger.testSummary.predLabels);
 			testPredProbs.addAll(curHmmLogger.testSummary.predProbs);

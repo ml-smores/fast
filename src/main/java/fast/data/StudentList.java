@@ -123,10 +123,10 @@ public class StudentList extends LinkedList<CVStudent> {
 			if (// reportError&&
 			(previousStudent == aStudent) && (previousProblem == aProblem)
 					&& (previousStep == aStep)) {
-				System.out.println("WARNING: Repeated datum, student= "
-						+ data.getStudents().get(aStudent) + " problem="
-						+ data.getProblems().get(aProblem) + " step="
-						+ data.getSteps().get(aStep) + ". Yet I still keep it in the dataset.");// + "or features are repeated!");
+				System.out.println("WARNING: Repeated datum (same as the one before) for kc=" + data.getSkills().get(datum.getSkill()) 
+						+ ", student= " + data.getStudents().get(aStudent) 
+						+ " problem=" + data.getProblems().get(aProblem) 
+						+ " step=" + data.getSteps().get(aStep) + ". Yet I still keep it in the dataset.");// + "or features are repeated!");
 			}
 			
 			previousStudent = aStudent;
