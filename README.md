@@ -23,8 +23,8 @@ Quick Start
 ------------
 
 1. Download the latest release [here] (https://github.com/ml-smores/fast/releases).
-2. Decompress the file.  It includes sample data for getting you started quickly.
-3. Open a terminal and type:  
+2. Decompress the file.  It includes sample data for getting you started quickly. 
+3. Open a terminal and type (you need to be in the same directory as the fast-2.1.1-final.jar file in your console, which can be achieved by the cd command):  
 ``` java -jar fast-2.1.1-final.jar ++data/IRT_exp/FAST+IRT1.conf  ````
 
 Congratulations! You just trained a student model (with IRT features) using state of the art technology.
