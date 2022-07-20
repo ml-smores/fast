@@ -32,7 +32,7 @@ Congratulations! You just trained a student model (with IRT features) using stat
 
 Please see the [Wiki](https://github.com/ml-smores/fast/wiki/) for more information. 
 
-
+Please cite our work (and provide the link https://github.com/ml-smores/fast if you use our tool in your published papers: González-Brenes, J. P., Huang, Y., & Brusilovsky, P. (2014). General features in knowledge tracing: applications to multiple subskills, temporal item response theory, and expert knowledge. In Proc. 7th Int. Conf. on Educational Data Mining (pp. 84-91).
 
 Contact us
 ==========
